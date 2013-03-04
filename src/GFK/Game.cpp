@@ -6,16 +6,16 @@ namespace gfk
 {
 
 Game::Game() :
-time(),
-clock()
+clock(),
+time()
 {
 
 }
 
 Game::Game(const std::string& gameTitle) :
-title(gameTitle),
+clock(),
 time(),
-clock()
+title(gameTitle)
 {
 
 }
