@@ -1,0 +1,13 @@
+#include <SFML/System.hpp>
+
+namespace GFK
+{
+class GameTime
+{
+public:
+	GameTime();
+	~GameTime();
+protected:
+private:
+}
+}
