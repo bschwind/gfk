@@ -28,6 +28,8 @@ protected:
 	virtual void Draw(const gfk::GameTime gameTime);
 private:
 	sf::Clock clock;
+	sf::Window window;
+	sf::Event event;
 	gfk::GameTime time;
 	std::string title;
 	void Tick();
