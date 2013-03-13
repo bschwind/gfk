@@ -13,7 +13,9 @@ class Game
 {
 public:
 	Game();
-	Game(const std::string& title);
+	Game(const std::string& title, 
+		 const int screenWidth, 
+		 const int screenHeight);
 	~Game();
 	void Run();
 	void Exit();
@@ -32,6 +34,7 @@ private:
 	sf::Event event;
 	gfk::GameTime time;
 	std::string title;
+	int width, height;
 	void Tick();
 };
 

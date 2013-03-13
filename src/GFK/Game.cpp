@@ -14,10 +14,14 @@ title("GFK Game")
 
 }
 
-Game::Game(const std::string& gameTitle) :
+Game::Game(const std::string& gameTitle,
+		   const int screenWidth,
+		   const int screenHeight) :
 clock(),
 time(),
-title(gameTitle)
+title(gameTitle),
+width(screenWidth),
+height(screenHeight)
 {
 
 }
@@ -31,9 +35,8 @@ Game::~Game()
 
 void Game::Initialize()
 {
-	//Initialize graphics device
+	window.Create(sf::VideoMode(width, height, 32), title);
 	Device = GraphicsDevice();
-	window.Create(sf::VideoMode(800, 600, 32), title);
 	LoadContent();
 }
 
@@ -49,11 +52,12 @@ void Game::UnloadContent()
 
 void Game::Update(const gfk::GameTime gameTime)
 {
-	std::cout << gameTime.TotalGameTime << std::endl;
+	std::cout << gameTime.ElapsedGameTime << std::endl;
 }
 
 void Game::Draw(const gfk::GameTime gameTime)
 {
+	Device.Clear();
 	window.Display();
 }
 
@@ -69,16 +73,21 @@ void Game::Tick()
 	while (window.GetEvent(event))
 	{
 		// Window closed
-		if (event.Type == sf::Event::Closed)
+		if(event.Type == sf::Event::Closed)
 		{
 			window.Close();
 		}
 
 		// Escape key pressed
-		if ((event.Type == sf::Event::KeyPressed) && (event.Key.Code == sf::Key::Escape))
+		if((event.Type == sf::Event::KeyPressed)
+			&& (event.Key.Code == sf::Key::Escape))
 		{
 			window.Close();
 		}
+		if(event.Type == sf::Event::Resized)
+		{
+			glViewport(0, 0, event.Size.Width, event.Size.Height);
+		}	
 	}
 
 	Update(time);
