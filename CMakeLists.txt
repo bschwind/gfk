@@ -27,6 +27,7 @@ add_library( gfk STATIC
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GraphicsDevice.cpp
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Color.cpp
        )
 
 target_link_libraries(gfk ${SFML_LIBRARIES})
