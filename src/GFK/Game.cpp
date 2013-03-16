@@ -37,6 +37,7 @@ void Game::Initialize()
 {
 	window.Create(sf::VideoMode(width, height, 32), title);
 	Device = GraphicsDevice();
+	Device.SetClearColor(Color::Orange);
 	LoadContent();
 }
 
