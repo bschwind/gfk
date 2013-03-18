@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SFML/Window.hpp>
 #include <GFK/Graphics/Color.hpp>
 

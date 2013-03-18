@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GFK/GameTime.hpp>
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <SFML/System.hpp>
