@@ -2,6 +2,7 @@
 
 #include <SFML/Window.hpp>
 #include <GFK/Graphics/Color.hpp>
+#include <GFK/Graphics/PackedColor.hpp>
 
 namespace gfk
 {
@@ -12,6 +13,7 @@ public:
 	~GraphicsDevice();
 
 	void SetClearColor(const gfk::Color color);
+	void SetClearColor(const gfk::PackedColor color);
 	void SetDepthClearValue(const float depth);
 	void Clear();
 	void ClearDepth();
