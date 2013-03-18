@@ -125,7 +125,7 @@ const PackedColor PackedColor::MediumAquamarine(0xffaacd66);
 const PackedColor PackedColor::MediumBlue(0xffcd0000);
 const PackedColor PackedColor::MediumOrchid(0xffd355ba);
 const PackedColor PackedColor::MediumPurple(0xffdb7093); 
-const PackedColor MediumSeaGreen(0xff71b33c);
+const PackedColor PackedColor::MediumSeaGreen(0xff71b33c);
 const PackedColor PackedColor::MediumSlateBlue(0xffee687b);
 const PackedColor PackedColor::MediumSpringGreen(0xff9afa00);
 const PackedColor PackedColor::MediumTurquoise(0xffccd148);
