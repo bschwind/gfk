@@ -1,4 +1,5 @@
 #include <GFK/Game.hpp>
+#include <GFK/Vector2.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <string>
@@ -14,7 +15,7 @@ title("GFK Game")
 
 }
 
-Game::Game(const std::string& gameTitle,
+Game::Game(const std::string &gameTitle,
 		   const int screenWidth,
 		   const int screenHeight) :
 clock(),
@@ -51,12 +52,12 @@ void Game::UnloadContent()
 
 }
 
-void Game::Update(const gfk::GameTime gameTime)
+void Game::Update(const gfk::GameTime &gameTime)
 {
 	std::cout << gameTime.ElapsedGameTime << std::endl;
 }
 
-void Game::Draw(const gfk::GameTime gameTime)
+void Game::Draw(const gfk::GameTime &gameTime)
 {
 	Device.Clear();
 	window.Display();

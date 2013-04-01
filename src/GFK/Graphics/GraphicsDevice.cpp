@@ -16,12 +16,12 @@ GraphicsDevice::~GraphicsDevice()
 
 }
 
-void GraphicsDevice::SetClearColor(const gfk::Color color)
+void GraphicsDevice::SetClearColor(const gfk::Color &color)
 {
 	glClearColor(color.R, color.G, color.B, color.A);
 }
 
-void GraphicsDevice::SetClearColor(const gfk::PackedColor color)
+void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
 {
 	glClearColor(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 }

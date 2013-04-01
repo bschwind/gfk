@@ -12,8 +12,8 @@ public:
 	GraphicsDevice();
 	~GraphicsDevice();
 
-	void SetClearColor(const gfk::Color color);
-	void SetClearColor(const gfk::PackedColor color);
+	void SetClearColor(const gfk::Color &color);
+	void SetClearColor(const gfk::PackedColor &color);
 	void SetDepthClearValue(const float depth);
 	void Clear();
 	void ClearDepth();

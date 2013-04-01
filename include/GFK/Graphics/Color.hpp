@@ -5,13 +5,12 @@ namespace gfk
 class Color
 {
 public:
+	float R, G, B, A;
 	Color();
 	Color(const float r, const float g, const float b);
 	Color(const float r, const float g, const float b, const float a);
 	Color(const unsigned int color);
 	~Color();
-
-	float R, G, B, A;
 
 	/// TransparentBlack color (R:0,G:0,B:0,A:0).
 	static const Color TransparentBlack;
