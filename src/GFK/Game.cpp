@@ -40,9 +40,6 @@ void Game::Initialize()
 	Device = GraphicsDevice();
 	Device.SetClearColor(Color::CornflowerBlue);
 	LoadContent();
-
-	Vector2 v(3.0f, 4.0f);
-	std::cout << Vector2::Length(v) << std::endl;
 }
 
 void Game::LoadContent()
