@@ -40,6 +40,9 @@ void Game::Initialize()
 	Device = GraphicsDevice();
 	Device.SetClearColor(Color::CornflowerBlue);
 	LoadContent();
+
+	Vector2 v(3.0f, 4.0f);
+	std::cout << Vector2::Length(v) << std::endl;
 }
 
 void Game::LoadContent()
@@ -54,7 +57,7 @@ void Game::UnloadContent()
 
 void Game::Update(const gfk::GameTime &gameTime)
 {
-	std::cout << gameTime.ElapsedGameTime << std::endl;
+	//std::cout << gameTime.ElapsedGameTime << std::endl;
 }
 
 void Game::Draw(const gfk::GameTime &gameTime)
