@@ -16,17 +16,23 @@ public:
 	static const Vector2 UnitX;
 	static const Vector2 UnitY;
 
-	static float Dot(const Vector2 &v1, const Vector2 &v2);
-	static float Length(const Vector2 &v);
-	static void Rotate(Vector2 &v, float angle);
-	static void Normalize(Vector2 &v);
 	static Vector2 Barycentric(Vector2 &v1, Vector2 &v2, Vector2 &v3, float amount1, float amount2);
 	static Vector2 CatmullRom(Vector2 &v1, Vector2 &v2, Vector2 &v3, Vector2 &v4, float amount);
 	static Vector2 Clamp(const Vector2 &v, const Vector2 &min, const Vector2 &max);
 	static float Distance(const Vector2 &v1, const Vector2 &v2);
 	static float DistanceSquared(const Vector2 &v1, const Vector2 &v2);
+	static float Dot(const Vector2 &v1, const Vector2 &v2);
 	static Vector2 Hermite(Vector2 &v1, Vector2 &tangent1, Vector2 &v2, Vector2 &tangent2, float amount);
+	static float Length(const Vector2 &v);
+	static Vector2 Lerp(const Vector2 &v1, const Vector2 &v2, float amount);
+	static Vector2 Max(const Vector2 &v1, const Vector2 &v2);
+	static Vector2 Min(const Vector2 &v1, const Vector2 &v2);
+	static Vector2 Negate(Vector2 &v1);
+	static Vector2 Negate(const Vector2 &v1);
+	static Vector2 Normalize(Vector2 &v);
+	static Vector2 Normalize(const Vector2 &v);
 	static Vector2 Reflect(const Vector2 &v, const Vector2 &normal);
+	static void Rotate(Vector2 &v, float angle);
 protected:
 private:
 };

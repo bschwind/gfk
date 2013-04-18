@@ -35,6 +35,11 @@ public:
 	}
 
 	static float Hermite(float v1, float tangent1, float v2, float tangent2, float amount);
+
+	static inline float Lerp(float v1, float v2, float amount)
+	{
+		return v1 + (v2 - v1) * amount;
+	}
 };
 
 }

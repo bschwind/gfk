@@ -26,33 +26,6 @@ namespace gfk
 	const Vector2 Vector2::UnitX(1.0f, 0.0f);
 	const Vector2 Vector2::UnitY(0.0f, 1.0f);
 
-	float Vector2::Dot(const Vector2 &v1, const Vector2 &v2)
-	{
-		return v1.X * v2.X + v1.Y * v2.Y;
-	}
-
-	float Vector2::Length(const Vector2 &v)
-	{
-		return sqrt(v.X * v.X + v.Y * v.Y);
-	}
-
-	void Vector2::Rotate(Vector2 &v, float angle)
-	{
-		float cosVal = cos(angle);
-		float sinVal = sin(angle);
-
-		float temp = v.X;
-		v.X = cosVal * v.X - sinVal * v.Y;
-		v.Y = sinVal * temp + cosVal * v.Y;
-	}
-
-	void Vector2::Normalize(Vector2 &v)
-	{
-		float length = sqrt(v.X * v.X + v.Y * v.Y);
-		v.X /= length;
-		v.Y /= length;
-	}
-
 	Vector2 Vector2::Barycentric(Vector2 &v1, Vector2 &v2, Vector2 &v3, float amount1, float amount2)
 	{
 		return Vector2::Vector2(
@@ -87,11 +60,68 @@ namespace gfk
 		return x * x + y * y;
 	}
 
+	float Vector2::Dot(const Vector2 &v1, const Vector2 &v2)
+	{
+		return v1.X * v2.X + v1.Y * v2.Y;
+	}
+
 	Vector2 Vector2::Hermite(Vector2 &v1, Vector2 &tangent1, Vector2 &v2, Vector2 &tangent2, float amount)
 	{
 		return Vector2::Vector2(
 			MathHelper::Hermite(v1.X, tangent1.X, v2.X, tangent2.X, amount), 
 			MathHelper::Hermite(v1.Y, tangent1.Y, v2.Y, tangent2.Y, amount));
+	}
+
+	float Vector2::Length(const Vector2 &v)
+	{
+		return sqrt(v.X * v.X + v.Y * v.Y);
+	}
+
+	Vector2 Vector2::Lerp(const Vector2 &v1, const Vector2 &v2, float amount)
+	{
+		return Vector2::Vector2(MathHelper::Lerp(v1.X, v2.X, amount), MathHelper::Lerp(v1.Y, v2.Y, amount));
+	}
+
+	Vector2 Vector2::Max(const Vector2 &v1, const Vector2 &v2)
+	{
+		return Vector2::Vector2(v1.X > v2.X ? v1.X : v2.X, v1.Y > v2.Y ? v1.Y : v2.Y);
+	}
+
+	Vector2 Vector2::Min(const Vector2 &v1, const Vector2 &v2)
+	{
+		return Vector2::Vector2(v1.X < v2.X ? v1.X : v2.X, v1.Y < v2.Y ? v1.Y : v2.Y);
+	}
+
+	Vector2 Vector2::Negate(Vector2 &v)
+	{
+		v.X = -v.X;
+		v.Y = -v.Y;
+		return v;
+	}
+
+	Vector2 Vector2::Negate(const Vector2 &v)
+	{
+		Vector2 vOut(v.X, v.Y);
+		vOut.X = -vOut.X;
+		vOut.Y = -vOut.Y;
+		return vOut;
+	}
+
+	Vector2 Vector2::Normalize(Vector2 &v)
+	{
+		float length = sqrt(v.X * v.X + v.Y * v.Y);
+		v.X /= length;
+		v.Y /= length;
+		return v;
+	}
+
+	Vector2 Vector2::Normalize(const Vector2 &v)
+	{
+		Vector2 vOut(v.X, v.Y);
+		float length = sqrt(vOut.X * vOut.X + vOut.Y * vOut.Y);
+		vOut.X /= length;
+		vOut.Y /= length;
+		return vOut;
 	}
 
 	Vector2 Vector2::Reflect(const Vector2 &v, const Vector2 &normal)
@@ -101,5 +131,15 @@ namespace gfk
 		result.X = v.X - (normal.X * val);
 		result.Y = v.Y - (normal.Y * val);
 		return result;
+	}
+
+	void Vector2::Rotate(Vector2 &v, float angle)
+	{
+		float cosVal = cos(angle);
+		float sinVal = sin(angle);
+
+		float temp = v.X;
+		v.X = cosVal * v.X - sinVal * v.Y;
+		v.Y = sinVal * temp + cosVal * v.Y;
 	}
 }
