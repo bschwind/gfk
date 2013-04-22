@@ -24,6 +24,7 @@ public:
 	static float Dot(const Vector2 &v1, const Vector2 &v2);
 	static Vector2 Hermite(Vector2 &v1, Vector2 &tangent1, Vector2 &v2, Vector2 &tangent2, float amount);
 	static float Length(const Vector2 &v);
+	static float LengthSquared(const Vector2 &v);
 	static Vector2 Lerp(const Vector2 &v1, const Vector2 &v2, float amount);
 	static Vector2 Max(const Vector2 &v1, const Vector2 &v2);
 	static Vector2 Min(const Vector2 &v1, const Vector2 &v2);
@@ -33,8 +34,19 @@ public:
 	static Vector2 Normalize(const Vector2 &v);
 	static Vector2 Reflect(const Vector2 &v, const Vector2 &normal);
 	static void Rotate(Vector2 &v, float angle);
+	static Vector2 SmoothStep(Vector2 &v1, Vector2 &v2, float amount);
+	Vector2 operator+= (const Vector2 &op2);
+	Vector2 operator-= (const Vector2 &op2);
+	Vector2 operator*= (float scalar);
+	Vector2 operator/= (float divisor);
 protected:
 private:
 };
+
+Vector2 operator+ (const Vector2 &op1, const Vector2 &op2);
+Vector2 operator- (const Vector2 &op1, const Vector2 &op2);
+Vector2 operator* (const Vector2 &op1, float scalar);
+Vector2 operator* (float scalar, const Vector2 &op2);
+Vector2 operator/ (const Vector2 &op1, float divisor);
 
 }

@@ -77,6 +77,11 @@ namespace gfk
 		return sqrt(v.X * v.X + v.Y * v.Y);
 	}
 
+	float Vector2::LengthSquared(const Vector2 &v)
+	{
+		return v.X * v.X + v.Y * v.Y;
+	}
+
 	Vector2 Vector2::Lerp(const Vector2 &v1, const Vector2 &v2, float amount)
 	{
 		return Vector2::Vector2(MathHelper::Lerp(v1.X, v2.X, amount), MathHelper::Lerp(v1.Y, v2.Y, amount));
@@ -141,5 +146,64 @@ namespace gfk
 		float temp = v.X;
 		v.X = cosVal * v.X - sinVal * v.Y;
 		v.Y = sinVal * temp + cosVal * v.Y;
+	}
+
+	Vector2 SmoothStep(Vector2 &v1, Vector2 &v2, float amount)
+	{
+		return Vector2::Vector2(MathHelper::SmoothStep(v1.X, v2.X, amount), 
+								MathHelper::SmoothStep(v1.Y, v2.Y, amount));
+	}
+
+	Vector2 operator+ (const Vector2 &op1, const Vector2 &op2)
+	{
+		return Vector2::Vector2(op1.X + op2.X, op1.Y + op2.Y);
+	}
+
+	Vector2 operator- (const Vector2 &op1, const Vector2 &op2)
+	{
+		return Vector2::Vector2(op1.X - op2.X, op1.Y - op2.Y);
+	}
+
+	Vector2 operator* (const Vector2 &op1, float scalar)
+	{
+		return Vector2::Vector2(op1.X * scalar, op1.Y * scalar);
+	}
+
+	Vector2 operator* (float scalar, const Vector2 &op2)
+	{
+		return Vector2::Vector2(op2.X * scalar, op2.Y * scalar);
+	}
+
+	Vector2 operator/ (const Vector2 &op2, float divisor)
+	{
+		return Vector2::Vector2(op2.X / divisor, op2.Y / divisor);
+	}
+
+	Vector2 Vector2::operator+= (const Vector2 &op2)
+	{
+		X += op2.X;
+		Y += op2.Y;
+		return *this;
+	}
+
+	Vector2 Vector2::operator-= (const Vector2 &op2)
+	{
+		X -= op2.X;
+		Y -= op2.Y;
+		return *this;
+	}
+
+	Vector2 Vector2::operator*= (float scalar)
+	{
+		X *= scalar;
+		Y *= scalar;
+		return *this;
+	}
+
+	Vector2 Vector2::operator/= (float scalar)
+	{
+		X /= scalar;
+		Y /= scalar;
+		return *this;
 	}
 }

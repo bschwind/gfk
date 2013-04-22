@@ -29,17 +29,14 @@ public:
 		return value < min ? min : (value > max ? max : value);
 	}
 
-	static inline void Clamp(float &value, const float min, const float max)
-	{
-		value = (value < min) ? min : (value > max ? max : value);
-	}
-
 	static float Hermite(float v1, float tangent1, float v2, float tangent2, float amount);
 
 	static inline float Lerp(float v1, float v2, float amount)
 	{
 		return v1 + (v2 - v1) * amount;
 	}
+
+	static float SmoothStep(float v1, float v2, float amount);
 };
 
 }

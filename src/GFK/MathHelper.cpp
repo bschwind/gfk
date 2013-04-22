@@ -27,4 +27,11 @@ namespace gfk
 
 		return (float)result;
 	}
+
+	float MathHelper::SmoothStep(float v1, float v2, float amount)
+	{
+		float result = MathHelper::Clamp(amount, 0.0f, 1.0f);
+		result = MathHelper::Hermite(v1, 0.0f, v2, 0.0f, result);
+		return result;
+	}
 }
