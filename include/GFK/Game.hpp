@@ -37,6 +37,7 @@ private:
 	gfk::GameTime time;
 	std::string title;
 	int width, height;
+	void HandleEvents();
 	void Tick();
 };
 

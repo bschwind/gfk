@@ -6,6 +6,10 @@ project(GFK)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+#These two lines are needed to compile for C++11 and Clang
+set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+set(CMAKE_C_FLAGS "-stdlib=libc++")
+
 # setup version numbers
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
@@ -19,7 +23,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # add the subdirectories
 add_subdirectory(src/GFK)
 
-find_package(SFML 1 COMPONENTS system window REQUIRED)
+find_package(SFML 2.0 COMPONENTS system window graphics REQUIRED)
 include_directories(${SFML_INCLUDE_DIR})
 message(STATUS ${SFML_INCLUDE_DIR})
 
