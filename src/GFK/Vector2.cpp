@@ -43,7 +43,9 @@ namespace gfk
 
 	Vector2 Vector2::Clamp(const Vector2 &v, const Vector2 &min, const Vector2 &max)
 	{
-		return Vector2::Vector2(MathHelper::Clamp(v.X, min.X, max.X), MathHelper::Clamp(v.Y, min.Y, max.Y));
+		return Vector2::Vector2(
+			MathHelper::Clamp(v.X, min.X, max.X),
+			MathHelper::Clamp(v.Y, min.Y, max.Y));
 	}
 
 	float Vector2::Distance(const Vector2 &v1, const Vector2 &v2)
@@ -84,17 +86,22 @@ namespace gfk
 
 	Vector2 Vector2::Lerp(const Vector2 &v1, const Vector2 &v2, float amount)
 	{
-		return Vector2::Vector2(MathHelper::Lerp(v1.X, v2.X, amount), MathHelper::Lerp(v1.Y, v2.Y, amount));
+		return Vector2::Vector2(
+			MathHelper::Lerp(v1.X, v2.X, amount), 
+			MathHelper::Lerp(v1.Y, v2.Y, amount));
 	}
 
 	Vector2 Vector2::Max(const Vector2 &v1, const Vector2 &v2)
 	{
-		return Vector2::Vector2(v1.X > v2.X ? v1.X : v2.X, v1.Y > v2.Y ? v1.Y : v2.Y);
+		return Vector2::Vector2(
+			v1.X > v2.X ? v1.X : v2.X,
+			v1.Y > v2.Y ? v1.Y : v2.Y);
 	}
 
 	Vector2 Vector2::Min(const Vector2 &v1, const Vector2 &v2)
 	{
-		return Vector2::Vector2(v1.X < v2.X ? v1.X : v2.X, v1.Y < v2.Y ? v1.Y : v2.Y);
+		return Vector2::Vector2(v1.X < v2.X ? v1.X : v2.X,
+			v1.Y < v2.Y ? v1.Y : v2.Y);
 	}
 
 	Vector2 Vector2::Negate(Vector2 &v)
@@ -150,8 +157,9 @@ namespace gfk
 
 	Vector2 SmoothStep(Vector2 &v1, Vector2 &v2, float amount)
 	{
-		return Vector2::Vector2(MathHelper::SmoothStep(v1.X, v2.X, amount), 
-								MathHelper::SmoothStep(v1.Y, v2.Y, amount));
+		return Vector2::Vector2(
+			MathHelper::SmoothStep(v1.X, v2.X, amount),
+			MathHelper::SmoothStep(v1.Y, v2.Y, amount));
 	}
 
 	Vector2 operator+ (const Vector2 &op1, const Vector2 &op2)
