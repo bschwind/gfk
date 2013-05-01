@@ -28,7 +28,7 @@ namespace gfk
 
 	Vector2 Vector2::Barycentric(Vector2 &v1, Vector2 &v2, Vector2 &v3, float amount1, float amount2)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::Barycentric(v1.X, v2.X, v3.X, amount1, amount2),
 			MathHelper::Barycentric(v1.Y, v2.Y, v3.Y, amount1, amount2));
 
@@ -36,14 +36,14 @@ namespace gfk
 
 	Vector2 Vector2::CatmullRom(Vector2 &v1, Vector2 &v2, Vector2 &v3, Vector2 &v4, float amount)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::CatmullRom(v1.X, v2.X, v3.X, v4.X, amount),
 			MathHelper::CatmullRom(v1.Y, v2.Y, v3.Y, v4.Y, amount));
 	}
 
 	Vector2 Vector2::Clamp(const Vector2 &v, const Vector2 &min, const Vector2 &max)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::Clamp(v.X, min.X, max.X),
 			MathHelper::Clamp(v.Y, min.Y, max.Y));
 	}
@@ -69,7 +69,7 @@ namespace gfk
 
 	Vector2 Vector2::Hermite(Vector2 &v1, Vector2 &tangent1, Vector2 &v2, Vector2 &tangent2, float amount)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::Hermite(v1.X, tangent1.X, v2.X, tangent2.X, amount), 
 			MathHelper::Hermite(v1.Y, tangent1.Y, v2.Y, tangent2.Y, amount));
 	}
@@ -86,21 +86,21 @@ namespace gfk
 
 	Vector2 Vector2::Lerp(const Vector2 &v1, const Vector2 &v2, float amount)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::Lerp(v1.X, v2.X, amount), 
 			MathHelper::Lerp(v1.Y, v2.Y, amount));
 	}
 
 	Vector2 Vector2::Max(const Vector2 &v1, const Vector2 &v2)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			v1.X > v2.X ? v1.X : v2.X,
 			v1.Y > v2.Y ? v1.Y : v2.Y);
 	}
 
 	Vector2 Vector2::Min(const Vector2 &v1, const Vector2 &v2)
 	{
-		return Vector2::Vector2(v1.X < v2.X ? v1.X : v2.X,
+		return Vector2(v1.X < v2.X ? v1.X : v2.X,
 			v1.Y < v2.Y ? v1.Y : v2.Y);
 	}
 
@@ -157,34 +157,34 @@ namespace gfk
 
 	Vector2 SmoothStep(Vector2 &v1, Vector2 &v2, float amount)
 	{
-		return Vector2::Vector2(
+		return Vector2(
 			MathHelper::SmoothStep(v1.X, v2.X, amount),
 			MathHelper::SmoothStep(v1.Y, v2.Y, amount));
 	}
 
 	Vector2 operator+ (const Vector2 &op1, const Vector2 &op2)
 	{
-		return Vector2::Vector2(op1.X + op2.X, op1.Y + op2.Y);
+		return Vector2(op1.X + op2.X, op1.Y + op2.Y);
 	}
 
 	Vector2 operator- (const Vector2 &op1, const Vector2 &op2)
 	{
-		return Vector2::Vector2(op1.X - op2.X, op1.Y - op2.Y);
+		return Vector2(op1.X - op2.X, op1.Y - op2.Y);
 	}
 
 	Vector2 operator* (const Vector2 &op1, float scalar)
 	{
-		return Vector2::Vector2(op1.X * scalar, op1.Y * scalar);
+		return Vector2(op1.X * scalar, op1.Y * scalar);
 	}
 
 	Vector2 operator* (float scalar, const Vector2 &op2)
 	{
-		return Vector2::Vector2(op2.X * scalar, op2.Y * scalar);
+		return Vector2(op2.X * scalar, op2.Y * scalar);
 	}
 
 	Vector2 operator/ (const Vector2 &op2, float divisor)
 	{
-		return Vector2::Vector2(op2.X / divisor, op2.Y / divisor);
+		return Vector2(op2.X / divisor, op2.Y / divisor);
 	}
 
 	Vector2 Vector2::operator+= (const Vector2 &op2)
