@@ -6,10 +6,14 @@ project(GFK)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-#These two lines are needed to compile for C++11 and Clang
-set(CMAKE_CXX_FLAGS "-stdlib=libc++")
-set(CMAKE_C_FLAGS "-stdlib=libc++")
-
+# Compiler-specific C++11 activation.
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS "-std=c++11")
+elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+	set(CMAKE_C_FLAGS "-stdlib=libc++")
+endif ()
+ 
 # setup version numbers
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
