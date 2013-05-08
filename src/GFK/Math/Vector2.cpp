@@ -1,5 +1,5 @@
-#include <GFK/Vector2.hpp>
-#include <GFK/MathHelper.hpp>
+#include <GFK/Math/Vector2.hpp>
+#include <GFK/Math/MathHelper.hpp>
 #include <cmath>
 
 namespace gfk

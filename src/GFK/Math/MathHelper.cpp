@@ -1,11 +1,9 @@
-#include <GFK/MathHelper.hpp>
+#include <GFK/Math/MathHelper.hpp>
 
 namespace gfk
 {
 	float MathHelper::Hermite(float v1, float tangent1, float v2, float tangent2, float amount)
 	{
-		// All transformed to double not to lose precission
-		// Otherwise, for high numbers of param:amount the result is NaN instead of Infinity
 		double d1 = v1, d2 = v2, t1 = tangent1, t2 = tangent2, s = amount, result;
 		double sSquared = s * s;
 		double sCubed = s * sSquared;

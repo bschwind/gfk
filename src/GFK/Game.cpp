@@ -1,5 +1,5 @@
 #include <GFK/Game.hpp>
-#include <GFK/Vector2.hpp>
+#include <GFK/Math/Vector2.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 #include <iostream>
