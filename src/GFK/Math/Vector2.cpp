@@ -16,6 +16,12 @@ namespace gfk
 
 	}
 
+	Vector2::Vector2(const float value) :
+	X(value), Y(value)
+	{
+
+	}
+
 	Vector2::~Vector2()
 	{
 

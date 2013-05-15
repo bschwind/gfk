@@ -9,6 +9,7 @@ public:
 	float X, Y;
 	Vector2();
 	Vector2(const float x, const float y);
+	Vector2(const float value);
 	~Vector2();
 
 	static const Vector2 Zero;
