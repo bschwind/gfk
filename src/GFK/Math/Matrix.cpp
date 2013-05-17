@@ -64,9 +64,44 @@ const Matrix Matrix::Identity(
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f);
 
+void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix &result)
+{
+	Vector3 vector(0.0f);
+	Vector3 vector2(0.0f);
+	Vector3 vector3(0.0f);
+	vector = objectPosition - cameraPosition;
+	float num = vector.LengthSquared();
+	if (num < 0.0001f)
+	{
+		vector = cameraForwardVector;
+	}
+	else
+	{
+		vector *= (float)(1.0f / ((float)sqrt((double)num)));
+	}
+	Vector3::Cross(cameraUpVector, vector, vector3);
+	vector3.Normalize();
+	Vector3::Cross(vector, vector3, vector2);
+	result.SetRight(vector3);
+	result(1,4) = 0.0f;
+	result.SetUp(vector2);
+	result(2,4) = 0.0f;
+	result.SetBackward(vector);
+	result(3,4) = 0.0f;
+	result.SetTranslation(objectPosition);
+	result(4,4) = 1.0f;
+}
+
 Vector3 Matrix::GetBackward()
 {
 	return Vector3(m31, m32, m33);
+}
+
+void Matrix::SetBackward(const Vector3 &v)
+{
+	m31 = v.X;
+	m32 = v.Y;
+	m33 = v.Z;
 }
 
 Vector3 Matrix::GetForward()
@@ -79,6 +114,13 @@ Vector3 Matrix::GetRight()
 	return Vector3(m11, m12, m13);
 }
 
+void Matrix::SetRight(const Vector3 &v)
+{
+	m11 = v.X;
+	m12 = v.Y;
+	m13 = v.Z;
+}
+
 Vector3 Matrix::GetLeft()
 {
 	return Vector3(-m11, -m12, -m13);
@@ -87,6 +129,13 @@ Vector3 Matrix::GetLeft()
 Vector3 Matrix::GetUp()
 {
 	return Vector3(m21, m22, m23);
+}
+
+void Matrix::SetUp(const Vector3 &v)
+{
+	m21 = v.X;
+	m22 = v.Y;
+	m23 = v.Z;
 }
 
 Vector3 Matrix::GetDown()
@@ -99,42 +148,11 @@ Vector3 Matrix::GetTranslation()
 	return Vector3(m41, m42, m43);
 }
 
-// Matrix CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Nullable<Vector3> cameraForwardVector)
-// {
-// 	 Vector3 vector;
-//             Vector3 vector2;
-//             Vector3 vector3;
-//             vector.X = objectPosition.X - cameraPosition.X;
-//             vector.Y = objectPosition.Y - cameraPosition.Y;
-//             vector.Z = objectPosition.Z - cameraPosition.Z;
-//             float num = vector.LengthSquared();
-//             if (num < 0.0001f)
-//             {
-//                 vector = cameraForwardVector.HasValue ? -cameraForwardVector.Value : Vector3.Forward;
-//             }
-//             else
-//             {
-//                 Vector3.Multiply(ref vector, (float)(1f / ((float)Math.Sqrt((double)num))), out vector);
-//             }
-//             Vector3.Cross(ref cameraUpVector, ref vector, out vector3);
-//             vector3.Normalize();
-//             Vector3.Cross(ref vector, ref vector3, out vector2);
-//             result.M11 = vector3.X;
-//             result.M12 = vector3.Y;
-//             result.M13 = vector3.Z;
-//             result.M14 = 0f;
-//             result.M21 = vector2.X;
-//             result.M22 = vector2.Y;
-//             result.M23 = vector2.Z;
-//             result.M24 = 0f;
-//             result.M31 = vector.X;
-//             result.M32 = vector.Y;
-//             result.M33 = vector.Z;
-//             result.M34 = 0f;
-//             result.M41 = objectPosition.X;
-//             result.M42 = objectPosition.Y;
-//             result.M43 = objectPosition.Z;
-//             result.M44 = 1f;
-// }
+void Matrix::SetTranslation(const Vector3 &v)
+{
+	m41 = v.X;
+	m42 = v.Y;
+	m43 = v.Z;
+}
 
 }

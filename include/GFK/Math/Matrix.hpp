@@ -17,16 +17,24 @@ public:
 
 	static const Matrix Identity;
 
+	static Matrix CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector);
+	static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix &result);
+
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
 	Vector3 GetBackward();
+	void SetBackward(const Vector3 &v);
 	Vector3 GetForward();
 	Vector3 GetRight();
+	void SetRight(const Vector3 &v);
 	Vector3 GetLeft();
 	Vector3 GetUp();
+	void SetUp(const Vector3 &v);
 	Vector3 GetDown();
 	Vector3 GetTranslation();
-	// Matrix CreateBillboard(const Vector3 objectPosition, const Vector3 cameraPosition, const Vector3 cameraUpVector, const Vector3 cameraForwardVector);
-	// void CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Nullable<Vector3> cameraForwardVector, Vector3 result); 
+	void SetTranslation(const Vector3 &v);
+
+	float &operator()(int row, int column) { return matrix[column * 4 + row]; }
+	const float &operator()(int row, int column) const { return matrix[column * 4 + row]; }
 protected:
 private:
 	float matrix[16];
