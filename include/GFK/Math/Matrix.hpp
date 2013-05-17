@@ -1,4 +1,5 @@
 #pragma once
+#include <GFK/Math/Vector3.hpp>
 
 namespace gfk
 {
@@ -17,6 +18,15 @@ public:
 	static const Matrix Identity;
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
+	Vector3 GetBackward();
+	Vector3 GetForward();
+	Vector3 GetRight();
+	Vector3 GetLeft();
+	Vector3 GetUp();
+	Vector3 GetDown();
+	Vector3 GetTranslation();
+	// Matrix CreateBillboard(const Vector3 objectPosition, const Vector3 cameraPosition, const Vector3 cameraUpVector, const Vector3 cameraForwardVector);
+	// void CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Nullable<Vector3> cameraForwardVector, Vector3 result); 
 protected:
 private:
 	float matrix[16];
