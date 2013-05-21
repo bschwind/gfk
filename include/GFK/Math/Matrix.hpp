@@ -19,6 +19,15 @@ public:
 
 	static Matrix CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector);
 	static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix &result);
+	static Matrix CreateConstrainedBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &rotateAxis, const Vector3 &cameraForwardVector, const Vector3 &objectForwardVector);
+	static void CreateConstrainedBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &rotateAxis, const Vector3 &cameraForwardVector, const Vector3 &objectForwardVector, Matrix &result);
+	static Matrix CreateFromAxisAngle(const Vector3 &axis, const float angle);
+	static void CreateFromAxisAngle(const Vector3 &axis, const float angle, Matrix &result);
+	//static Matrix CreateFromQuaternion(Quaternion quaternion);
+	// static Matrix CreateFromYawPitchRoll(const float yaw, const float pitch, const float roll);
+	// static void CreateFromYawPitchRoll(const float yaw, const float pitch, const float roll, Matrix result);
+	static Matrix CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector);
+	static void CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
 	Vector3 GetBackward();
