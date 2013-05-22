@@ -1,6 +1,7 @@
 #include <GFK/Math/Matrix.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <GFK/Math/Vector3.hpp>
+#include <stdexcept>
 #include <cmath>
 
 #define m11 matrix[0]
@@ -244,6 +245,144 @@ void Matrix::CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTa
 	result(4,2) = -Vector3::Dot(vector3, cameraPosition);
 	result(4,3) = -Vector3::Dot(vector, cameraPosition);
 	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane)
+{
+	Matrix m;
+	CreateOrthographic(width, height, zNearPlane, zFarPlane, m);
+	return m;
+}
+
+void Matrix::CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane, Matrix &result)
+{
+	result(1,1) = 2.0f / width;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,2) = 2.0f / height;
+	result(2,1) = 0.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,3) = 1.0f / (zNearPlane - zFarPlane);
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,4) = 0.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = zNearPlane / (zNearPlane - zFarPlane);
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane)
+{
+	Matrix m;
+	CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane, m);
+	return m;
+}
+
+void Matrix::CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane, Matrix &result)
+{
+	result(1,1) = (float)(2.0 / ((double)right - (double)left));
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = (float)(2.0 / ((double)top - (double)bottom));
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = (float)(1.0 / ((double)zNearPlane - (double)zFarPlane));
+	result(3,4) = 0.0f;
+	result(4,1) = (float)(((double)left + (double)right) / ((double)left - (double)right));
+	result(4,2) = (float)(((double)top + (double)bottom) / ((double)bottom - (double)top));
+	result(4,3) = (float)((double)zNearPlane / ((double)zNearPlane - (double)zFarPlane));
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance)
+{
+	Matrix m;
+	CreatePerspective(width, height, nearPlaneDistance, farPlaneDistance, m);
+	return m;
+}
+
+void Matrix::CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+{
+	if (nearPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("nearPlaneDistance <= 0");
+	}
+	if (farPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("farPlaneDistance <= 0");
+	}
+	if (nearPlaneDistance >= farPlaneDistance)
+	{
+		throw std::invalid_argument("nearPlaneDistance >= farPlaneDistance");
+	}
+	result(1,1) = (2.0f * nearPlaneDistance) / width;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,2) = (2.0f * nearPlaneDistance) / height;
+	result(2,1) = 0.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,3) = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,4) = -1.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,4) = 0.0f;
+	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+}
+
+Matrix Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance)
+{
+	Matrix m;
+	CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance, m);
+	return m;
+}
+
+void Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+{
+	if ((fieldOfView <= 0.0f) || (fieldOfView >= 3.141593f))
+	{
+		throw std::invalid_argument("fieldOfView <= 0 or >= PI");
+	}
+	if (nearPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("nearPlaneDistance <= 0");
+	}
+	if (farPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("farPlaneDistance <= 0");
+	}
+	if (nearPlaneDistance >= farPlaneDistance)
+	{
+		throw std::invalid_argument("nearPlaneDistance >= farPlaneDistance");
+	}
+	float num = 1.0f / ((float) tan((double) (fieldOfView * 0.5f)));
+	float num9 = num / aspectRatio;
+	result(1,1) = num9;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0;
+	result(2,2) = num;
+	result(2,1) = 0.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+	result(3,4) = -1.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,4) = 0.0f;
+	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 }
 
 Vector3 Matrix::GetBackward()

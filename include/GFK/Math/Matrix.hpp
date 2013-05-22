@@ -28,6 +28,14 @@ public:
 	// static void CreateFromYawPitchRoll(const float yaw, const float pitch, const float roll, Matrix result);
 	static Matrix CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector);
 	static void CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector, Matrix &result);
+	static Matrix CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane);
+	static void CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane, Matrix &result);
+	static Matrix CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane);
+	static void CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane, Matrix &result);
+	static Matrix CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance);
+	static void CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result);
+	static Matrix CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance);
+	static void CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
 	Vector3 GetBackward();
