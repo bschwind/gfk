@@ -36,11 +36,33 @@ public:
 	static void CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result);
 	static Matrix CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance);
 	static void CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result);
+	static Matrix CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance);
+	static void CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result);
+	static Matrix CreateRotationX(const float radians);
+	static void CreateRotationX(const float radians, Matrix &result);
+	static Matrix CreateRotationY(const float radians);
+	static void CreateRotationY(const float radians, Matrix &result);
+	static Matrix CreateRotationZ(const float radians);
+	static void CreateRotationZ(const float radians, Matrix &result);
+	static Matrix CreateScale(const float scale);
+	static void CreateScale(const float scale, Matrix &result);
+	static Matrix CreateScale(const float xScale, const float yScale, const float zScale);
+	static void CreateScale(const float xScale, const float yScale, const float zScale, Matrix &result);
+	static Matrix CreateScale(Vector3 scales);
+	static void CreateScale(Vector3 scales, Matrix &result);
+	static Matrix CreateTranslation(const float xPosition, const float yPosition, const float zPosition);
+	static void CreateTranslation(const float xPosition, const float yPosition, const float zPosition, Matrix &result);
+	static Matrix CreateTranslation(const Vector3 position);
+	static void CreateTranslation(const Vector3 position, Matrix &result);
+	//static Matrix CreateReflection(Plane value);
+	//static Matrix CreateReflection(Plane value, Matrix &result);
+	static Matrix CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up);
+	static void CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
 	Vector3 GetBackward();
-	void SetBackward(const Vector3 &v);
 	Vector3 GetForward();
+	void SetForward(const Vector3 &v);
 	Vector3 GetRight();
 	void SetRight(const Vector3 &v);
 	Vector3 GetLeft();

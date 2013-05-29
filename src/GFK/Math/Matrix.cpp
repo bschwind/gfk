@@ -94,7 +94,7 @@ void Matrix::CreateBillboard(const Vector3 &objectPosition, const Vector3 &camer
 	result(1,4) = 0.0f;
 	result.SetUp(vector2);
 	result(2,4) = 0.0f;
-	result.SetBackward(vector);
+	result.SetForward(vector);
 	result(3,4) = 0.0f;
 	result.SetTranslation(objectPosition);
 	result(4,4) = 1.0f;
@@ -153,7 +153,7 @@ void Matrix::CreateConstrainedBillboard(const Vector3 &objectPosition, const Vec
 	result(1,4) = 0.0f;
 	result.SetUp(vector4);
 	result(2,4) = 0.0f;
-	result.SetBackward(vector);
+	result.SetForward(vector);
 	result(3,4) = 0.0f;
 	result.SetTranslation(objectPosition);
 	result(4,4) = 1.0f;
@@ -385,21 +385,289 @@ void Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float a
 	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 }
 
+Matrix Matrix::CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance)
+{
+	Matrix m;
+	CreatePerspectiveOffCenter(left, right, bottom, top, nearPlaneDistance, farPlaneDistance, m);
+	return m;
+}
+
+void Matrix::CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+{
+	if (nearPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("nearPlaneDistance <= 0");
+	}
+	if (farPlaneDistance <= 0.0f)
+	{
+		throw std::invalid_argument("farPlaneDistance <= 0");
+	}
+	if (nearPlaneDistance >= farPlaneDistance)
+	{
+		throw std::invalid_argument("nearPlaneDistance >= farPlaneDistance");
+	}
+
+	result(1,1) = (2.0f * nearPlaneDistance) / (right - left);
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,2) = (2.0f * nearPlaneDistance) / (top - bottom);
+	result(2,1) = 0.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = (left + right) / (right - left);
+	result(3,2) = (top + bottom) / (top - bottom);
+	result(3,3) = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+	result(3,4) = -1.0f;
+	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,4) = 0.0f;
+}
+
+Matrix Matrix::CreateRotationX(const float radians)
+{
+	Matrix m;
+	CreateRotationX(radians, m);
+	return m;
+}
+
+void Matrix::CreateRotationX(const float radians, Matrix &result)
+{
+	result = Matrix::Identity;
+
+	float val1 = (float)cos(radians);
+	float val2 = (float)sin(radians);
+
+	result(2,2) = val1;
+	result(2,3) = val2;
+	result(3,2) = -val2;
+	result(3,3) = val1;
+}
+
+Matrix Matrix::CreateRotationY(const float radians)
+{
+	Matrix m;
+	CreateRotationY(radians, m);
+	return m;
+}
+
+void Matrix::CreateRotationY(const float radians, Matrix &result)
+{
+	result = Matrix::Identity;
+
+	float val1 = (float)cos(radians);
+	float val2 = (float)sin(radians);
+
+	result(1,1) = val1;
+	result(1,3) = -val2;
+	result(3,1) = val2;
+	result(3,3) = val1;
+}
+
+Matrix Matrix::CreateRotationZ(const float radians)
+{
+	Matrix m;
+	CreateRotationZ(radians, m);
+	return m;
+}
+
+void Matrix::CreateRotationZ(const float radians, Matrix &result)
+{
+	result = Matrix::Identity;
+
+	float val1 = (float)cos(radians);
+	float val2 = (float)sin(radians);
+
+	result(1,1) = val1;
+	result(1,2) = val2;
+	result(2,1) = -val2;
+	result(2,2) = val1;
+}
+
+Matrix Matrix::CreateScale(float scale)
+{
+	Matrix m;
+	CreateScale(scale, m);
+	return m;
+}
+
+void Matrix::CreateScale(float scale, Matrix &result)
+{
+	result(1,1) = scale;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = scale;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = scale;
+	result(3,4) = 0.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateScale(float xScale, float yScale, float zScale)
+{
+	Matrix m;
+	CreateScale(xScale, yScale, zScale, m);
+	return m;
+}
+
+void Matrix::CreateScale(float xScale, float yScale, float zScale, Matrix &result)
+{
+	result(1,1) = xScale;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = yScale;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = zScale;
+	result(3,4) = 0.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateScale(Vector3 scales)
+{
+	Matrix m;
+	CreateScale(scales, m);
+	return m;
+}
+
+void Matrix::CreateScale(Vector3 scales, Matrix &result)
+{
+	result(1,1) = scales.X;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = scales.Y;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = scales.Z;
+	result(3,4) = 0.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
+	result(4,4) = 1.0;
+}
+
+Matrix Matrix::CreateTranslation(const float xPosition, const float yPosition, const float zPosition)
+{
+	Matrix m;
+	CreateTranslation(xPosition, yPosition, zPosition, m);
+	return m;
+}
+
+void Matrix::CreateTranslation(const float xPosition, const float yPosition, const float zPosition, Matrix &result)
+{
+	result(1,1) = 1.0f;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = 1.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = 1.0f;
+	result(3,4) = 0.0f;
+	result(4,1) = xPosition;
+	result(4,2) = yPosition;
+	result(4,3) = zPosition;
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateTranslation(const Vector3 position)
+{
+	Matrix m;
+	CreateTranslation(position, m);
+	return m;
+}
+
+void Matrix::CreateTranslation(const Vector3 position, Matrix &result)
+{
+	result(1,1) = 1.0f;
+	result(1,2) = 0.0f;
+	result(1,3) = 0.0f;
+	result(1,4) = 0.0f;
+	result(2,1) = 0.0f;
+	result(2,2) = 1.0f;
+	result(2,3) = 0.0f;
+	result(2,4) = 0.0f;
+	result(3,1) = 0.0f;
+	result(3,2) = 0.0f;
+	result(3,3) = 1.0f;
+	result(3,4) = 0.0f;
+	result(4,1) = position.X;
+	result(4,2) = position.Y;
+	result(4,3) = position.Z;
+	result(4,4) = 1.0f;
+}
+
+// Matrix Matrix::CreateReflection(Plane value)
+// {
+
+// }
+
+// void Matrix::CreateReflection(Plane value, Matrix &result)
+// {
+
+// }
+
+Matrix Matrix::CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up)
+{
+	Matrix m;
+	CreateWorld(position, forward, up, m);
+	return m;
+}
+
+void Matrix::CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up, Matrix &result)
+{
+	Vector3 x, y, z;
+	Vector3::Normalize(forward, z);
+	Vector3::Cross(forward, up, x);
+	Vector3::Cross(x, forward, y);
+	x.Normalize();
+	y.Normalize();            
+
+	result = Matrix::Identity;
+	result.SetRight(x);
+	result.SetUp(y);
+	result.SetForward(z);
+	result.SetTranslation(position);
+}
+
 Vector3 Matrix::GetBackward()
 {
 	return Vector3(m31, m32, m33);
 }
 
-void Matrix::SetBackward(const Vector3 &v)
-{
-	m31 = v.X;
-	m32 = v.Y;
-	m33 = v.Z;
-}
-
 Vector3 Matrix::GetForward()
 {
 	return Vector3(-m31, -m32, -m33);
+}
+
+void Matrix::SetForward(const Vector3 &v)
+{
+	m31 = -v.X;
+	m32 = -v.Y;
+	m33 = -v.Z;
 }
 
 Vector3 Matrix::GetRight()
