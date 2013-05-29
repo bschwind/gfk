@@ -653,6 +653,192 @@ void Matrix::CreateWorld(const Vector3 &position, const Vector3 &forward, const 
 	result.SetTranslation(position);
 }
 
+Matrix Matrix::Invert(const Matrix &matrix)
+{
+	Matrix m;
+	Invert(matrix, m);
+	return m;
+}
+
+void Matrix::Invert(const Matrix &matrix, Matrix &result)
+{
+	float num1 = matrix(1,1);
+	float num2 = matrix(1,2);
+	float num3 = matrix(1,3);
+	float num4 = matrix(1,4);
+	float num5 = matrix(2,1);
+	float num6 = matrix(2,2);
+	float num7 = matrix(2,3);
+	float num8 = matrix(2,4);
+	float num9 = matrix(3,1);
+	float num10 = matrix(3,2);
+	float num11 = matrix(3,3);
+	float num12 = matrix(3,4);
+	float num13 = matrix(4,1);
+	float num14 = matrix(4,2);
+	float num15 = matrix(4,3);
+	float num16 = matrix(4,4);
+	float num17 = (float) ((double) num11 * (double) num16 - (double) num12 * (double) num15);
+	float num18 = (float) ((double) num10 * (double) num16 - (double) num12 * (double) num14);
+	float num19 = (float) ((double) num10 * (double) num15 - (double) num11 * (double) num14);
+	float num20 = (float) ((double) num9 * (double) num16 - (double) num12 * (double) num13);
+	float num21 = (float) ((double) num9 * (double) num15 - (double) num11 * (double) num13);
+	float num22 = (float) ((double) num9 * (double) num14 - (double) num10 * (double) num13);
+	float num23 = (float) ((double) num6 * (double) num17 - (double) num7 * (double) num18 + (double) num8 * (double) num19);
+	float num24 = (float) -((double) num5 * (double) num17 - (double) num7 * (double) num20 + (double) num8 * (double) num21);
+	float num25 = (float) ((double) num5 * (double) num18 - (double) num6 * (double) num20 + (double) num8 * (double) num22);
+	float num26 = (float) -((double) num5 * (double) num19 - (double) num6 * (double) num21 + (double) num7 * (double) num22);
+	float num27 = (float) (1.0 / ((double) num1 * (double) num23 + (double) num2 * (double) num24 + (double) num3 * (double) num25 + (double) num4 * (double) num26));
+
+	result(1,1) = num23 * num27;
+	result(2,1) = num24 * num27;
+	result(3,1) = num25 * num27;
+	result(4,1) = num26 * num27;
+	result(1,2) = (float) -((double) num2 * (double) num17 - (double) num3 * (double) num18 + (double) num4 * (double) num19) * num27;
+	result(2,2) = (float) ((double) num1 * (double) num17 - (double) num3 * (double) num20 + (double) num4 * (double) num21) * num27;
+	result(3,2) = (float) -((double) num1 * (double) num18 - (double) num2 * (double) num20 + (double) num4 * (double) num22) * num27;
+	result(4,2) = (float) ((double) num1 * (double) num19 - (double) num2 * (double) num21 + (double) num3 * (double) num22) * num27;
+	float num28 = (float) ((double) num7 * (double) num16 - (double) num8 * (double) num15);
+	float num29 = (float) ((double) num6 * (double) num16 - (double) num8 * (double) num14);
+	float num30 = (float) ((double) num6 * (double) num15 - (double) num7 * (double) num14);
+	float num31 = (float) ((double) num5 * (double) num16 - (double) num8 * (double) num13);
+	float num32 = (float) ((double) num5 * (double) num15 - (double) num7 * (double) num13);
+	float num33 = (float) ((double) num5 * (double) num14 - (double) num6 * (double) num13);
+	result(1,3) = (float) ((double) num2 * (double) num28 - (double) num3 * (double) num29 + (double) num4 * (double) num30) * num27;
+	result(2,3) = (float) -((double) num1 * (double) num28 - (double) num3 * (double) num31 + (double) num4 * (double) num32) * num27;
+	result(3,3) = (float) ((double) num1 * (double) num29 - (double) num2 * (double) num31 + (double) num4 * (double) num33) * num27;
+	result(4,3) = (float) -((double) num1 * (double) num30 - (double) num2 * (double) num32 + (double) num3 * (double) num33) * num27;
+	float num34 = (float) ((double) num7 * (double) num12 - (double) num8 * (double) num11);
+	float num35 = (float) ((double) num6 * (double) num12 - (double) num8 * (double) num10);
+	float num36 = (float) ((double) num6 * (double) num11 - (double) num7 * (double) num10);
+	float num37 = (float) ((double) num5 * (double) num12 - (double) num8 * (double) num9);
+	float num38 = (float) ((double) num5 * (double) num11 - (double) num7 * (double) num9);
+	float num39 = (float) ((double) num5 * (double) num10 - (double) num6 * (double) num9);
+	result(1,4) = (float) -((double) num2 * (double) num34 - (double) num3 * (double) num35 + (double) num4 * (double) num36) * num27;
+	result(2,4) = (float) ((double) num1 * (double) num34 - (double) num3 * (double) num37 + (double) num4 * (double) num38) * num27;
+	result(3,4) = (float) -((double) num1 * (double) num35 - (double) num2 * (double) num37 + (double) num4 * (double) num39) * num27;
+	result(4,4) = (float) ((double) num1 * (double) num36 - (double) num2 * (double) num38 + (double) num3 * (double) num39) * num27;
+}
+
+Matrix Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount)
+{
+	Matrix m;
+	Lerp(matrix1, matrix2, amount, m);
+	return m;
+}
+
+void Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount, Matrix &result)
+{
+	result(1,1) = matrix1(1,1) + ((matrix2(1,1) - matrix1(1,1)) * amount);
+	result(1,2) = matrix1(1,2) + ((matrix2(1,2) - matrix1(1,2)) * amount);
+	result(1,3) = matrix1(1,3) + ((matrix2(1,3) - matrix1(1,3)) * amount);
+	result(1,4) = matrix1(1,4) + ((matrix2(1,4) - matrix1(1,4)) * amount);
+	result(2,1) = matrix1(2,1) + ((matrix2(2,1) - matrix1(2,1)) * amount);
+	result(2,2) = matrix1(2,2) + ((matrix2(2,2) - matrix1(2,2)) * amount);
+	result(2,3) = matrix1(2,3) + ((matrix2(2,3) - matrix1(2,3)) * amount);
+	result(2,4) = matrix1(2,4) + ((matrix2(2,4) - matrix1(2,4)) * amount);
+	result(3,1) = matrix1(3,1) + ((matrix2(3,1) - matrix1(3,1)) * amount);
+	result(3,2) = matrix1(3,2) + ((matrix2(3,2) - matrix1(3,2)) * amount);
+	result(3,3) = matrix1(3,3) + ((matrix2(3,3) - matrix1(3,3)) * amount);
+	result(3,4) = matrix1(3,4) + ((matrix2(3,4) - matrix1(3,4)) * amount);
+	result(4,1) = matrix1(4,1) + ((matrix2(4,1) - matrix1(4,1)) * amount);
+	result(4,2) = matrix1(4,2) + ((matrix2(4,2) - matrix1(4,2)) * amount);
+	result(4,3) = matrix1(4,3) + ((matrix2(4,3) - matrix1(4,3)) * amount);
+	result(4,4) = matrix1(4,4) + ((matrix2(4,4) - matrix1(4,4)) * amount);
+}
+
+Matrix Matrix::Negate(const Matrix &matrix)
+{
+	Matrix m;
+	Negate(matrix, m);
+	return m;
+}
+
+void Matrix::Negate(const Matrix &matrix, Matrix &result)
+{
+	result(1,1) = -matrix(1,1);
+	result(1,2) = -matrix(1,2);
+	result(1,3) = -matrix(1,3);
+	result(1,4) = -matrix(1,4);
+	result(2,1) = -matrix(2,1);
+	result(2,2) = -matrix(2,2);
+	result(2,3) = -matrix(2,3);
+	result(2,4) = -matrix(2,4);
+	result(3,1) = -matrix(3,1);
+	result(3,2) = -matrix(3,2);
+	result(3,3) = -matrix(3,3);
+	result(3,4) = -matrix(3,4);
+	result(4,1) = -matrix(4,1);
+	result(4,2) = -matrix(4,2);
+	result(4,3) = -matrix(4,3);
+	result(4,4) = -matrix(4,4);
+}
+
+Matrix Matrix::Transpose(const Matrix &matrix)
+{
+	Matrix m;
+	Transpose(matrix, m);
+	return m;
+}
+
+void Matrix::Transpose(const Matrix &matrix, Matrix &result)
+{
+	Matrix ret;
+
+	ret(1,1) = matrix(1,1);
+	ret(1,2) = matrix(2,1);
+	ret(1,3) = matrix(3,1);
+	ret(1,4) = matrix(4,1);
+
+	ret(2,1) = matrix(1,2);
+	ret(2,2) = matrix(2,2);
+	ret(2,3) = matrix(3,2);
+	ret(2,4) = matrix(4,2);
+
+	ret(3,1) = matrix(1,3);
+	ret(3,2) = matrix(2,3);
+	ret(3,3) = matrix(3,3);
+	ret(3,4) = matrix(4,3);
+
+	ret(4,1) = matrix(1,4);
+	ret(4,2) = matrix(2,4);
+	ret(4,3) = matrix(3,4);
+	ret(4,4) = matrix(4,4);
+
+	result = ret;
+}
+
+float Matrix::Determinant()
+{
+	float num22 = m11;
+	float num21 = m12;
+	float num20 = m13;
+	float num19 = m14;
+	float num12 = m21;
+	float num11 = m22;
+	float num10 = m23;
+	float num9 = m24;
+	float num8 = m31;
+	float num7 = m32;
+	float num6 = m33;
+	float num5 = m34;
+	float num4 = m41;
+	float num3 = m42;
+	float num2 = m43;
+	float num = m44;
+	float num18 = (num6 * num) - (num5 * num2);
+	float num17 = (num7 * num) - (num5 * num3);
+	float num16 = (num7 * num2) - (num6 * num3);
+	float num15 = (num8 * num) - (num5 * num4);
+	float num14 = (num8 * num2) - (num6 * num4);
+	float num13 = (num8 * num3) - (num7 * num4);
+
+	return ((((num22 * (((num11 * num18) - (num10 * num17))
+		+ (num9 * num16))) - (num21 * (((num12 * num18) - (num10 * num15))
+		+ (num9 * num14)))) + (num20 * (((num12 * num17) - (num11 * num15))
+		+ (num9 * num13)))) - (num19 * (((num12 * num16) - (num11 * num14)) + (num10 * num13))));
+}
+
 Vector3 Matrix::GetBackward()
 {
 	return Vector3(m31, m32, m33);

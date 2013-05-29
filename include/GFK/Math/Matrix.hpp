@@ -58,8 +58,17 @@ public:
 	//static Matrix CreateReflection(Plane value, Matrix &result);
 	static Matrix CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up);
 	static void CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up, Matrix &result);
+	static Matrix Invert(const Matrix &matrix);
+	static void Invert(const Matrix &matrix, Matrix &result);
+	static Matrix Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount);
+	static void Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount, Matrix &result);
+	static Matrix Negate(const Matrix &matrix);
+	static void Negate(const Matrix &matrix, Matrix &result);
+	static Matrix Transpose(const Matrix &matrix);
+	static void Transpose(const Matrix &matrix, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
+	float Determinant();
 	Vector3 GetBackward();
 	Vector3 GetForward();
 	void SetForward(const Vector3 &v);
