@@ -30,10 +30,10 @@ Matrix::Matrix()
 }
 
 Matrix::Matrix(
-	const float a11, const float a12, const float a13, const float a14,
-	const float a21, const float a22, const float a23, const float a24,
-	const float a31, const float a32, const float a33, const float a34,
-	const float a41, const float a42, const float a43, const float a44) :
+	float a11, float a12, float a13, float a14,
+	float a21, float a22, float a23, float a24,
+	float a31, float a32, float a33, float a34,
+	float a41, float a42, float a43, float a44) :
 	matrix()
 {
 	m11 = a11;
@@ -159,14 +159,14 @@ void Matrix::CreateConstrainedBillboard(const Vector3 &objectPosition, const Vec
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateFromAxisAngle(const Vector3 &axis, const float angle)
+Matrix Matrix::CreateFromAxisAngle(const Vector3 &axis, float angle)
 {
 	Matrix m;
 	CreateFromAxisAngle(axis, angle, m);
 	return m;
 }
 
-void Matrix::CreateFromAxisAngle(const Vector3 &axis, const float angle, Matrix &result)
+void Matrix::CreateFromAxisAngle(const Vector3 &axis, float angle, Matrix &result)
 {
 	float x = axis.X;
 	float y = axis.Y;
@@ -197,7 +197,7 @@ void Matrix::CreateFromAxisAngle(const Vector3 &axis, const float angle, Matrix 
 	result(4,4) = 1.0f;
 }
 
-// static Matrix Matrix::CreateFromYawPitchRoll(const float yaw, const float pitch, const float roll)
+// static Matrix Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
 // {
 // 	// Matrix matrix;
 // 	// Quaternion quaternion;
@@ -206,7 +206,7 @@ void Matrix::CreateFromAxisAngle(const Vector3 &axis, const float angle, Matrix 
 // 	// return matrix;
 // }
 
-// static void Matrix::CreateFromYawPitchRoll(const float yaw, const float pitch, const float roll, Matrix result)
+// static void Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll, Matrix result)
 // {
 // 	// Matrix matrix;
 // 	// Quaternion quaternion;
@@ -247,14 +247,14 @@ void Matrix::CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTa
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane)
+Matrix Matrix::CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane)
 {
 	Matrix m;
 	CreateOrthographic(width, height, zNearPlane, zFarPlane, m);
 	return m;
 }
 
-void Matrix::CreateOrthographic(const float width, const float height, const float zNearPlane, const float zFarPlane, Matrix &result)
+void Matrix::CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane, Matrix &result)
 {
 	result(1,1) = 2.0f / width;
 	result(1,2) = 0.0f;
@@ -274,14 +274,14 @@ void Matrix::CreateOrthographic(const float width, const float height, const flo
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane)
+Matrix Matrix::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane)
 {
 	Matrix m;
 	CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane, m);
 	return m;
 }
 
-void Matrix::CreateOrthographicOffCenter(const float left, const float right, const float bottom, const float top, const float zNearPlane, const float zFarPlane, Matrix &result)
+void Matrix::CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane, Matrix &result)
 {
 	result(1,1) = (float)(2.0 / ((double)right - (double)left));
 	result(1,2) = 0.0f;
@@ -301,14 +301,14 @@ void Matrix::CreateOrthographicOffCenter(const float left, const float right, co
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance)
+Matrix Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
 {
 	Matrix m;
 	CreatePerspective(width, height, nearPlaneDistance, farPlaneDistance, m);
 	return m;
 }
 
-void Matrix::CreatePerspective(const float width, const float height, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+void Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance, Matrix &result)
 {
 	if (nearPlaneDistance <= 0.0f)
 	{
@@ -340,14 +340,14 @@ void Matrix::CreatePerspective(const float width, const float height, const floa
 	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 }
 
-Matrix Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance)
+Matrix Matrix::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
 {
 	Matrix m;
 	CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance, m);
 	return m;
 }
 
-void Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float aspectRatio, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+void Matrix::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance, Matrix &result)
 {
 	if ((fieldOfView <= 0.0f) || (fieldOfView >= 3.141593f))
 	{
@@ -385,14 +385,14 @@ void Matrix::CreatePerspectiveFieldOfView(const float fieldOfView, const float a
 	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 }
 
-Matrix Matrix::CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance)
+Matrix Matrix::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
 {
 	Matrix m;
 	CreatePerspectiveOffCenter(left, right, bottom, top, nearPlaneDistance, farPlaneDistance, m);
 	return m;
 }
 
-void Matrix::CreatePerspectiveOffCenter(const float left, const float right, const float bottom, const float top, const float nearPlaneDistance, const float farPlaneDistance, Matrix &result)
+void Matrix::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance, Matrix &result)
 {
 	if (nearPlaneDistance <= 0.0f)
 	{
@@ -425,14 +425,14 @@ void Matrix::CreatePerspectiveOffCenter(const float left, const float right, con
 	result(4,4) = 0.0f;
 }
 
-Matrix Matrix::CreateRotationX(const float radians)
+Matrix Matrix::CreateRotationX(float radians)
 {
 	Matrix m;
 	CreateRotationX(radians, m);
 	return m;
 }
 
-void Matrix::CreateRotationX(const float radians, Matrix &result)
+void Matrix::CreateRotationX(float radians, Matrix &result)
 {
 	result = Matrix::Identity;
 
@@ -445,14 +445,14 @@ void Matrix::CreateRotationX(const float radians, Matrix &result)
 	result(3,3) = val1;
 }
 
-Matrix Matrix::CreateRotationY(const float radians)
+Matrix Matrix::CreateRotationY(float radians)
 {
 	Matrix m;
 	CreateRotationY(radians, m);
 	return m;
 }
 
-void Matrix::CreateRotationY(const float radians, Matrix &result)
+void Matrix::CreateRotationY(float radians, Matrix &result)
 {
 	result = Matrix::Identity;
 
@@ -465,14 +465,14 @@ void Matrix::CreateRotationY(const float radians, Matrix &result)
 	result(3,3) = val1;
 }
 
-Matrix Matrix::CreateRotationZ(const float radians)
+Matrix Matrix::CreateRotationZ(float radians)
 {
 	Matrix m;
 	CreateRotationZ(radians, m);
 	return m;
 }
 
-void Matrix::CreateRotationZ(const float radians, Matrix &result)
+void Matrix::CreateRotationZ(float radians, Matrix &result)
 {
 	result = Matrix::Identity;
 
@@ -566,14 +566,14 @@ void Matrix::CreateScale(Vector3 scales, Matrix &result)
 	result(4,4) = 1.0;
 }
 
-Matrix Matrix::CreateTranslation(const float xPosition, const float yPosition, const float zPosition)
+Matrix Matrix::CreateTranslation(float xPosition, float yPosition, float zPosition)
 {
 	Matrix m;
 	CreateTranslation(xPosition, yPosition, zPosition, m);
 	return m;
 }
 
-void Matrix::CreateTranslation(const float xPosition, const float yPosition, const float zPosition, Matrix &result)
+void Matrix::CreateTranslation(float xPosition, float yPosition, float zPosition, Matrix &result)
 {
 	result(1,1) = 1.0f;
 	result(1,2) = 0.0f;
@@ -720,14 +720,14 @@ void Matrix::Invert(const Matrix &matrix, Matrix &result)
 	result(4,4) = (float) ((double) num1 * (double) num36 - (double) num2 * (double) num38 + (double) num3 * (double) num39) * num27;
 }
 
-Matrix Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount)
+Matrix Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount)
 {
 	Matrix m;
 	Lerp(matrix1, matrix2, amount, m);
 	return m;
 }
 
-void Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, const float amount, Matrix &result)
+void Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount, Matrix &result)
 {
 	result(1,1) = matrix1(1,1) + ((matrix2(1,1) - matrix1(1,1)) * amount);
 	result(1,2) = matrix1(1,2) + ((matrix2(1,2) - matrix1(1,2)) * amount);
@@ -807,6 +807,11 @@ void Matrix::Transpose(const Matrix &matrix, Matrix &result)
 
 	result = ret;
 }
+
+// bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation)
+// {
+
+// }
 
 float Matrix::Determinant()
 {
@@ -900,6 +905,314 @@ void Matrix::SetTranslation(const Vector3 &v)
 	m41 = v.X;
 	m42 = v.Y;
 	m43 = v.Z;
+}
+
+Matrix Matrix::operator+= (const Matrix &op2)
+{
+	m11 += op2(1,1);
+	m12 += op2(1,2);
+	m13 += op2(1,3);
+	m14 += op2(1,4);
+	m21 += op2(2,1);
+	m22 += op2(2,2);
+	m23 += op2(2,3);
+	m24 += op2(2,4);
+	m31 += op2(3,1);
+	m32 += op2(3,2);
+	m33 += op2(3,3);
+	m34 += op2(3,4);
+	m41 += op2(4,1);
+	m42 += op2(4,2);
+	m43 += op2(4,3);
+	m44 += op2(4,4);
+	return *this;
+}
+
+Matrix Matrix::operator-= (const Matrix &op2)
+{
+	m11 -= op2(1,1);
+	m12 -= op2(1,2);
+	m13 -= op2(1,3);
+	m14 -= op2(1,4);
+	m21 -= op2(2,1);
+	m22 -= op2(2,2);
+	m23 -= op2(2,3);
+	m24 -= op2(2,4);
+	m31 -= op2(3,1);
+	m32 -= op2(3,2);
+	m33 -= op2(3,3);
+	m34 -= op2(3,4);
+	m41 -= op2(4,1);
+	m42 -= op2(4,2);
+	m43 -= op2(4,3);
+	m44 -= op2(4,4);
+	return *this;
+}
+
+Matrix Matrix::operator*= (const Matrix &op2)
+{
+	float temp11 = (((m11 * op2(1,1)) + (m12 * op2(2,1))) + (m13 * op2(3,1))) + (m14 * op2(4,1));
+	float temp12 = (((m11 * op2(1,2)) + (m12 * op2(2,2))) + (m13 * op2(3,2))) + (m14 * op2(4,2));
+	float temp13 = (((m11 * op2(1,3)) + (m12 * op2(2,3))) + (m13 * op2(3,3))) + (m14 * op2(4,3));
+	float temp14 = (((m11 * op2(1,4)) + (m12 * op2(2,4))) + (m13 * op2(3,4))) + (m14 * op2(4,4));
+	float temp21 = (((m21 * op2(1,1)) + (m22 * op2(2,1))) + (m23 * op2(3,1))) + (m24 * op2(4,1));
+	float temp22 = (((m21 * op2(1,2)) + (m22 * op2(2,2))) + (m23 * op2(3,2))) + (m24 * op2(4,2));
+	float temp23 = (((m21 * op2(1,3)) + (m22 * op2(2,3))) + (m23 * op2(3,3))) + (m24 * op2(4,3));
+	float temp24 = (((m21 * op2(1,4)) + (m22 * op2(2,4))) + (m23 * op2(3,4))) + (m24 * op2(4,4));
+	float temp31 = (((m31 * op2(1,1)) + (m32 * op2(2,1))) + (m33 * op2(3,1))) + (m34 * op2(4,1));
+	float temp32 = (((m31 * op2(1,2)) + (m32 * op2(2,2))) + (m33 * op2(3,2))) + (m34 * op2(4,2));
+	float temp33 = (((m31 * op2(1,3)) + (m32 * op2(2,3))) + (m33 * op2(3,3))) + (m34 * op2(4,3));
+	float temp34 = (((m31 * op2(1,4)) + (m32 * op2(2,4))) + (m33 * op2(3,4))) + (m34 * op2(4,4));
+	float temp41 = (((m41 * op2(1,1)) + (m42 * op2(2,1))) + (m43 * op2(3,1))) + (m44 * op2(4,1));
+	float temp42 = (((m41 * op2(1,2)) + (m42 * op2(2,2))) + (m43 * op2(3,2))) + (m44 * op2(4,2));
+	float temp43 = (((m41 * op2(1,3)) + (m42 * op2(2,3))) + (m43 * op2(3,3))) + (m44 * op2(4,3));
+	float temp44 = (((m41 * op2(1,4)) + (m42 * op2(2,4))) + (m43 * op2(3,4))) + (m44 * op2(4,4));
+
+	m11 = temp11;
+	m12 = temp12;
+	m13 = temp13;
+	m14 = temp14;
+	m21 = temp21;
+	m22 = temp22;
+	m23 = temp23;
+	m24 = temp24;
+	m31 = temp31;
+	m32 = temp32;
+	m33 = temp33;
+	m34 = temp34;
+	m41 = temp41;
+	m42 = temp42;
+	m43 = temp43;
+	m44 = temp44;
+
+	return *this;
+}
+
+Matrix Matrix::operator*= (float op2)
+{
+	m11 *= op2;
+	m12 *= op2;
+	m13 *= op2;
+	m14 *= op2;
+	m21 *= op2;
+	m22 *= op2;
+	m23 *= op2;
+	m24 *= op2;
+	m31 *= op2;
+	m32 *= op2;
+	m33 *= op2;
+	m34 *= op2;
+	m41 *= op2;
+	m42 *= op2;
+	m43 *= op2;
+	m44 *= op2;
+	return *this;
+}
+
+Matrix Matrix::operator/= (float op2)
+{
+	m11 /= op2;
+	m12 /= op2;
+	m13 /= op2;
+	m14 /= op2;
+	m21 /= op2;
+	m22 /= op2;
+	m23 /= op2;
+	m24 /= op2;
+	m31 /= op2;
+	m32 /= op2;
+	m33 /= op2;
+	m34 /= op2;
+	m41 /= op2;
+	m42 /= op2;
+	m43 /= op2;
+	m44 /= op2;
+	return *this;
+}
+
+Matrix operator+ (const Matrix &op1, const Matrix &op2)
+{
+	Matrix result;
+	result(1,1) = op1(1,1) + op2(1,1);
+	result(1,2) = op1(1,2) + op2(1,2);
+	result(1,3) = op1(1,3) + op2(1,3);
+	result(1,4) = op1(1,4) + op2(1,4);
+	result(2,1) = op1(2,1) + op2(2,1);
+	result(2,2) = op1(2,2) + op2(2,2);
+	result(2,3) = op1(2,3) + op2(2,3);
+	result(2,4) = op1(2,4) + op2(2,4);
+	result(3,1) = op1(3,1) + op2(3,1);
+	result(3,2) = op1(3,2) + op2(3,2);
+	result(3,3) = op1(3,3) + op2(3,3);
+	result(3,4) = op1(3,4) + op2(3,4);
+	result(4,1) = op1(4,1) + op2(4,1);
+	result(4,2) = op1(4,2) + op2(4,2);
+	result(4,3) = op1(4,3) + op2(4,3);
+	result(4,4) = op1(4,4) + op2(4,4);
+	return result;
+}
+
+Matrix operator- (const Matrix &op1, const Matrix &op2)
+{
+	Matrix result;
+	result(1,1) = op1(1,1) - op2(1,1);
+	result(1,2) = op1(1,2) - op2(1,2);
+	result(1,3) = op1(1,3) - op2(1,3);
+	result(1,4) = op1(1,4) - op2(1,4);
+	result(2,1) = op1(2,1) - op2(2,1);
+	result(2,2) = op1(2,2) - op2(2,2);
+	result(2,3) = op1(2,3) - op2(2,3);
+	result(2,4) = op1(2,4) - op2(2,4);
+	result(3,1) = op1(3,1) - op2(3,1);
+	result(3,2) = op1(3,2) - op2(3,2);
+	result(3,3) = op1(3,3) - op2(3,3);
+	result(3,4) = op1(3,4) - op2(3,4);
+	result(4,1) = op1(4,1) - op2(4,1);
+	result(4,2) = op1(4,2) - op2(4,2);
+	result(4,3) = op1(4,3) - op2(4,3);
+	result(4,4) = op1(4,4) - op2(4,4);
+	return result;
+}
+
+Matrix operator- (const Matrix &op1)
+{
+	Matrix result;
+	result(1,1) = -op1(1,1);
+	result(1,2) = -op1(1,2);
+	result(1,3) = -op1(1,3);
+	result(1,4) = -op1(1,4);
+	result(2,1) = -op1(2,1);
+	result(2,2) = -op1(2,2);
+	result(2,3) = -op1(2,3);
+	result(2,4) = -op1(2,4);
+	result(3,1) = -op1(3,1);
+	result(3,2) = -op1(3,2);
+	result(3,3) = -op1(3,3);
+	result(3,4) = -op1(3,4);
+	result(4,1) = -op1(4,1);
+	result(4,2) = -op1(4,2);
+	result(4,3) = -op1(4,3);
+	result(4,4) = -op1(4,4);
+	return result;
+}
+
+Matrix operator* (const Matrix &op1, const Matrix &op2)
+{
+	Matrix result;
+	result(1,1) = (((op1(1,1) * op2(1,1)) + (op1(1,2) * op2(2,1))) + (op1(1,3) * op2(3,1))) + (op1(1,4) * op2(4,1));
+	result(1,2) = (((op1(1,1) * op2(1,2)) + (op1(1,2) * op2(2,2))) + (op1(1,3) * op2(3,2))) + (op1(1,4) * op2(4,2));
+	result(1,3) = (((op1(1,1) * op2(1,3)) + (op1(1,2) * op2(2,3))) + (op1(1,3) * op2(3,3))) + (op1(1,4) * op2(4,3));
+	result(1,4) = (((op1(1,1) * op2(1,4)) + (op1(1,2) * op2(2,4))) + (op1(1,3) * op2(3,4))) + (op1(1,4) * op2(4,4));
+	result(2,1) = (((op1(2,1) * op2(1,1)) + (op1(2,2) * op2(2,1))) + (op1(2,3) * op2(3,1))) + (op1(2,4) * op2(4,1));
+	result(2,2) = (((op1(2,1) * op2(1,2)) + (op1(2,2) * op2(2,2))) + (op1(2,3) * op2(3,2))) + (op1(2,4) * op2(4,2));
+	result(2,3) = (((op1(2,1) * op2(1,3)) + (op1(2,2) * op2(2,3))) + (op1(2,3) * op2(3,3))) + (op1(2,4) * op2(4,3));
+	result(2,4) = (((op1(2,1) * op2(1,4)) + (op1(2,2) * op2(2,4))) + (op1(2,3) * op2(3,4))) + (op1(2,4) * op2(4,4));
+	result(3,1) = (((op1(3,1) * op2(1,1)) + (op1(3,2) * op2(2,1))) + (op1(3,3) * op2(3,1))) + (op1(3,4) * op2(4,1));
+	result(3,2) = (((op1(3,1) * op2(1,2)) + (op1(3,2) * op2(2,2))) + (op1(3,3) * op2(3,2))) + (op1(3,4) * op2(4,2));
+	result(3,3) = (((op1(3,1) * op2(1,3)) + (op1(3,2) * op2(2,3))) + (op1(3,3) * op2(3,3))) + (op1(3,4) * op2(4,3));
+	result(3,4) = (((op1(3,1) * op2(1,4)) + (op1(3,2) * op2(2,4))) + (op1(3,3) * op2(3,4))) + (op1(3,4) * op2(4,4));
+	result(4,1) = (((op1(4,1) * op2(1,1)) + (op1(4,2) * op2(2,1))) + (op1(4,3) * op2(3,1))) + (op1(4,4) * op2(4,1));
+	result(4,2) = (((op1(4,1) * op2(1,2)) + (op1(4,2) * op2(2,2))) + (op1(4,3) * op2(3,2))) + (op1(4,4) * op2(4,2));
+	result(4,3) = (((op1(4,1) * op2(1,3)) + (op1(4,2) * op2(2,3))) + (op1(4,3) * op2(3,3))) + (op1(4,4) * op2(4,3));
+	result(4,4) = (((op1(4,1) * op2(1,4)) + (op1(4,2) * op2(2,4))) + (op1(4,3) * op2(3,4))) + (op1(4,4) * op2(4,4));
+	return result;
+}
+
+Vector3 operator* (const Matrix &op1, const Vector3 &op2)
+{
+	Vector3 result;
+	result.X = op2.X * op1(0,0) + op2.Y * op1(0,1) + op2.Z * op1(0,2) + op1(0,3);
+	result.Y = op2.X * op1(1,0) + op2.Y * op1(1,1) + op2.Z * op1(1,2) + op1(1,3);
+	result.Z = op2.X * op1(2,0) + op2.Y * op1(2,1) + op2.Z * op1(2,2) + op1(2,3);
+	return result;
+}
+
+Matrix operator* (const Matrix &op1, float op2)
+{
+	Matrix result;
+	result(1,1) = op1(1,1) * op2;
+	result(1,2) = op1(1,2) * op2;
+	result(1,3) = op1(1,3) * op2;
+	result(1,4) = op1(1,4) * op2;
+	result(2,1) = op1(2,1) * op2;
+	result(2,2) = op1(2,2) * op2;
+	result(2,3) = op1(2,3) * op2;
+	result(2,4) = op1(2,4) * op2;
+	result(3,1) = op1(3,1) * op2;
+	result(3,2) = op1(3,2) * op2;
+	result(3,3) = op1(3,3) * op2;
+	result(3,4) = op1(3,4) * op2;
+	result(4,1) = op1(4,1) * op2;
+	result(4,2) = op1(4,2) * op2;
+	result(4,3) = op1(4,3) * op2;
+	result(4,4) = op1(4,4) * op2;
+	return result;
+}
+
+Matrix operator* (float op1, const Matrix &op2)
+{
+	Matrix result;
+	result(1,1) = op2(1,1) * op1;
+	result(1,2) = op2(1,2) * op1;
+	result(1,3) = op2(1,3) * op1;
+	result(1,4) = op2(1,4) * op1;
+	result(2,1) = op2(2,1) * op1;
+	result(2,2) = op2(2,2) * op1;
+	result(2,3) = op2(2,3) * op1;
+	result(2,4) = op2(2,4) * op1;
+	result(3,1) = op2(3,1) * op1;
+	result(3,2) = op2(3,2) * op1;
+	result(3,3) = op2(3,3) * op1;
+	result(3,4) = op2(3,4) * op1;
+	result(4,1) = op2(4,1) * op1;
+	result(4,2) = op2(4,2) * op1;
+	result(4,3) = op2(4,3) * op1;
+	result(4,4) = op2(4,4) * op1;
+	return result;
+}
+
+Matrix operator/ (const Matrix &op1, const Matrix &op2)
+{
+	Matrix result;
+	result(1,1) = op1(1,1) / op2(1,1);
+	result(1,2) = op1(1,2) / op2(1,2);
+	result(1,3) = op1(1,3) / op2(1,3);
+	result(1,4) = op1(1,4) / op2(1,4);
+	result(2,1) = op1(2,1) / op2(2,1);
+	result(2,2) = op1(2,2) / op2(2,2);
+	result(2,3) = op1(2,3) / op2(2,3);
+	result(2,4) = op1(2,4) / op2(2,4);
+	result(3,1) = op1(3,1) / op2(3,1);
+	result(3,2) = op1(3,2) / op2(3,2);
+	result(3,3) = op1(3,3) / op2(3,3);
+	result(3,4) = op1(3,4) / op2(3,4);
+	result(4,1) = op1(4,1) / op2(4,1);
+	result(4,2) = op1(4,2) / op2(4,2);
+	result(4,3) = op1(4,3) / op2(4,3);
+	result(4,4) = op1(4,4) / op2(4,4);
+	return result;
+}
+
+Matrix operator/ (const Matrix &op1, float op2)
+{
+	Matrix result;
+	result(1,1) = op1(1,1) / op2;
+	result(1,2) = op1(1,2) / op2;
+	result(1,3) = op1(1,3) / op2;
+	result(1,4) = op1(1,4) / op2;
+	result(2,1) = op1(2,1) / op2;
+	result(2,2) = op1(2,2) / op2;
+	result(2,3) = op1(2,3) / op2;
+	result(2,4) = op1(2,4) / op2;
+	result(3,1) = op1(3,1) / op2;
+	result(3,2) = op1(3,2) / op2;
+	result(3,3) = op1(3,3) / op2;
+	result(3,4) = op1(3,4) / op2;
+	result(4,1) = op1(4,1) / op2;
+	result(4,2) = op1(4,2) / op2;
+	result(4,3) = op1(4,3) / op2;
+	result(4,4) = op1(4,4) / op2;
+	return result;
 }
 
 }
