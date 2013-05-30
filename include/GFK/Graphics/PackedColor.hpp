@@ -10,8 +10,8 @@ private:
 
 public:
 	PackedColor();
-	PackedColor(const float r, const float g, const float b);
-	PackedColor(const float r, const float g, const float b, const float a);
+	PackedColor(float r, float g, float b);
+	PackedColor(float r, float g, float b, float a);
 	PackedColor(const unsigned int PackedColor);
 	~PackedColor();
 

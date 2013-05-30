@@ -9,9 +9,9 @@ class Vector3
 public:
 	float X, Y, Z;
 	Vector3();
-	Vector3(const Vector2 v, const float z);
-	Vector3(const float x, const float y, const float z);
-	Vector3(const float value);
+	Vector3(const Vector2 v, float z);
+	Vector3(float x, float y, float z);
+	Vector3(float value);
 	~Vector3();
 
 	static const Vector3 Zero;

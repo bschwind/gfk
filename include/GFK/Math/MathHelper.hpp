@@ -24,7 +24,7 @@ public:
 
 	}
 
-	static inline float Clamp(const float value, const float min, const float max)
+	static inline float Clamp(float value, float min, float max)
 	{
 		return value < min ? min : (value > max ? max : value);
 	}

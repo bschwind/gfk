@@ -10,7 +10,7 @@ PackedColor::PackedColor()
 	packedValue = 0xff000000;
 }
 
-PackedColor::PackedColor(const float r, const float g, const float b)
+PackedColor::PackedColor(float r, float g, float b)
 {
 	packedValue = 0;
 	packedValue |= ((unsigned char)(r * 255));
@@ -19,7 +19,7 @@ PackedColor::PackedColor(const float r, const float g, const float b)
 	packedValue |= 0xff000000;
 }
 
-PackedColor::PackedColor(const float r, const float g, const float b, const float a)
+PackedColor::PackedColor(float r, float g, float b, float a)
 {
 	packedValue = 0;
 	packedValue |= ((unsigned char)(r * 255));

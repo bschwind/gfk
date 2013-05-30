@@ -9,13 +9,13 @@ R(0.0f), G(0.0f), B(0.0f), A(1.0f)
 
 }
 
-Color::Color(const float r, const float g, const float b) :
+Color::Color(float r, float g, float b) :
 R(r), G(g), B(b), A(1.0f)
 {
 
 }
 
-Color::Color(const float r, const float g, const float b, const float a) :
+Color::Color(float r, float g, float b, float a) :
 R(r), G(g), B(b), A(a)
 {
 	

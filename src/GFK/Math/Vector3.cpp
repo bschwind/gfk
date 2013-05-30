@@ -11,18 +11,18 @@ X(0.0f), Y(0.0f), Z(0.0f)
 
 }
 
-Vector3::Vector3(const Vector2 v, const float z) :
+Vector3::Vector3(const Vector2 v, float z) :
 X(v.X), Y(v.Y), Z(z)
 {
 
 }
 
-Vector3::Vector3(const float x, const float y, const float z) :
+Vector3::Vector3(float x, float y, float z) :
 X(x), Y(y), Z(z)
 {
 
 }
-Vector3::Vector3(const float value) :
+Vector3::Vector3(float value) :
 X(value), Y(value), Z(value)
 {
 
@@ -294,31 +294,6 @@ void Vector3::Normalize()
 	Z *= val;
 }
 
-Vector3 operator+ (const Vector3 &op1, const Vector3 &op2)
-{
-	return Vector3(op1.X + op2.X, op1.Y + op2.Y, op1.Z + op2.Z);
-}
-
-Vector3 operator- (const Vector3 &op1, const Vector3 &op2)
-{
-	return Vector3(op1.X - op2.X, op1.Y - op2.Y, op1.Z - op2.Z);
-}
-
-Vector3 operator* (const Vector3 &op1, float scalar)
-{
-	return Vector3(op1.X * scalar, op1.Y * scalar, op1.Z * scalar);
-}
-
-Vector3 operator* (float scalar, const Vector3 &op2)
-{
-	return Vector3(op2.X * scalar, op2.Y * scalar, op2.Z * scalar);
-}
-
-Vector3 operator/ (const Vector3 &op2, float divisor)
-{
-	return Vector3(op2.X / divisor, op2.Y / divisor, op2.Z / divisor);
-}
-
 Vector3 Vector3::operator+= (const Vector3 &op2)
 {
 	X += op2.X;
@@ -349,6 +324,31 @@ Vector3 Vector3::operator/= (float scalar)
 	Y /= scalar;
 	Z /= scalar;
 	return *this;
+}
+
+Vector3 operator+ (const Vector3 &op1, const Vector3 &op2)
+{
+	return Vector3(op1.X + op2.X, op1.Y + op2.Y, op1.Z + op2.Z);
+}
+
+Vector3 operator- (const Vector3 &op1, const Vector3 &op2)
+{
+	return Vector3(op1.X - op2.X, op1.Y - op2.Y, op1.Z - op2.Z);
+}
+
+Vector3 operator* (const Vector3 &op1, float scalar)
+{
+	return Vector3(op1.X * scalar, op1.Y * scalar, op1.Z * scalar);
+}
+
+Vector3 operator* (float scalar, const Vector3 &op2)
+{
+	return Vector3(op2.X * scalar, op2.Y * scalar, op2.Z * scalar);
+}
+
+Vector3 operator/ (const Vector3 &op2, float divisor)
+{
+	return Vector3(op2.X / divisor, op2.Y / divisor, op2.Z / divisor);
 }
 
 }

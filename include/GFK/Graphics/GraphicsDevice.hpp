@@ -14,7 +14,7 @@ public:
 
 	void SetClearColor(const gfk::Color &color);
 	void SetClearColor(const gfk::PackedColor &color);
-	void SetDepthClearValue(const float depth);
+	void SetDepthClearValue(float depth);
 	void Clear();
 	void ClearDepth();
 	void ClearColor();

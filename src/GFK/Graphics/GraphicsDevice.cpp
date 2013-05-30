@@ -27,7 +27,7 @@ void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
 	glClearColor(color.GetR(), color.GetG(), color.GetB(), color.GetA());
 }
 
-void GraphicsDevice::SetDepthClearValue(const float depth)
+void GraphicsDevice::SetDepthClearValue(float depth)
 {
 	glClearDepth(depth);
 }

@@ -7,8 +7,8 @@ class Color
 public:
 	float R, G, B, A;
 	Color();
-	Color(const float r, const float g, const float b);
-	Color(const float r, const float g, const float b, const float a);
+	Color(float r, float g, float b);
+	Color(float r, float g, float b, float a);
 	Color(const unsigned int color);
 	~Color();
 
