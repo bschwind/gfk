@@ -1,0 +1,5 @@
+{
+	"shell": true,
+	"working_dir": "$project_path/build",
+	"cmd": ["cmake .. && make"]
+}
