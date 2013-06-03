@@ -41,6 +41,7 @@ add_library( gfk STATIC
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Vector3.cpp
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/MathHelper.cpp
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Matrix.cpp
+       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
        )
 
 target_link_libraries(gfk ${SFML_LIBRARIES})
