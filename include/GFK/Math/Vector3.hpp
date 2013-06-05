@@ -1,4 +1,5 @@
 #pragma once
+
 #include <GFK/Math/Vector2.hpp>
 
 namespace gfk
