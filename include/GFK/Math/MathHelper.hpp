@@ -37,6 +37,12 @@ public:
 	}
 
 	static float SmoothStep(float v1, float v2, float amount);
+
+	template <typename T>
+	static int Sign(T val)
+	{
+		return (T(0) < val) - (val < T(0));
+	}
 };
 
 }
