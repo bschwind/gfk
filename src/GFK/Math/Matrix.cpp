@@ -1,6 +1,5 @@
 #include <GFK/Math/Matrix.hpp>
 #include <GFK/Math/MathHelper.hpp>
-#include <GFK/Math/Vector3.hpp>
 #include <stdexcept>
 #include <cmath>
 
@@ -197,23 +196,55 @@ void Matrix::CreateFromAxisAngle(const Vector3 &axis, float angle, Matrix &resul
 	result(4,4) = 1.0f;
 }
 
-// static Matrix Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
-// {
-// 	// Matrix matrix;
-// 	// Quaternion quaternion;
-// 	// Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll, out quaternion);
-// 	// CreateFromQuaternion(ref quaternion, out matrix);
-// 	// return matrix;
-// }
+Matrix Matrix::CreateFromQuaternion(const Quaternion &quaternion)
+{
+	Matrix m;
+	CreateFromQuaternion(quaternion, m);
+	return m;
+}
 
-// static void Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll, Matrix result)
-// {
-// 	// Matrix matrix;
-// 	// Quaternion quaternion;
-// 	// Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll, out quaternion);
-// 	// CreateFromQuaternion(ref quaternion, out matrix);
-// 	// return matrix;
-// }
+void Matrix::CreateFromQuaternion(const Quaternion &quaternion, Matrix &result)
+{
+	float num9 = quaternion.X * quaternion.X;
+	float num8 = quaternion.Y * quaternion.Y;
+	float num7 = quaternion.Z * quaternion.Z;
+	float num6 = quaternion.X * quaternion.Y;
+	float num5 = quaternion.Z * quaternion.W;
+	float num4 = quaternion.Z * quaternion.X;
+	float num3 = quaternion.Y * quaternion.W;
+	float num2 = quaternion.Y * quaternion.Z;
+	float num = quaternion.X * quaternion.W;
+	result(1,1) = 1.0f - (2.0f * (num8 + num7));
+	result(1,2) = 2.0f * (num6 + num5);
+	result(1,3) = 2.0f * (num4 - num3);
+	result(1,4) = 0.0f;
+	result(2,1) = 2.0f * (num6 - num5);
+	result(2,2) = 1.0f - (2.0f * (num7 + num9));
+	result(2,3) = 2.0f * (num2 + num);
+	result(2,4) = 0.0f;
+	result(3,1) = 2.0f * (num4 + num3);
+	result(3,2) = 2.0f * (num2 - num);
+	result(3,3) = 1.0f - (2.0f * (num8 + num9));
+	result(3,4) = 0.0f;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
+	result(4,4) = 1.0f;
+}
+
+Matrix Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+{
+	Matrix m;
+	CreateFromYawPitchRoll(yaw, pitch, roll, m);
+	return m;	
+}
+
+void Matrix::CreateFromYawPitchRoll(float yaw, float pitch, float roll, Matrix result)
+{
+	Quaternion quaternion;
+	Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll, quaternion);
+	CreateFromQuaternion(quaternion, result);
+}
 
 Matrix Matrix::CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector)
 {
@@ -808,10 +839,35 @@ void Matrix::Transpose(const Matrix &matrix, Matrix &result)
 	result = ret;
 }
 
-// bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation)
-// {
+bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation)
+{
+	translation.X = m41;
+	translation.Y = m42;
+	translation.Z = m43;
 
-// }
+	float xs = (MathHelper::Sign(m11 * m12 * m13 * m14) < 0.0f) ? -1.0f : 1.0f;
+	float ys = (MathHelper::Sign(m21 * m22 * m23 * m24) < 0.0f) ? -1.0f : 1.0f;
+	float zs = (MathHelper::Sign(m31 * m32 * m33 * m34) < 0.0f) ? -1.0f : 1.0f;                               
+
+	scale.X = xs * (float)sqrt(m11 * m11 + m12 * m12 + m13 * m13);
+	scale.Y = ys * (float)sqrt(m21 * m21 + m22 * m22 + m23 * m23);
+	scale.Z = zs * (float)sqrt(m31 * m31 + m32 * m32 + m33 * m33);
+
+	if (scale.X == 0.0 || scale.Y == 0.0 || scale.Z == 0.0)
+	{
+		rotation = Quaternion::Identity;
+		return false;
+	}
+
+	Matrix m1(
+		m11/scale.X, m12/scale.X, m13/scale.X, 0.0f,
+		m21/scale.Y, m22/scale.Y, m23/scale.Y, 0.0f,
+		m31/scale.Z, m32/scale.Z, m33/scale.Z, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
+	rotation = Quaternion::CreateFromRotationMatrix(m1);
+	return true;
+}
 
 float Matrix::Determinant()
 {

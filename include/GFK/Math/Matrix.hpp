@@ -1,8 +1,12 @@
 #pragma once
+
 #include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Quaternion.hpp>
 
 namespace gfk
 {
+
+class Quaternion;
 
 class Matrix
 {
@@ -23,9 +27,10 @@ public:
 	static void CreateConstrainedBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &rotateAxis, const Vector3 &cameraForwardVector, const Vector3 &objectForwardVector, Matrix &result);
 	static Matrix CreateFromAxisAngle(const Vector3 &axis, float angle);
 	static void CreateFromAxisAngle(const Vector3 &axis, float angle, Matrix &result);
-	// static Matrix CreateFromQuaternion(Quaternion quaternion);
-	// static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll);
-	// static void CreateFromYawPitchRoll(float yaw, float pitch, float roll, Matrix result);
+	static Matrix CreateFromQuaternion(const Quaternion &quaternion);
+	static void CreateFromQuaternion(const Quaternion &quaternion, Matrix &result);
+	static Matrix CreateFromYawPitchRoll(float yaw, float pitch, float roll);
+	static void CreateFromYawPitchRoll(float yaw, float pitch, float roll, Matrix result);
 	static Matrix CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector);
 	static void CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTarget, const Vector3 &cameraUpVector, Matrix &result);
 	static Matrix CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane);
@@ -68,7 +73,7 @@ public:
 	static void Transpose(const Matrix &matrix, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
-	// bool Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation);
+	bool Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation);
 	float Determinant();
 	Vector3 GetBackward();
 	Vector3 GetForward();
