@@ -1,6 +1,6 @@
 #include <GFK/Game.hpp>
 #include <GFK/Math/Vector2.hpp>
-#include <SFML/Window.hpp>
+#include <GFK/Graphics/Color.hpp>
 #include <SFML/OpenGL.hpp>
 #include <iostream>
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include <SFML/Window.hpp>
-#include <GFK/Graphics/Color.hpp>
-#include <GFK/Graphics/PackedColor.hpp>
-
 namespace gfk
 {
+
+class Color;
+class PackedColor;
+
 class GraphicsDevice
 {
 public:

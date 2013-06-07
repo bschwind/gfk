@@ -1,4 +1,6 @@
 #include <GFK/Graphics/GraphicsDevice.hpp>
+#include <GFK/Graphics/Color.hpp>
+#include <GFK/Graphics/PackedColor.hpp>
 #include <SFML/System.hpp>
 #include <SFML/OpenGL.hpp>
 #include <iostream>
