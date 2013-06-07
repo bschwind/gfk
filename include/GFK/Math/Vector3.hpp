@@ -58,7 +58,8 @@ public:
 	static void Reflect(const Vector3 &v, const Vector3 &normal, Vector3 &result);
 	static Vector3 SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount);
 	static void SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount, Vector3 &result);
-	//static Vector2 Transform(Vector2 position, Matrix matrix)
+	static Vector3 Transform(const Vector3 &position, const Matrix &matrix);
+	static void Transform(const Vector3 &position, const Matrix &matrix, Vector3 &result);
 
 	float Length();
 	float LengthSquared();

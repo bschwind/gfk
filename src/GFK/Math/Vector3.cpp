@@ -1,5 +1,6 @@
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/Vector2.hpp>
+#include <GFK/Math/Matrix.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <cmath>
 
@@ -275,6 +276,21 @@ void Vector3::SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount, Vec
 	result.X = MathHelper::SmoothStep(v1.X, v2.X, amount);
 	result.Y = MathHelper::SmoothStep(v1.Y, v2.Y, amount);
 	result.Z = MathHelper::SmoothStep(v1.Z, v2.Z, amount);
+}
+
+Vector3 Vector3::Transform(const Vector3 &position, const Matrix &matrix)
+{
+	return Vector3(
+		(position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + (position.Z * matrix(3,1)) + matrix(4,1),
+		(position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + (position.Z * matrix(3,2)) + matrix(4,2),
+		(position.X * matrix(1,3)) + (position.Y * matrix(2,3)) + (position.Z * matrix(3,3)) + matrix(4,3));
+}
+
+void Vector3::Transform(const Vector3 &position, const Matrix &matrix, Vector3 &result)
+{
+	result.X = (position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + (position.Z * matrix(3,1)) + matrix(4,1);
+	result.Y = (position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + (position.Z * matrix(3,2)) + matrix(4,2);
+	result.Z = (position.X * matrix(1,3)) + (position.Y * matrix(2,3)) + (position.Z * matrix(3,3)) + matrix(4,3);
 }
 
 float Vector3::Length()
