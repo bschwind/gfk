@@ -3,6 +3,8 @@
 namespace gfk
 {
 
+class Matrix;
+
 class Vector2
 {
 public:
@@ -47,7 +49,8 @@ public:
 	static void Rotate(const Vector2 &v, float angle, Vector2 &result);
 	static Vector2 SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount);
 	static void SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount, Vector2 &result);
-	//static void Transform();
+	static Vector2 Transform(const Vector2 &position, const Matrix &matrix);
+	static void Transform(const Vector2 &position, const Matrix &matrix, Vector2 &result);
 
 	float Length();
 	float LengthSquared();

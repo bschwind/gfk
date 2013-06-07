@@ -1,4 +1,5 @@
 #include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Vector2.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <cmath>
 

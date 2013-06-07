@@ -1,11 +1,9 @@
 #pragma once
 
-#include <GFK/Math/Vector3.hpp>
-#include <GFK/Math/Matrix.hpp>
-
 namespace gfk
 {
 
+class Vector3;
 class Matrix;
 
 class Quaternion

@@ -1,4 +1,5 @@
 #include <GFK/Math/Vector2.hpp>
+#include <GFK/Math/Matrix.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <cmath>
 
@@ -239,6 +240,19 @@ void Vector2::SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount, Vec
 {
 	result.X = MathHelper::SmoothStep(v1.X, v2.X, amount);
 	result.Y = MathHelper::SmoothStep(v1.Y, v2.Y, amount);
+}
+
+Vector2 Vector2::Transform(const Vector2 &position, const Matrix &matrix)
+{
+	return Vector2(
+		(position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + matrix(4,1),
+		(position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + matrix(4,2));
+}
+
+void Vector2::Transform(const Vector2 &position, const Matrix &matrix, Vector2 &result)
+{
+	result.X = (position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + matrix(4,1);
+	result.Y = (position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + matrix(4,2);
 }
 
 float Vector2::Length()

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <GFK/Math/Vector2.hpp>
-
 namespace gfk
 {
+
+class Vector2;
+class Matrix;
 
 class Vector3
 {
@@ -57,7 +58,7 @@ public:
 	static void Reflect(const Vector3 &v, const Vector3 &normal, Vector3 &result);
 	static Vector3 SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount);
 	static void SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount, Vector3 &result);
-	//static void Transform();
+	//static Vector2 Transform(Vector2 position, Matrix matrix)
 
 	float Length();
 	float LengthSquared();
