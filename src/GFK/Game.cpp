@@ -1,16 +1,14 @@
-#include <GL/glew.h>
 #include <GFK/Game.hpp>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Graphics/Color.hpp>
-#include <iostream>
 
 namespace gfk
 {
 
 Game::Game() :
-clock(),
-time(),
-title("GFK Game")
+title("GFK Game"),
+width(1280),
+height(720)
 {
 
 }
@@ -18,8 +16,6 @@ title("GFK Game")
 Game::Game(const std::string &gameTitle,
 		   const int screenWidth,
 		   const int screenHeight) :
-clock(),
-time(),
 title(gameTitle),
 width(screenWidth),
 height(screenHeight)
@@ -29,29 +25,12 @@ height(screenHeight)
 
 Game::~Game()
 {
-	std::cout << "Calling Game's destructor" << std::endl;
+	
 }
 
 void Game::Initialize()
 {
 	window.create(sf::VideoMode(width, height, 32), title);
-	// GLenum err = glewInit();
-	// std::cout << GLEW_OK << std::endl;
-	// if (GLEW_OK != err)
-	// {
-	// 	std::cout << "Fuck" << std::endl;
-	// 	// Problem: glewInit failed, something is seriously wrong. 
-	// 	fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-	// }
-
-	// // std::cout << &glGenBuffers << std::endl;
-	// // GLuint vbo;
-	// // glGenBuffers(1, &vbo);
-	// // glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// // std::cout << sizeof(vertices_position) << std::endl;
-	// // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position, GL_STATIC_DRAW);
-
-	Device = GraphicsDevice();
 	Device.Initialize();
 	Device.SetClearColor(Color::CornflowerBlue);
 	LoadContent();
