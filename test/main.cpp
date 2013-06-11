@@ -6,4 +6,5 @@ int main()
 {
 	gfk::Game game("Test Game", 1280, 720);
 	game.Run();
+	return 0;
 }

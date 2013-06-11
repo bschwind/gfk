@@ -18,6 +18,8 @@ public:
 	void Clear();
 	void ClearDepth();
 	void ClearColor();
+	void Initialize();
+	void ResizeWindow(int width, int height);
 protected:
 
 private:

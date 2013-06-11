@@ -1,7 +1,7 @@
+#include <GL/glew.h>
 #include <GFK/Game.hpp>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Graphics/Color.hpp>
-#include <SFML/OpenGL.hpp>
 #include <iostream>
 
 namespace gfk
@@ -30,14 +30,29 @@ height(screenHeight)
 Game::~Game()
 {
 	std::cout << "Calling Game's destructor" << std::endl;
-	window.close();
-	UnloadContent();
 }
 
 void Game::Initialize()
 {
 	window.create(sf::VideoMode(width, height, 32), title);
+	// GLenum err = glewInit();
+	// std::cout << GLEW_OK << std::endl;
+	// if (GLEW_OK != err)
+	// {
+	// 	std::cout << "Fuck" << std::endl;
+	// 	// Problem: glewInit failed, something is seriously wrong. 
+	// 	fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	// }
+
+	// // std::cout << &glGenBuffers << std::endl;
+	// // GLuint vbo;
+	// // glGenBuffers(1, &vbo);
+	// // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	// // std::cout << sizeof(vertices_position) << std::endl;
+	// // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position, GL_STATIC_DRAW);
+
 	Device = GraphicsDevice();
+	Device.Initialize();
 	Device.SetClearColor(Color::CornflowerBlue);
 	LoadContent();
 }
@@ -83,6 +98,9 @@ void Game::Run()
 	{
 		Tick();
 	}
+
+	window.close();
+	UnloadContent();
 }
 
 void Game::HandleEvents()
@@ -98,13 +116,13 @@ void Game::HandleEvents()
 
 		if(event.type == sf::Event::Resized)
 		{
-			glViewport(0, 0, event.size.width, event.size.height);
+			Device.ResizeWindow(event.size.width, event.size.height);
 		}	
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		window.close();
+		exitRequested = true;
 	}
 }
 
