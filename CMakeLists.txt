@@ -1,8 +1,9 @@
-
 cmake_minimum_required(VERSION 2.8)
-
-# project name
 project(GFK)
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -13,23 +14,20 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "-stdlib=libc++")
 	set(CMAKE_C_FLAGS "-stdlib=libc++")
 endif ()
- 
-# setup version numbers
-set(VERSION_MAJOR 1)
-set(VERSION_MINOR 0)
-set(VERSION_PATCH 0)
 
 add_definitions(-Wall)
 
-# add the GFK header path
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-# add the subdirectories
-add_subdirectory(src/GFK)
-
+# Find libraries
 find_package(SFML 2.0 COMPONENTS system window graphics REQUIRED)
+find_package(GLEW REQUIRED)
+
+# Add header paths
 include_directories(${SFML_INCLUDE_DIR})
-message(STATUS ${SFML_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${GLEW_INCLUDE_PATH})
+
+# Add the subdirectories
+add_subdirectory(src/GFK)
 
 add_library( gfk STATIC
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
@@ -44,6 +42,6 @@ add_library( gfk STATIC
        ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
        )
 
-target_link_libraries(gfk ${SFML_LIBRARIES})
+target_link_libraries(gfk ${SFML_LIBRARIES} ${GLEW_LIBRARY})
 
 add_subdirectory(test)
