@@ -9,9 +9,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_CXX_FLAGS "-std=c++0x")
+	set(CMAKE_CXX_FLAGS "-std=c++0x")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+	set(CMAKE_CXX_FLAGS "-stdlib=libc++")
 	set(CMAKE_C_FLAGS "-stdlib=libc++")
 endif ()
 
@@ -29,18 +29,18 @@ include_directories(${GLEW_INCLUDE_PATH})
 # Add the subdirectories
 add_subdirectory(src/GFK)
 
-add_library( gfk STATIC
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GraphicsDevice.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Color.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PackedColor.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Vector2.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Vector3.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/MathHelper.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Matrix.cpp
-       ${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
-       )
+add_library(gfk STATIC
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GraphicsDevice.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Color.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PackedColor.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Vector2.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Vector3.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/MathHelper.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Matrix.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
+			)
 
 target_link_libraries(gfk ${SFML_LIBRARIES} ${GLEW_LIBRARY})
 
