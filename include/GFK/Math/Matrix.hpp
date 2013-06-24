@@ -85,8 +85,8 @@ public:
 	Vector3 GetTranslation();
 	void SetTranslation(const Vector3 &v);
 
-	float &operator()(int row, int column) { return matrix[column * 4 + row]; }
-	const float &operator()(int row, int column) const { return matrix[column * 4 + row]; }
+	float &operator()(int row, int column) { return matrix[(column-1) * 4 + (row-1)]; }
+	const float &operator()(int row, int column) const { return matrix[(column-1) * 4 + (row-1)]; }
 
 	Matrix operator+= (const Matrix &op2);
 	Matrix operator-= (const Matrix &op2);
