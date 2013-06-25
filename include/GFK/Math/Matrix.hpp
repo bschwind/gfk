@@ -19,6 +19,7 @@ public:
 
 	static const Matrix Identity;
 
+	static void Add(const Matrix &m1, const Matrix &m2, Matrix &result);
 	static Matrix CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector);
 	static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix &result);
 	static Matrix CreateConstrainedBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &rotateAxis, const Vector3 &cameraForwardVector, const Vector3 &objectForwardVector);
@@ -61,14 +62,17 @@ public:
 	// static Matrix CreateReflection(Plane value, Matrix &result);
 	static Matrix CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up);
 	static void CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up, Matrix &result);
+	static void Divide(const Matrix &m, float divisor, Matrix &result);
 	static Matrix Invert(const Matrix &matrix);
 	static void Invert(const Matrix &matrix, Matrix &result);
 	static Matrix Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount);
 	static void Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount, Matrix &result);
+	static void Multiply(const Matrix &m, float scalar, Matrix &result);
 	static Matrix Negate(const Matrix &matrix);
 	static void Negate(const Matrix &matrix, Matrix &result);
 	static Matrix Transpose(const Matrix &matrix);
 	static void Transpose(const Matrix &matrix, Matrix &result);
+	static void Subtract(const Matrix &m1, const Matrix &m2, Matrix &result);
 
 	float *ToFloatArray () const { return (float *)&(matrix[0]); }
 	bool Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation);

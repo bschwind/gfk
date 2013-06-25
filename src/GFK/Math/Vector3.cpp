@@ -47,6 +47,13 @@ const Vector3 Vector3::Right(1.0f, 0.0f, 0.0f);
 const Vector3 Vector3::Forward(0.0f, 0.0f, -1.0f);
 const Vector3 Vector3::Backward(0.0f, 0.0f, 1.0f);
 
+void Vector3::Add(const Vector3 &v1, const Vector3 &v2, Vector3 &result)
+{
+	result.X = v1.X + v2.X;
+	result.Y = v1.Y + v2.Y;
+	result.Z = v1.Z + v2.Z;
+}
+
 Vector3 Vector3::Barycentric(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3, float amount1, float amount2)
 {
 	return Vector3(
@@ -140,6 +147,13 @@ void Vector3::DistanceSquared(const Vector3 &v1, const Vector3 &v2, float &resul
 	result =  x * x + y * y + z * z;
 }
 
+void Vector3::Divide(const Vector3 &v, float scalar, Vector3 &result)
+{
+	result.X = v.X / scalar;
+	result.Y = v.Y / scalar;
+	result.Z = v.Z / scalar;
+}
+
 float Vector3::Dot(const Vector3 &v1, const Vector3 &v2)
 {
 	return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
@@ -210,6 +224,13 @@ void Vector3::Min(const Vector3 &v1, const Vector3 &v2, Vector3 &result)
 	result.Z = v1.Z < v2.Z ? v1.Z : v2.Z;
 }
 
+void Vector3::Multiply(const Vector3 &v1, float scalar, Vector3 &result)
+{
+	result.X = v1.X * scalar;
+	result.Y = v1.Y * scalar;
+	result.Z = v1.Z * scalar;
+}
+
 Vector3 Vector3::Negate(Vector3 &v)
 {
 	v.X = -v.X;
@@ -276,6 +297,13 @@ void Vector3::SmoothStep(const Vector3 &v1, const Vector3 &v2, float amount, Vec
 	result.X = MathHelper::SmoothStep(v1.X, v2.X, amount);
 	result.Y = MathHelper::SmoothStep(v1.Y, v2.Y, amount);
 	result.Z = MathHelper::SmoothStep(v1.Z, v2.Z, amount);
+}
+
+void Subtract(const Vector3 &v1, const Vector3 &v2, Vector3 &result)
+{
+	result.X = v1.X - v2.X;
+	result.Y = v1.Y - v2.Y;
+	result.Z = v1.Z - v2.Z;
 }
 
 Vector3 Vector3::Transform(const Vector3 &position, const Matrix &matrix)

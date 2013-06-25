@@ -65,6 +65,26 @@ const Matrix Matrix::Identity(
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f);
 
+void Add(const Matrix &m1, const Matrix &m2, Matrix &result)
+{
+	result(1,1) = m1(1,1) + m2(1,1);
+	result(1,2) = m1(1,2) + m2(1,2);
+	result(1,3) = m1(1,3) + m2(1,3);
+	result(1,4) = m1(1,4) + m2(1,4);
+	result(2,1) = m1(2,1) + m2(2,1);
+	result(2,2) = m1(2,2) + m2(2,2);
+	result(2,3) = m1(2,3) + m2(2,3);
+	result(2,4) = m1(2,4) + m2(2,4);
+	result(3,1) = m1(3,1) + m2(3,1);
+	result(3,2) = m1(3,2) + m2(3,2);
+	result(3,3) = m1(3,3) + m2(3,3);
+	result(3,4) = m1(3,4) + m2(3,4);
+	result(4,1) = m1(4,1) + m2(4,1);
+	result(4,2) = m1(4,2) + m2(4,2);
+	result(4,3) = m1(4,3) + m2(4,3);
+	result(4,4) = m1(4,4) + m2(4,4);
+}
+
 Matrix Matrix::CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector)
 {
 	Matrix m;
@@ -685,6 +705,26 @@ void Matrix::CreateWorld(const Vector3 &position, const Vector3 &forward, const 
 	result.SetTranslation(position);
 }
 
+void Matrix::Divide(const Matrix &m, float divisor, Matrix &result)
+{
+	result(1,1) = m(1,1) / divisor;
+	result(1,2) = m(1,2) / divisor;
+	result(1,3) = m(1,3) / divisor;
+	result(1,4) = m(1,4) / divisor;
+	result(2,1) = m(2,1) / divisor;
+	result(2,2) = m(2,2) / divisor;
+	result(2,3) = m(2,3) / divisor;
+	result(2,4) = m(2,4) / divisor;
+	result(3,1) = m(3,1) / divisor;
+	result(3,2) = m(3,2) / divisor;
+	result(3,3) = m(3,3) / divisor;
+	result(3,4) = m(3,4) / divisor;
+	result(4,1) = m(4,1) / divisor;
+	result(4,2) = m(4,2) / divisor;
+	result(4,3) = m(4,3) / divisor;
+	result(4,4) = m(4,4) / divisor;
+}
+
 Matrix Matrix::Invert(const Matrix &matrix)
 {
 	Matrix m;
@@ -779,6 +819,26 @@ void Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount, Ma
 	result(4,4) = matrix1(4,4) + ((matrix2(4,4) - matrix1(4,4)) * amount);
 }
 
+void Matrix::Multiply(const Matrix &m, float scalar, Matrix &result)
+{
+	result(1,1) = m(1,1) * scalar;
+	result(1,2) = m(1,2) * scalar;
+	result(1,3) = m(1,3) * scalar;
+	result(1,4) = m(1,4) * scalar;
+	result(2,1) = m(2,1) * scalar;
+	result(2,2) = m(2,2) * scalar;
+	result(2,3) = m(2,3) * scalar;
+	result(2,4) = m(2,4) * scalar;
+	result(3,1) = m(3,1) * scalar;
+	result(3,2) = m(3,2) * scalar;
+	result(3,3) = m(3,3) * scalar;
+	result(3,4) = m(3,4) * scalar;
+	result(4,1) = m(4,1) * scalar;
+	result(4,2) = m(4,2) * scalar;
+	result(4,3) = m(4,3) * scalar;
+	result(4,4) = m(4,4) * scalar;
+}
+
 Matrix Matrix::Negate(const Matrix &matrix)
 {
 	Matrix m;
@@ -838,6 +898,26 @@ void Matrix::Transpose(const Matrix &matrix, Matrix &result)
 	ret(4,4) = matrix(4,4);
 
 	result = ret;
+}
+
+void Matrix::Subtract(const Matrix &m1, const Matrix &m2, Matrix &result)
+{
+	result(1,1) = m1(1,1) - m2(1,1);
+	result(1,2) = m1(1,2) - m2(1,2);
+	result(1,3) = m1(1,3) - m2(1,3);
+	result(1,4) = m1(1,4) - m2(1,4);
+	result(2,1) = m1(2,1) - m2(2,1);
+	result(2,2) = m1(2,2) - m2(2,2);
+	result(2,3) = m1(2,3) - m2(2,3);
+	result(2,4) = m1(2,4) - m2(2,4);
+	result(3,1) = m1(3,1) - m2(3,1);
+	result(3,2) = m1(3,2) - m2(3,2);
+	result(3,3) = m1(3,3) - m2(3,3);
+	result(3,4) = m1(3,4) - m2(3,4);
+	result(4,1) = m1(4,1) - m2(4,1);
+	result(4,2) = m1(4,2) - m2(4,2);
+	result(4,3) = m1(4,3) - m2(4,3);
+	result(4,4) = m1(4,4) - m2(4,4);
 }
 
 bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation)

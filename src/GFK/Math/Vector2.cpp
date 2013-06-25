@@ -34,6 +34,12 @@ const Vector2 Vector2::One(1.0f, 1.0f);
 const Vector2 Vector2::UnitX(1.0f, 0.0f);
 const Vector2 Vector2::UnitY(0.0f, 1.0f);
 
+void Vector2::Add(const Vector2 &v1, const Vector2 &v2, Vector2 &result)
+{
+	result.X = v1.X + v2.X;
+	result.Y = v1.Y + v2.Y;
+}
+
 Vector2 Vector2::Barycentric(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, float amount1, float amount2)
 {
 	return Vector2(
@@ -102,6 +108,12 @@ void Vector2::DistanceSquared(const Vector2 &v1, const Vector2 &v2, float &resul
 	result =  x * x + y * y;
 }
 
+void Vector2::Divide(const Vector2 &v, float scalar, Vector2 &result)
+{
+	result.X = v.X / scalar;
+	result.Y = v.Y / scalar;
+}
+
 float Vector2::Dot(const Vector2 &v1, const Vector2 &v2)
 {
 	return v1.X * v2.X + v1.Y * v2.Y;
@@ -162,6 +174,12 @@ void Vector2::Min(const Vector2 &v1, const Vector2 &v2, Vector2 &result)
 {
 	result.X = v1.X < v2.X ? v1.X : v2.X;
 	result.Y = v1.Y < v2.Y ? v1.Y : v2.Y;
+}
+
+void Vector2::Multiply(const Vector2 &v, float scalar, Vector2 &result)
+{
+	result.X = v.X * scalar;
+	result.Y = v.Y * scalar;
 }
 
 Vector2 Vector2::Negate(Vector2 &v)
@@ -242,6 +260,12 @@ void Vector2::SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount, Vec
 	result.Y = MathHelper::SmoothStep(v1.Y, v2.Y, amount);
 }
 
+void Vector2::Subtract(const Vector2 &v1, const Vector2 &v2, Vector2 &result)
+{
+	result.X = v1.X - v2.X;
+	result.Y = v1.Y - v2.Y;
+}
+
 Vector2 Vector2::Transform(const Vector2 &position, const Matrix &matrix)
 {
 	return Vector2(
@@ -253,6 +277,19 @@ void Vector2::Transform(const Vector2 &position, const Matrix &matrix, Vector2 &
 {
 	result.X = (position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + matrix(4,1);
 	result.Y = (position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + matrix(4,2);
+}
+
+Vector2 Vector2::TransformNormal(const Vector2 &normal, const Matrix matrix)
+{
+	return Vector2(
+		(normal.X * matrix(1,1)) + (normal.Y * matrix(2,1)),
+		(normal.X * matrix(1,2)) + (normal.Y * matrix(2,2)));
+}
+
+void Vector2::TransformNormal(const Vector2 &normal, const Matrix matrix, Vector2 &result)
+{
+	result.X = (normal.X * matrix(1,1)) + (normal.Y * matrix(2,1));
+	result.Y = (normal.X * matrix(1,2)) + (normal.Y * matrix(2,2));
 }
 
 float Vector2::Length()

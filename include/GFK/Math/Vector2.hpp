@@ -19,6 +19,7 @@ public:
 	static const Vector2 UnitX;
 	static const Vector2 UnitY;
 
+	static void Add(const Vector2 &v1, const Vector2 &v2, Vector2 &result);
 	static Vector2 Barycentric(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, float amount1, float amount2);
 	static void Barycentric(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, float amount1, float amount2, Vector2 &result);
 	static Vector2 CatmullRom(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, Vector2 &v4, float amount);
@@ -29,6 +30,7 @@ public:
 	static void Distance(const Vector2 &v1, const Vector2 &v2, float &result);
 	static float DistanceSquared(const Vector2 &v1, const Vector2 &v2);
 	static void DistanceSquared(const Vector2 &v1, const Vector2 &v2, float &result);
+	static void Divide(const Vector2 &v, float scalar, Vector2 &result);
 	static float Dot(const Vector2 &v1, const Vector2 &v2);
 	static void Dot(const Vector2 &v1, const Vector2 &v2, float &result);
 	static Vector2 Hermite(const Vector2 &v1, const Vector2 &tangent1, const Vector2 &v2, const Vector2 &tangent2, float amount);
@@ -39,6 +41,7 @@ public:
 	static void Max(const Vector2 &v1, const Vector2 &v2, Vector2 &result);
 	static Vector2 Min(const Vector2 &v1, const Vector2 &v2);
 	static void Min(const Vector2 &v1, const Vector2 &v2, Vector2 &result);
+	static void Multiply(const Vector2 &v, float scalar, Vector2 &result);
 	static Vector2 Negate(Vector2 &v1);
 	static void Negate(const Vector2 &v1, Vector2 &result);
 	static Vector2 Normalize(Vector2 &v);
@@ -49,8 +52,11 @@ public:
 	static void Rotate(const Vector2 &v, float angle, Vector2 &result);
 	static Vector2 SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount);
 	static void SmoothStep(const Vector2 &v1, const Vector2 &v2, float amount, Vector2 &result);
+	static void Subtract(const Vector2 &v1, const Vector2 &v2, Vector2 &result);
 	static Vector2 Transform(const Vector2 &position, const Matrix &matrix);
 	static void Transform(const Vector2 &position, const Matrix &matrix, Vector2 &result);
+	static Vector2 TransformNormal(const Vector2 &normal, const Matrix matrix);
+	static void TransformNormal(const Vector2 &normal, const Matrix matrix, Vector2 &result);
 
 	float Length();
 	float LengthSquared();
