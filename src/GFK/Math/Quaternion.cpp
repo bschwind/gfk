@@ -32,6 +32,14 @@ Quaternion::~Quaternion()
 
 const Quaternion Quaternion::Identity(0.0f, 0.0f, 0.0f, 1.0f);
 
+void Quaternion::Add(const Quaternion &q1, const Quaternion &q2, Quaternion &result)
+{
+	result.X = q1.X + q2.X;
+	result.Y = q1.Y + q2.Y;
+	result.Z = q1.Z + q2.Z;
+	result.W = q1.W + q2.W;
+}
+
 Quaternion Quaternion::Concatenate(const Quaternion &q1, const Quaternion &q2)
 {
 	Quaternion q;
@@ -167,6 +175,28 @@ void Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll, Quat
 	result.W = ((num * num3) * num5) + ((num2 * num4) * num6);
 }
 
+void Quaternion::Divide(const Quaternion &q1, const Quaternion &q2, Quaternion &result)
+{
+	float x = q1.X;
+	float y = q1.Y;
+	float z = q1.Z;
+	float w = q1.W;
+	float num14 = (((q2.X * q2.X) + (q2.Y * q2.Y)) + (q2.Z * q2.Z)) + (q2.W * q2.W);
+	float num5 = 1.0f / num14;
+	float num4 = -q2.X * num5;
+	float num3 = -q2.Y * num5;
+	float num2 = -q2.Z * num5;
+	float num = q2.W * num5;
+	float num13 = (y * num2) - (z * num3);
+	float num12 = (z * num4) - (x * num2);
+	float num11 = (x * num3) - (y * num4);
+	float num10 = ((x * num4) + (y * num3)) + (z * num2);
+	result.X = ((x * num) + (num4 * w)) + num13;
+	result.Y = ((y * num) + (num3 * w)) + num12;
+	result.Z = ((z * num) + (num2 * w)) + num11;
+	result.W = (w * num) - num10;
+}
+
 float Quaternion::Dot(const Quaternion &q1, const Quaternion &q2)
 {
 	return ((((q1.X * q2.X) + (q1.Y * q2.Y)) + (q1.Z * q2.Z)) + (q1.W * q2.W));
@@ -229,6 +259,34 @@ void Quaternion::Lerp(const Quaternion &q1, const Quaternion &q2, float amount, 
 	result.W *= num3;
 }
 
+void Quaternion::Multiply(const Quaternion &q, float scalar, Quaternion &result)
+{
+	result.X = q.X * scalar;
+	result.Y = q.Y * scalar;
+	result.Z = q.Z * scalar;
+	result.W = q.W * scalar;
+}
+
+void Quaternion::Multiply(const Quaternion &q1, const Quaternion &q2, Quaternion &result)
+{
+	float x = q1.X;
+	float y = q1.Y;
+	float z = q1.Z;
+	float w = q1.W;
+	float num4 = q2.X;
+	float num3 = q2.Y;
+	float num2 = q2.Z;
+	float num = q2.W;
+	float num12 = (y * num2) - (z * num3);
+	float num11 = (z * num4) - (x * num2);
+	float num10 = (x * num3) - (y * num4);
+	float num9 = ((x * num4) + (y * num3)) + (z * num2);
+	result.X = ((x * num) + (num4 * w)) + num12;
+	result.Y = ((y * num) + (num3 * w)) + num11;
+	result.Z = ((z * num) + (num2 * w)) + num10;
+	result.W = (w * num) - num9;
+}
+
 Quaternion Quaternion::Slerp(const Quaternion &q1, const Quaternion &q2, float amount)
 {
 	Quaternion q;
@@ -266,6 +324,14 @@ void Quaternion::Slerp(const Quaternion &q1, const Quaternion &q2, float amount,
 	result.Y = (num3 * q1.Y) + (num2 * q2.Y);
 	result.Z = (num3 * q1.Z) + (num2 * q2.Z);
 	result.W = (num3 * q1.W) + (num2 * q2.W);
+}
+
+void Quaternion::Subtract(const Quaternion &q1, const Quaternion &q2, Quaternion &result)
+{
+	result.X = q1.X - q2.X;
+	result.Y = q1.Y - q2.Y;
+	result.Z = q1.Z - q2.Z;
+	result.W = q1.W - q2.W;
 }
 
 Quaternion Quaternion::Negate(const Quaternion &value)

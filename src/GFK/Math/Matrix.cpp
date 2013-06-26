@@ -707,22 +707,43 @@ void Matrix::CreateWorld(const Vector3 &position, const Vector3 &forward, const 
 
 void Matrix::Divide(const Matrix &m, float divisor, Matrix &result)
 {
-	result(1,1) = m(1,1) / divisor;
-	result(1,2) = m(1,2) / divisor;
-	result(1,3) = m(1,3) / divisor;
-	result(1,4) = m(1,4) / divisor;
-	result(2,1) = m(2,1) / divisor;
-	result(2,2) = m(2,2) / divisor;
-	result(2,3) = m(2,3) / divisor;
-	result(2,4) = m(2,4) / divisor;
-	result(3,1) = m(3,1) / divisor;
-	result(3,2) = m(3,2) / divisor;
-	result(3,3) = m(3,3) / divisor;
-	result(3,4) = m(3,4) / divisor;
-	result(4,1) = m(4,1) / divisor;
-	result(4,2) = m(4,2) / divisor;
-	result(4,3) = m(4,3) / divisor;
-	result(4,4) = m(4,4) / divisor;
+	float num = 1.0f / divisor;
+	result(1,1) = m(1,1) * num;
+	result(1,2) = m(1,2) * num;
+	result(1,3) = m(1,3) * num;
+	result(1,4) = m(1,4) * num;
+	result(2,1) = m(2,1) * num;
+	result(2,2) = m(2,2) * num;
+	result(2,3) = m(2,3) * num;
+	result(2,4) = m(2,4) * num;
+	result(3,1) = m(3,1) * num;
+	result(3,2) = m(3,2) * num;
+	result(3,3) = m(3,3) * num;
+	result(3,4) = m(3,4) * num;
+	result(4,1) = m(4,1) * num;
+	result(4,2) = m(4,2) * num;
+	result(4,3) = m(4,3) * num;
+	result(4,4) = m(4,4) * num;
+}
+
+void Matrix::Divide(const Matrix &m1, const Matrix &m2, Matrix &result)
+{
+	result(1,1) = m1(1,1) / m2(1,1);
+	result(1,2) = m1(1,2) / m2(1,2);
+	result(1,3) = m1(1,3) / m2(1,3);
+	result(1,4) = m1(1,4) / m2(1,4);
+	result(2,1) = m1(2,1) / m2(2,1);
+	result(2,2) = m1(2,2) / m2(2,2);
+	result(2,3) = m1(2,3) / m2(2,3);
+	result(2,4) = m1(2,4) / m2(2,4);
+	result(3,1) = m1(3,1) / m2(3,1);
+	result(3,2) = m1(3,2) / m2(3,2);
+	result(3,3) = m1(3,3) / m2(3,3);
+	result(3,4) = m1(3,4) / m2(3,4);
+	result(4,1) = m1(4,1) / m2(4,1);
+	result(4,2) = m1(4,2) / m2(4,2);
+	result(4,3) = m1(4,3) / m2(4,3);
+	result(4,4) = m1(4,4) / m2(4,4);
 }
 
 Matrix Matrix::Invert(const Matrix &matrix)
@@ -792,31 +813,31 @@ void Matrix::Invert(const Matrix &matrix, Matrix &result)
 	result(4,4) = (float) ((double) num1 * (double) num36 - (double) num2 * (double) num38 + (double) num3 * (double) num39) * num27;
 }
 
-Matrix Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount)
+Matrix Matrix::Lerp(const Matrix &m1, const Matrix &m2, float amount)
 {
 	Matrix m;
-	Lerp(matrix1, matrix2, amount, m);
+	Lerp(m1, m2, amount, m);
 	return m;
 }
 
-void Matrix::Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount, Matrix &result)
+void Matrix::Lerp(const Matrix &m1, const Matrix &m2, float amount, Matrix &result)
 {
-	result(1,1) = matrix1(1,1) + ((matrix2(1,1) - matrix1(1,1)) * amount);
-	result(1,2) = matrix1(1,2) + ((matrix2(1,2) - matrix1(1,2)) * amount);
-	result(1,3) = matrix1(1,3) + ((matrix2(1,3) - matrix1(1,3)) * amount);
-	result(1,4) = matrix1(1,4) + ((matrix2(1,4) - matrix1(1,4)) * amount);
-	result(2,1) = matrix1(2,1) + ((matrix2(2,1) - matrix1(2,1)) * amount);
-	result(2,2) = matrix1(2,2) + ((matrix2(2,2) - matrix1(2,2)) * amount);
-	result(2,3) = matrix1(2,3) + ((matrix2(2,3) - matrix1(2,3)) * amount);
-	result(2,4) = matrix1(2,4) + ((matrix2(2,4) - matrix1(2,4)) * amount);
-	result(3,1) = matrix1(3,1) + ((matrix2(3,1) - matrix1(3,1)) * amount);
-	result(3,2) = matrix1(3,2) + ((matrix2(3,2) - matrix1(3,2)) * amount);
-	result(3,3) = matrix1(3,3) + ((matrix2(3,3) - matrix1(3,3)) * amount);
-	result(3,4) = matrix1(3,4) + ((matrix2(3,4) - matrix1(3,4)) * amount);
-	result(4,1) = matrix1(4,1) + ((matrix2(4,1) - matrix1(4,1)) * amount);
-	result(4,2) = matrix1(4,2) + ((matrix2(4,2) - matrix1(4,2)) * amount);
-	result(4,3) = matrix1(4,3) + ((matrix2(4,3) - matrix1(4,3)) * amount);
-	result(4,4) = matrix1(4,4) + ((matrix2(4,4) - matrix1(4,4)) * amount);
+	result(1,1) = m1(1,1) + ((m2(1,1) - m1(1,1)) * amount);
+	result(1,2) = m1(1,2) + ((m2(1,2) - m1(1,2)) * amount);
+	result(1,3) = m1(1,3) + ((m2(1,3) - m1(1,3)) * amount);
+	result(1,4) = m1(1,4) + ((m2(1,4) - m1(1,4)) * amount);
+	result(2,1) = m1(2,1) + ((m2(2,1) - m1(2,1)) * amount);
+	result(2,2) = m1(2,2) + ((m2(2,2) - m1(2,2)) * amount);
+	result(2,3) = m1(2,3) + ((m2(2,3) - m1(2,3)) * amount);
+	result(2,4) = m1(2,4) + ((m2(2,4) - m1(2,4)) * amount);
+	result(3,1) = m1(3,1) + ((m2(3,1) - m1(3,1)) * amount);
+	result(3,2) = m1(3,2) + ((m2(3,2) - m1(3,2)) * amount);
+	result(3,3) = m1(3,3) + ((m2(3,3) - m1(3,3)) * amount);
+	result(3,4) = m1(3,4) + ((m2(3,4) - m1(3,4)) * amount);
+	result(4,1) = m1(4,1) + ((m2(4,1) - m1(4,1)) * amount);
+	result(4,2) = m1(4,2) + ((m2(4,2) - m1(4,2)) * amount);
+	result(4,3) = m1(4,3) + ((m2(4,3) - m1(4,3)) * amount);
+	result(4,4) = m1(4,4) + ((m2(4,4) - m1(4,4)) * amount);
 }
 
 void Matrix::Multiply(const Matrix &m, float scalar, Matrix &result)
@@ -837,6 +858,42 @@ void Matrix::Multiply(const Matrix &m, float scalar, Matrix &result)
 	result(4,2) = m(4,2) * scalar;
 	result(4,3) = m(4,3) * scalar;
 	result(4,4) = m(4,4) * scalar;
+}
+
+void Matrix::Multiply(const Matrix &m1, const Matrix &m2, Matrix &result)
+{
+	float num11 = (((m1(1,1) * m2(1,1)) + (m1(1,2) * m2(2,1))) + (m1(1,3) * m2(3,1))) + (m1(1,4) * m2(4,1));
+	float num12 = (((m1(1,1) * m2(1,2)) + (m1(1,2) * m2(2,2))) + (m1(1,3) * m2(3,2))) + (m1(1,4) * m2(4,2));
+	float num13 = (((m1(1,1) * m2(1,3)) + (m1(1,2) * m2(2,3))) + (m1(1,3) * m2(3,3))) + (m1(1,4) * m2(4,3));
+	float num14 = (((m1(1,1) * m2(1,4)) + (m1(1,2) * m2(2,4))) + (m1(1,3) * m2(3,4))) + (m1(1,4) * m2(4,4));
+	float num21 = (((m1(2,1) * m2(1,1)) + (m1(2,2) * m2(2,1))) + (m1(2,3) * m2(3,1))) + (m1(2,4) * m2(4,1));
+	float num22 = (((m1(2,1) * m2(1,2)) + (m1(2,2) * m2(2,2))) + (m1(2,3) * m2(3,2))) + (m1(2,4) * m2(4,2));
+	float num23 = (((m1(2,1) * m2(1,3)) + (m1(2,2) * m2(2,3))) + (m1(2,3) * m2(3,3))) + (m1(2,4) * m2(4,3));
+	float num24 = (((m1(2,1) * m2(1,4)) + (m1(2,2) * m2(2,4))) + (m1(2,3) * m2(3,4))) + (m1(2,4) * m2(4,4));
+	float num31 = (((m1(3,1) * m2(1,1)) + (m1(3,2) * m2(2,1))) + (m1(3,3) * m2(3,1))) + (m1(3,4) * m2(4,1));
+	float num32 = (((m1(3,1) * m2(1,2)) + (m1(3,2) * m2(2,2))) + (m1(3,3) * m2(3,2))) + (m1(3,4) * m2(4,2));
+	float num33 = (((m1(3,1) * m2(1,3)) + (m1(3,2) * m2(2,3))) + (m1(3,3) * m2(3,3))) + (m1(3,4) * m2(4,3));
+	float num34 = (((m1(3,1) * m2(1,4)) + (m1(3,2) * m2(2,4))) + (m1(3,3) * m2(3,4))) + (m1(3,4) * m2(4,4));
+	float num41 = (((m1(4,1) * m2(1,1)) + (m1(4,2) * m2(2,1))) + (m1(4,3) * m2(3,1))) + (m1(4,4) * m2(4,1));
+	float num42 = (((m1(4,1) * m2(1,2)) + (m1(4,2) * m2(2,2))) + (m1(4,3) * m2(3,2))) + (m1(4,4) * m2(4,2));
+	float num43 = (((m1(4,1) * m2(1,3)) + (m1(4,2) * m2(2,3))) + (m1(4,3) * m2(3,3))) + (m1(4,4) * m2(4,3));
+	float num44 = (((m1(4,1) * m2(1,4)) + (m1(4,2) * m2(2,4))) + (m1(4,3) * m2(3,4))) + (m1(4,4) * m2(4,4));
+	result(1,1) = num11;
+	result(1,2) = num12;
+	result(1,3) = num13;
+	result(1,4) = num14;
+	result(2,1) = num21;
+	result(2,2) = num22;
+	result(2,3) = num23;
+	result(2,4) = num24;
+	result(3,1) = num31;
+	result(3,2) = num32;
+	result(3,3) = num33;
+	result(3,4) = num34;
+	result(4,1) = num41;
+	result(4,2) = num42;
+	result(4,3) = num43;
+	result(4,4) = num44;
 }
 
 Matrix Matrix::Negate(const Matrix &matrix)

@@ -63,11 +63,13 @@ public:
 	static Matrix CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up);
 	static void CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up, Matrix &result);
 	static void Divide(const Matrix &m, float divisor, Matrix &result);
+	static void Divide(const Matrix &m1, const Matrix &m2, Matrix &result);
 	static Matrix Invert(const Matrix &matrix);
 	static void Invert(const Matrix &matrix, Matrix &result);
 	static Matrix Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount);
 	static void Lerp(const Matrix &matrix1, const Matrix &matrix2, float amount, Matrix &result);
 	static void Multiply(const Matrix &m, float scalar, Matrix &result);
+	static void Multiply(const Matrix &m1, const Matrix &m2, Matrix &result);
 	static Matrix Negate(const Matrix &matrix);
 	static void Negate(const Matrix &matrix, Matrix &result);
 	static Matrix Transpose(const Matrix &matrix);
