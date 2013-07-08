@@ -7,6 +7,10 @@ set(VERSION_PATCH 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+if (APPLE)
+	set(CMAKE_OSX_ARCHITECTURES x86_64)
+endif()
+
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 	set(CMAKE_CXX_FLAGS "-std=c++0x")
@@ -18,13 +22,13 @@ endif ()
 add_definitions(-Wall)
 
 # Find libraries
-find_package(SFML 2.0 COMPONENTS system window graphics REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(GLFW REQUIRED)
 
 # Add header paths
-include_directories(${SFML_INCLUDE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${GLEW_INCLUDE_PATH})
+include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the subdirectories
 add_subdirectory(src/GFK)
@@ -45,6 +49,6 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 			)
 
-target_link_libraries(gfk ${SFML_LIBRARIES} ${GLEW_LIBRARY})
+target_link_libraries(gfk ${GLEW_LIBRARY} ${GLFW_LIBRARY})
 
 add_subdirectory(test)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/OpenGL.hpp>
+#include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
 

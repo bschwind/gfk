@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+
+struct GLFWwindow;
+
 namespace gfk
 {
 
@@ -20,10 +24,15 @@ public:
 	void ClearColor();
 	void Display();
 	void Initialize();
+	void Initialize(const std::string &title, int width, int height);
 	void ResizeWindow(int width, int height);
+	void SwapBuffers();
+	void UpdateWindowEvents();
+	bool WindowShouldClose();
 protected:
 
 private:
-
+	GLFWwindow* window;
+	static void error_callback(int error, const char* description);
 };
 }

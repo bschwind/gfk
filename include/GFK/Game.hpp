@@ -2,9 +2,6 @@
 
 #include <GFK/GameTime.hpp>
 #include <GFK/Graphics/GraphicsDevice.hpp>
-#include <SFML/System.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window.hpp>
 #include <iostream>
 #include <string>
 
@@ -31,9 +28,8 @@ protected:
 	virtual void Update(const gfk::GameTime &gameTime);
 	virtual void Draw(const gfk::GameTime &gameTime);
 private:
-	sf::Clock clock;
-	sf::Window window;
-	sf::Event event;
+	// sf::Clock clock;
+	// sf::Event event;
 	gfk::GameTime time;
 	std::string title;
 	int width, height;
