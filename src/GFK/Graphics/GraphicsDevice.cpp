@@ -1,7 +1,7 @@
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/PackedColor.hpp>
-// #include <GL/glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -89,6 +89,7 @@ void GraphicsDevice::Initialize()
 
 void GraphicsDevice::Initialize(const std::string &title, int width, int height)
 {
+	// Initialize GLFW
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit())
@@ -105,32 +106,16 @@ void GraphicsDevice::Initialize(const std::string &title, int width, int height)
 	}
 
 	glfwMakeContextCurrent(window);
-	// // Initialize GLFW
-	// if ( !glfwInit()) {
-	// 	std::cerr << "Failed to initialize GLFW! I'm out!" << std::endl;
-	// 	exit(-1);
-	// }
 
-	// // Use OpenGL 3.2 core profile
-	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	// // glfwWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-	// // glfwWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
+	// Initialize GLEW
+	glewExperimental = GL_TRUE;
+	if(glewInit() != GLEW_OK) {
+		std::cerr << "Failed to initialize GLEW! I'm out!" << std::endl;
+		glfwTerminate();
+		exit(-1);
+	}
 
-	// // Print the OpenGL version
-	// int major, minor, rev;
-	// glfwGetVersion(&major, &minor, &rev);
-	// std::cout << "OpenGL - " << major << "." << minor << "." << rev << std::endl;
-
-	// // Initialize GLEW
-	// glewExperimental = GL_TRUE;
-	// if(glewInit() != GLEW_OK) {
-	// 	std::cerr << "Failed to initialize GLEW! I'm out!" << std::endl;
-	// 	glfwTerminate();
-	// 	exit(-1);
-	// }
-
-	// std::cout << "Initialized GLEW" << std::endl;
+	std::cout << "Initialized GLEW" << std::endl;
 
 	// initialize(vao);
 }
