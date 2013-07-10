@@ -126,6 +126,8 @@ void GraphicsDevice::Initialize(const std::string &title, int width, int height)
 	std::cout << "Initialized GLEW" << std::endl;
 
 	initialize(vao);
+
+	//glfwSwapInterval(0); - 0 for no VSync, 1 for VSync
 }
 
 void GraphicsDevice::SetClearColor(const gfk::Color &color)

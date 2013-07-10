@@ -1,5 +1,6 @@
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/Color.hpp>
+#include <GLFW/glfw3.h>
 
 namespace gfk
 {
@@ -32,7 +33,11 @@ void Game::Initialize()
 {
 	Device.Initialize(title, width, height);
 	Device.SetClearColor(Color::CornflowerBlue);
+
+	time.TotalGameTime = glfwGetTime();
+
 	LoadContent();
+	glfwSetTime(0.0);
 }
 
 void Game::LoadContent()
@@ -59,10 +64,9 @@ void Game::Draw(const gfk::GameTime &gameTime)
 void Game::Tick()
 {
 	//Get the elapsed and total game time
-	// float dt = clock.getElapsedTime().asSeconds();
-	// time.ElapsedGameTime = dt;
-	// time.TotalGameTime += dt;
-	// clock.restart();
+	double currentTime = glfwGetTime();
+	time.ElapsedGameTime = currentTime - time.TotalGameTime;
+	time.TotalGameTime = currentTime;
 
 	HandleEvents();
 	Update(time);
@@ -77,7 +81,6 @@ void Game::Run()
 		Tick();
 	}
 
-	// window.close();
 	UnloadContent();
 }
 
