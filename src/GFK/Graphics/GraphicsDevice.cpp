@@ -55,14 +55,12 @@ void initialize(GLuint &vao) {
 
 	// Allocate space and upload the data from CPU to GPU
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position, GL_STATIC_DRAW);	
-
-	//GLuint shaderProgram = create_program("vertShader.vs", "fragShader.fs");
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position, GL_STATIC_DRAW);
 
 	Shader shader = Shader::CreateFromFile("vertShader.vs", "fragShader.fs");
 
-	// Get the location of the attributes that enters in the vertex shader
-	GLint position_attribute = glGetAttribLocation(shader.GetGLShaderID(), "position");
+	// Get the location of the attributes that enter into the vertex shader
+	GLint position_attribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
 
 	// Specify how the data for position can be accessed
 	glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -98,8 +96,9 @@ void GraphicsDevice::Initialize(const std::string &title, int width, int height)
 		exit(EXIT_FAILURE);
 	}
 
-	// Use OpenGL 3.2 core profile
+	// Enable 4x MSAA
 	glfwWindowHint(GLFW_SAMPLES, 4);
+	// Use OpenGL 3.2 core profile
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

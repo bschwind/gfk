@@ -6,26 +6,19 @@
 namespace gfk
 {
 
-Shader::Shader() :
-shaderID(glCreateProgram())
-{
-
-}
-
-Shader::Shader(GLuint id) :
-shaderID(id)
+Shader::Shader()
 {
 
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram(shaderID);
+	glDeleteProgram(Natives.OpenGL.ShaderID);
 }
 
 void Shader::Apply()
 {
-	glUseProgram(shaderID);
+	glUseProgram(Natives.OpenGL.ShaderID);
 }
 
 Shader Shader::CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName)
@@ -45,12 +38,10 @@ Shader Shader::CreateFromFile(const std::string &vertexShaderFileName, const std
 	// Link and use the program
 	glLinkProgram(shaderProgram);
 	glUseProgram(shaderProgram);
-	return Shader(shaderProgram);
-}
 
-GLuint Shader::GetGLShaderID()
-{
-	return shaderID;
+	Shader returnShader;
+	returnShader.Natives.OpenGL.ShaderID = shaderProgram;
+	return returnShader;
 }
 
 GLuint Shader::LoadAndCompileShader(const std::string fileName, GLenum shaderType)
