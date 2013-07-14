@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -24,7 +25,6 @@ public:
 	void ClearColor();
 	void Display();
 	void Initialize();
-	void Initialize(const std::string &title, int width, int height);
 	void ResizeWindow(int width, int height);
 	void SwapBuffers();
 	void UpdateWindowEvents();
@@ -32,7 +32,9 @@ public:
 protected:
 
 private:
-	GLFWwindow* window;
+	GLFWwindow* primaryWindow;
+	std::vector<GLFWwindow*> windows;
 	static void error_callback(int error, const char* description);
+	void InitializeWindows();
 };
 }

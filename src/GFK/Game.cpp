@@ -1,5 +1,6 @@
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/Color.hpp>
+#include <GFK/Graphics/MonitorConfig.hpp>
 #include <GLFW/glfw3.h>
 
 namespace gfk
@@ -31,7 +32,10 @@ Game::~Game()
 
 void Game::Initialize()
 {
-	Device.Initialize(title, width, height);
+	MonitorConfig::SetupMonitor(1280, 720, title, false);
+	MonitorConfig::SetupMonitor(1280, 720, title, false);
+
+	Device.Initialize();
 	Device.SetClearColor(Color::CornflowerBlue);
 
 	time.TotalGameTime = glfwGetTime();
