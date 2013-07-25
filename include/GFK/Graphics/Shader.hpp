@@ -17,7 +17,7 @@ struct GL
 	
 // };
 
-struct Natives
+struct NativeVars
 {
 	GL OpenGL;
 };
@@ -31,7 +31,7 @@ public:
 	void Apply();
 	static Shader CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName);
 
-	Natives Natives;
+	NativeVars Natives;
 protected:
 private:
 	static GLuint LoadAndCompileShader(const std::string fileName, GLenum shaderType);
