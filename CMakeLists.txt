@@ -48,6 +48,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Transform.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPSocket.cpp
 			)
 
 target_link_libraries(gfk ${GLEW_LIBRARY} ${GLFW_LIBRARY})
