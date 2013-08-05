@@ -50,7 +50,24 @@ bool UDPSocket::Open(unsigned short port)
 
 	socketPort = port;
 
-	std::cout << "Opened UDP socket on port " << socketPort << std::endl;
+	std::cout << "Opened UDP socket on port " << socketPort << " with handle " << handle << std::endl;
+
+	// Set socket to non-blocking mode
+	#if defined(PLATFORM_WINDOWS)
+		DWORD nonBlocking = 1;
+		if (ioctlsocket(handle, FIONBIO, &nonBlocking) != 0)
+		{
+			std::cerr << "Could not set socket with handle " << handle << " to non-blocking IO" << std::endl;
+			return false;
+		}
+	#else
+		int nonBlocking = 1;
+		if (fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
+		{
+			std::cerr << "Could not set socket with handle " << handle << " to non-blocking IO" << std::endl;
+			return false;
+		}
+	#endif
 
 	return true;
 }
