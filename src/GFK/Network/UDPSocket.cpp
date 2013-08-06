@@ -94,6 +94,52 @@ bool UDPSocket::IsOpen() const
 	return handle != 0;
 }
 
+bool UDPSocket::Send(const IPAddress &destination, const void *data, int size)
+{
+	if (handle == 0 || size <= 0)
+	{
+		return false;
+	}
+
+	sockaddr_in address;
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = htonl(destination.GetAddress());
+	address.sin_port = htons((unsigned short) destination.GetPort());
+
+	int sent_bytes = sendto(handle, (const char*)data, size, 0, (sockaddr*)&address, sizeof(sockaddr_in));
+
+	return sent_bytes == size;
+}
+
+int UDPSocket::Receive(IPAddress &sender, void *data, int size)
+{
+	if (handle == 0 || size <= 0)
+	{
+		return 0;
+	}	
+
+	#if defined(PLATFORM_WINDOWS)
+		typedef int socklen_t;
+	#endif
+
+	sockaddr_in from;
+	socklen_t fromLength = sizeof(from);
+
+	int received_bytes = recvfrom(handle, (char*)data, size, 0, (sockaddr*)&from, &fromLength);
+
+	if (received_bytes <= 0)
+	{
+		return 0;
+	}
+
+	unsigned int address = ntohl(from.sin_addr.s_addr);
+	unsigned int port = ntohs(from.sin_port);
+
+	sender = IPAddress(address, port);
+
+	return received_bytes;
+}
+
 bool UDPSocket::InitializeSocketLayer()
 {
 	#if defined(PLATFORM_WINDOWS)

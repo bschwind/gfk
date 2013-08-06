@@ -11,6 +11,8 @@
 	#include <unistd.h>
 #endif
 
+#include <GFK/Network/IPAddress.hpp>
+
 namespace gfk
 {
 
@@ -22,8 +24,8 @@ public:
 	bool Open(unsigned short port);
 	void Close();
 	bool IsOpen() const;
-	//bool Send(const Address & destination, const void * data, int size);
-	//int Receive(Address & sender, void * data, int size);
+	bool Send(const IPAddress &destination, const void *data, int size);
+	int Receive(IPAddress &sender, void *data, int size);
 
 	static bool InitializeSocketLayer();
 	static void ShutdownSocketLayer();
