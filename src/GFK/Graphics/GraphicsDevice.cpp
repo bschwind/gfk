@@ -68,9 +68,10 @@ void initialize(GLuint &vao) {
 	glEnableVertexAttribArray(position_attribute);
 }
 
-GraphicsDevice::GraphicsDevice()
+GraphicsDevice::GraphicsDevice() :
+gameShouldClose(false)
 {
-	
+
 }
 
 GraphicsDevice::~GraphicsDevice()
@@ -79,6 +80,7 @@ GraphicsDevice::~GraphicsDevice()
 	{
 		glfwDestroyWindow(*iter);
 	}
+	
 	glfwTerminate();
 }
 
@@ -189,7 +191,6 @@ void GraphicsDevice::SetClearColor(const gfk::Color &color)
 		glfwMakeContextCurrent(*iter);
 		glClearColor(color.R, color.G, color.B, color.A);
 	}
-	// glClearColor(color.R, color.G, color.B, color.A);
 }
 
 void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
@@ -210,8 +211,6 @@ void GraphicsDevice::Clear()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		display(vao);
 	}
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//display(vao);
 }
 
 void GraphicsDevice::ClearDepth()
@@ -235,7 +234,6 @@ void GraphicsDevice::SwapBuffers()
 	{
 		glfwSwapBuffers(*iter);
 	}
-	// glfwSwapBuffers(primaryWindow);
 }
 
 void GraphicsDevice::UpdateWindowEvents()
@@ -244,27 +242,15 @@ void GraphicsDevice::UpdateWindowEvents()
 
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
-		if (glfwGetKey((*iter), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			exit(0);
+		if (glfwGetKey((*iter), GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(*iter)) {
+			gameShouldClose = true;
 		}
 	}
-	// glfwPollEvents();
-	// if (glfwGetKey(primaryWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-	// 	exit(0);
-	// }
 }
 
 bool GraphicsDevice::WindowShouldClose()
 {
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		if (glfwWindowShouldClose(*iter))
-		{
-			return true;
-		}
-	}
-	// return glfwWindowShouldClose(primaryWindow);
-	return false;
+	return gameShouldClose;
 }
 
 void GraphicsDevice::error_callback(int error, const char* description)

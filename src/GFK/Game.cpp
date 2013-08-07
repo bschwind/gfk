@@ -33,7 +33,6 @@ Game::~Game()
 void Game::Initialize()
 {
 	MonitorConfig::SetupMonitor(1280, 720, title, false);
-	MonitorConfig::SetupMonitor(1280, 720, title, false);
 
 	Device.Initialize();
 	Device.SetClearColor(Color::CornflowerBlue);

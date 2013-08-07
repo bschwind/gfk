@@ -34,6 +34,7 @@ protected:
 private:
 	GLFWwindow* primaryWindow;
 	std::vector<GLFWwindow*> windows;
+	bool gameShouldClose;
 	static void error_callback(int error, const char* description);
 	void InitializeWindows();
 };

@@ -28,8 +28,6 @@ protected:
 	virtual void Update(const gfk::GameTime &gameTime);
 	virtual void Draw(const gfk::GameTime &gameTime);
 private:
-	// sf::Clock clock;
-	// sf::Event event;
 	gfk::GameTime time;
 	std::string title;
 	int width, height;
