@@ -12,6 +12,7 @@ class Game
 {
 public:
 	Game();
+	Game(bool headless);
 	Game(const std::string &title, 
 		 const int screenWidth, 
 		 const int screenHeight);
@@ -33,6 +34,7 @@ private:
 	int width, height;
 	void HandleEvents();
 	void Tick();
+	bool headless;
 };
 
 }

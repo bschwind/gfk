@@ -7,9 +7,19 @@ namespace gfk
 {
 
 Game::Game() :
+exitRequested(false),
 title("GFK Game"),
 width(1280),
-height(720)
+height(720),
+headless(false)
+{
+
+}
+
+Game::Game(bool headless) :
+exitRequested(false),
+title("GFK Game"),
+headless(headless)
 {
 
 }
@@ -20,7 +30,8 @@ Game::Game(const std::string &gameTitle,
 exitRequested(false),
 title(gameTitle),
 width(screenWidth),
-height(screenHeight)
+height(screenHeight),
+headless(false)
 {
 
 }
@@ -32,12 +43,16 @@ Game::~Game()
 
 void Game::Initialize()
 {
-	MonitorConfig::SetupMonitor(1280, 720, title, false);
+	GameTime::InitClock();
 
-	Device.Initialize();
-	Device.SetClearColor(Color::CornflowerBlue);
+	if (!headless)
+	{
+		MonitorConfig::SetupMonitor(width, height, title, false);
+		Device.Initialize();
+		Device.SetClearColor(Color::CornflowerBlue);
+	}
 
-	time.TotalGameTime = glfwGetTime();
+	time.TotalGameTime = GameTime::GetSystemTime();
 
 	LoadContent();
 	glfwSetTime(0.0);
@@ -55,7 +70,7 @@ void Game::UnloadContent()
 
 void Game::Update(const gfk::GameTime &gameTime)
 {
-
+	std::cout << (gameTime.TotalGameTime) << std::endl;
 }
 
 void Game::Draw(const gfk::GameTime &gameTime)
@@ -67,13 +82,21 @@ void Game::Draw(const gfk::GameTime &gameTime)
 void Game::Tick()
 {
 	//Get the elapsed and total game time
-	double currentTime = glfwGetTime();
+	double currentTime = GameTime::GetSystemTime();
 	time.ElapsedGameTime = currentTime - time.TotalGameTime;
 	time.TotalGameTime = currentTime;
 
-	HandleEvents();
+	if (!headless)
+	{
+		HandleEvents();
+	}
+
 	Update(time);
-	Draw(time);
+
+	if (!headless)
+	{
+		Draw(time);
+	}
 }
 
 void Game::Run()
