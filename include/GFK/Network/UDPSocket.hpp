@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GFK/OSDetection.hpp>
 
 #if defined(PLATFORM_WINDOWS)
