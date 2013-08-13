@@ -2,9 +2,8 @@
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/PackedColor.hpp>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <GFK/Graphics/Shader.hpp>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace gfk

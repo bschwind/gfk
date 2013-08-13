@@ -8,7 +8,7 @@ namespace gfk
 class GameObject
 {
 public:
-	Transform Transform;
+	gfk::Transform Transform;
 protected:
 private:
 };
