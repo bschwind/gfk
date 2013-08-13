@@ -2,6 +2,7 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GLFW/glfw3.h>
+#include <GFK/Network/UDPSocket.hpp>
 
 namespace gfk
 {
@@ -38,12 +39,13 @@ headless(false)
 
 Game::~Game()
 {
-	
+	UDPSocket::ShutdownSocketLayer();
 }
 
 void Game::Initialize()
 {
 	GameTime::InitClock();
+	UDPSocket::InitializeSocketLayer();
 
 	if (!headless)
 	{
