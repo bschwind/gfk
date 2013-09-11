@@ -21,13 +21,13 @@ public:
 	void Update(const GameTime &gameTime)
 	{
 		IPAddress sender;
-        int byteReadCount = socket.Receive(sender, receiveBuffer, sizeof(receiveBuffer));
-        if (!byteReadCount)
-        {
-            return;
-        }
+		int byteReadCount = socket.Receive(sender, receiveBuffer, sizeof(receiveBuffer));
+		if (!byteReadCount)
+		{
+			return;
+		}
 
-        std::cout << receiveBuffer << std::endl;
+		std::cout << receiveBuffer << std::endl;
 	}
 };
 
