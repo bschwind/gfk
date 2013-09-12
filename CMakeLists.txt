@@ -40,6 +40,7 @@ add_library(gfk-math STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Matrix.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Transform.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/GUIDGenerator.cpp
 			)
 
 add_library(gfk-graphics STATIC
