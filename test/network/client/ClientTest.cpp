@@ -18,7 +18,7 @@ int main()
 		std::getline(std::cin, message);
 		char *sendBuffer = (char*)message.c_str();
 
-		socket.Send(IPAddress(127,0,0,1,55777), sendBuffer, length);
+		socket.Send(IPAddress(192,168,1,13,55777), sendBuffer, length);
 	}
 
 	return 0;
