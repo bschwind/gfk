@@ -21,13 +21,13 @@ endif ()
 
 add_definitions(-Wall)
 
-# Find libraries
+# Set up external libraries
 find_package(GLEW REQUIRED)
-find_package(GLFW REQUIRED)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
 
 # Add header paths
 include_directories(${GLEW_INCLUDE_PATH})
-include_directories(${GLFW_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the subdirectories
@@ -61,7 +61,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY})
+target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES})
 
 target_link_libraries(gfk gfk-math gfk-graphics gfk-network)
 
