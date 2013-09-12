@@ -3,7 +3,6 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/PackedColor.hpp>
 #include <GFK/Graphics/Shader.hpp>
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace gfk
