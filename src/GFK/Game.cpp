@@ -115,25 +115,6 @@ void Game::Run()
 void Game::HandleEvents()
 {
 	Device.UpdateWindowEvents();
-	//Check for close events
-	// while (window.pollEvent(event))
-	// {
-	// 	// Window closed
-	// 	if(event.type == sf::Event::Closed)
-	// 	{
-	// 		window.close();
-	// 	}
-
-	// 	if(event.type == sf::Event::Resized)
-	// 	{
-	// 		Device.ResizeWindow(event.size.width, event.size.height);
-	// 	}	
-	// }
-
-	// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-	// {
-	// 	exitRequested = true;
-	// }
 }
 
 void Game::Exit()
