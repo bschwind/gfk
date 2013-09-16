@@ -15,9 +15,11 @@ namespace gfk
 double GameTime::clockResolution(0.0);
 long GameTime::clockBase(0);
 
-bool GameTime::hasPerformanceCounter(false);
-unsigned int GameTime::time32(0);
-__int64 GameTime::time64(0);
+#if defined(PLATFORM_WINDOWS)
+	bool GameTime::hasPerformanceCounter(false);
+	unsigned int GameTime::time32(0);
+	__int64 GameTime::time64(0);
+#endif
 
 GameTime::GameTime() :
 ElapsedGameTime(0),
