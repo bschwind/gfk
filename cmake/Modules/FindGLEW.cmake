@@ -18,6 +18,7 @@ IF (WIN32)
 			NAMES glew64 glew64s
 			PATHS
 			$ENV{PROGRAMFILES}/GLEW/lib
+			$ENV{PROGRAMFILES}/GLEW/lib/Release/x64
 			${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
 	    	${PROJECT_SOURCE_DIR}/src/nvgl/glew/lib
 			DOC "The GLEW library (64-bit)"
@@ -27,6 +28,7 @@ IF (WIN32)
 			NAMES glew GLEW glew32 glew32s
 			PATHS
 			$ENV{PROGRAMFILES}/GLEW/lib
+			$ENV{PROGRAMFILES}/GLEW/lib/Release/Win32
 			${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
 	    	${PROJECT_SOURCE_DIR}/src/nvgl/glew/lib
 			DOC "The GLEW library"
