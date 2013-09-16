@@ -6,6 +6,8 @@ using namespace gfk;
 
 int main()
 {
+	UDPSocket::InitializeSocketLayer();
+
 	UDPSocket socket;
 	unsigned char receiveBuffer[256];
 
@@ -23,5 +25,7 @@ int main()
 		std::cout << receiveBuffer << std::endl;
 	}
 
+	UDPSocket::ShutdownSocketLayer();
+	
 	return 0;
 }

@@ -6,6 +6,8 @@ using namespace gfk;
 
 int main()
 {
+	UDPSocket::InitializeSocketLayer();
+
 	UDPSocket socket;
 	static const int length = 256;
 
@@ -18,8 +20,10 @@ int main()
 		std::getline(std::cin, message);
 		char *sendBuffer = (char*)message.c_str();
 
-		socket.Send(IPAddress(192,168,1,13,55777), sendBuffer, length);
+		socket.Send(IPAddress(192,168,1,6,55777), sendBuffer, length);
 	}
+
+	UDPSocket::ShutdownSocketLayer();
 
 	return 0;
 }
