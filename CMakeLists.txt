@@ -23,6 +23,7 @@ add_definitions(-Wall)
 
 # Set up external libraries
 find_package(GLEW REQUIRED)
+find_package(UUID)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
 
 # Add header paths
@@ -63,6 +64,8 @@ add_library(gfk STATIC
 )
 
 target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES})
+message(${UUID_LIBRARY})
+target_link_libraries(gfk-math ${UUID_LIBRARY})
 
 target_link_libraries(gfk gfk-math gfk-graphics gfk-network)
 
