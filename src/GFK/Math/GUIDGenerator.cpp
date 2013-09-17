@@ -14,22 +14,22 @@ namespace gfk
 std::string GUIDGenerator::GenerateGUID()
 {
 #if defined(PLATFORM_WINDOWS)
-    UUID uuid;
-    UuidCreate (&uuid);
+	UUID uuid;
+	UuidCreate(&uuid);
 
-    unsigned char * str;
-    UuidToStringA (&uuid, &str);
+	unsigned char *str;
+	UuidToStringA (&uuid, &str);
 
-    std::string s((char*) str);
+	std::string s((char*) str);
 
-    RpcStringFreeA (&str);
+	RpcStringFreeA(&str);
 #else
-    uuid_t uuid;
-    uuid_generate_random (uuid);
-    char s[39];
-    uuid_unparse (uuid, s);
+	uuid_t uuid;
+	uuid_generate_random(uuid);
+	char s[39];
+	uuid_unparse(uuid, s);
 #endif
-    return s;
+	return s;
 }
 
 
