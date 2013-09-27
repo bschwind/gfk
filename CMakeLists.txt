@@ -15,7 +15,7 @@ endif()
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 	set(CMAKE_CXX_FLAGS "-std=c++0x")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-	set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+	set(CMAKE_CXX_FLAGS "-stdlib=libc++ -std=c++11")
 	set(CMAKE_C_FLAGS "-stdlib=libc++")
 endif ()
 
