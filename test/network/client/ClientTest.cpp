@@ -6,6 +6,12 @@ using namespace gfk;
 
 int main(int argc, char* argv[])
 {
+	if (argc < 2 || argc > 2)
+	{
+		std::cout << "Please provide a port to bind the client to" << std::endl;
+		return 1;
+	}
+
 	int portInt = atoi(argv[1]);
 	unsigned short port = (unsigned short)portInt;
 

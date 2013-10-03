@@ -60,6 +60,7 @@ add_library(gfk-graphics STATIC
 add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPSocket.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/IPAddress.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPServer.cpp
 			)
 
 add_library(gfk STATIC
