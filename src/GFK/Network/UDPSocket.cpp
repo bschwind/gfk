@@ -50,7 +50,7 @@ bool UDPSocket::Open(unsigned short port)
 
 	socketPort = port;
 
-	std::cout << "Opened UDP socket on port " << socketPort << " with handle " << handle << std::endl;
+	printf("Opened UDP socket on port %u with handle %d\n", socketPort, handle);
 
 	// Set socket to non-blocking mode
 	#if defined(PLATFORM_WINDOWS)
@@ -76,7 +76,7 @@ void UDPSocket::Close()
 {
 	if (IsOpen())
 	{
-		std::cout << "Closing socket with handle " << handle << " on port " << socketPort << std::endl;;
+		printf("Closing socket with handle %d on port %u\n", handle, socketPort);
 
 		#if defined(PLATFORM_WINDOWS)
 			closesocket(handle);
