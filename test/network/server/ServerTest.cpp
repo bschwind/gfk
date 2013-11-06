@@ -23,6 +23,9 @@ int main()
 		}
 
 		std::cout << receiveBuffer << std::endl;
+
+		// Echo the contents back to the client
+		socket.Send(sender, receiveBuffer, sizeof(receiveBuffer));
 	}
 
 	UDPSocket::ShutdownSocketLayer();

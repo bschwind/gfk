@@ -6,7 +6,7 @@ using namespace gfk;
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2 || argc > 2)
+	if (argc != 2)
 	{
 		std::cout << "Please provide a port to bind the client to" << std::endl;
 		return 1;
@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
 
 		socket.Send(IPAddress(127,0,0,1,55777), sendBuffer, length);
 
+		// Receive an echo from the server
 		while (true)
 		{
 			int byteReadCount = socket.Receive(sender, receiveBuffer, sizeof(receiveBuffer));
