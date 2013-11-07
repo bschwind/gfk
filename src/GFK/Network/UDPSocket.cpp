@@ -39,7 +39,7 @@ bool UDPSocket::Open(unsigned short port)
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons((unsigned short)port);
+	address.sin_port = htons(port);
 
 	if (bind(handle, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0)
 	{
@@ -104,7 +104,7 @@ bool UDPSocket::Send(const IPAddress &destination, const void *data, int size)
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = htonl(destination.GetAddress());
-	address.sin_port = htons((unsigned short) destination.GetPort());
+	address.sin_port = htons(destination.GetPort());
 
 	int sent_bytes = sendto(handle, (const char*)data, size, 0, (sockaddr*)&address, sizeof(sockaddr_in));
 

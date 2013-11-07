@@ -26,13 +26,15 @@ int main(int argc, char* argv[])
 
 	unsigned char receiveBuffer[256];
 	IPAddress sender;
-
-	while (true)
+	IPAddress destination;
+	int validAddress = IPAddress::FromIPV4String("127.0.0.1", 55777, destination);
+	
+	while (validAddress)
 	{
 		std::getline(std::cin, message);
 		char *sendBuffer = (char*)message.c_str();
 
-		socket.Send(IPAddress(127,0,0,1,55777), sendBuffer, length);
+		socket.Send(destination, sendBuffer, length);
 
 		// Receive an echo from the server
 		while (true)

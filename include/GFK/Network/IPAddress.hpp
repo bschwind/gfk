@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace gfk
 {
 
@@ -18,6 +20,8 @@ public:
 	unsigned char GetC() const;
 	unsigned char GetD() const;
 	unsigned short GetPort() const;
+
+	static int FromIPV4String(std::string address, unsigned short port, IPAddress &IPAddress);
 protected:
 private:
 	unsigned int address;

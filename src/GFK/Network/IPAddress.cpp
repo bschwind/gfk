@@ -1,3 +1,4 @@
+#include <GFK/Network/SocketHeader.hpp>
 #include <GFK/Network/IPAddress.hpp>
 
 namespace gfk
@@ -57,6 +58,22 @@ unsigned char IPAddress::GetD() const
 unsigned short IPAddress::GetPort() const
 {
 	return port;
+}
+
+int IPAddress::FromIPV4String(std::string address, unsigned short port, IPAddress &ipAddress)
+{
+	// Get a sockaddr_in struct, so we can call inet_pton to parse the address
+	struct sockaddr_in sa;
+	int result = inet_pton(AF_INET, address.c_str(), &(sa.sin_addr));
+
+	if (result > 0)
+	{
+		// inet_pton converts the address to network byte order,
+		// so we need to convert it back to host order with ntohl
+		ipAddress = IPAddress(ntohl(sa.sin_addr.s_addr), port);
+	}
+
+	return result;
 }
 
 }
