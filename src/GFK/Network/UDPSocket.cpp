@@ -18,7 +18,7 @@ UDPSocket::~UDPSocket()
 	Close();
 }
 
-bool UDPSocket::Open(unsigned short port)
+bool UDPSocket::Bind(unsigned short port)
 {
 	if (IsOpen())
 	{

@@ -18,7 +18,7 @@ namespace gfk
 		// Example of starting a thread with a member function
 		// std::thread worker(&UDPServer::Listen, this);
 
-		listening = socket.Open(port);
+		listening = socket.Bind(port);
 		std::cout << "UDP Server started" << std::endl;
 
 		IPAddress sender;

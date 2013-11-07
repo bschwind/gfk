@@ -11,7 +11,7 @@ class UDPSocket
 public:
 	UDPSocket();
 	~UDPSocket();
-	bool Open(unsigned short port);
+	bool Bind(unsigned short port);
 	void Close();
 	bool IsOpen() const;
 	bool Send(const IPAddress &destination, const void *data, int size);

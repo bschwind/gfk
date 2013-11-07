@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 	UDPSocket socket;
 	static const int length = 256;
 
-	socket.Open(port);
+	socket.Bind(port);
 
 	std::string message;
 

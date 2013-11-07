@@ -11,7 +11,7 @@ int main()
 	UDPSocket socket;
 	unsigned char receiveBuffer[256];
 
-	socket.Open(55777);
+	socket.Bind(55777);
 
 	IPAddress sender;
 	while (true)
