@@ -3,6 +3,8 @@
 	-Download the windows zip binary at http://glew.sourceforge.net/
 	-Follow the installation steps at http://glew.sourceforge.net/install.html
 		-NOTE: When copying glew32.dll to your System32 folder, you need to do this on the command line with administrative privileges. In the start menu, type "cmd", right click on cmd.exe, and choose "Run as Administrator", and copy the DLL to System32. You may think "Oh, I can just drag-and-drop, I see it right there in System32!". This is incorrect, and is a result of User Account Control Data Redirection: http://blogs.windows.com/windows/archive/b/developers/archive/2009/08/04/user-account-control-data-redirection.aspx
+-Install CMake
+	-http://www.cmake.org/cmake/resources/software.html
 -Run CMake
 	-Typically, you create a build directory in the top level project folder
 	-cd into the build directory, and call 'cmake ..'
