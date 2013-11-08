@@ -28,7 +28,9 @@ int main(int argc, char* argv[])
 	IPAddress sender;
 	IPAddress destination;
 	int validAddress = IPAddress::FromIPV4String("127.0.0.1", 55777, destination);
-	
+
+	std::cout << "Destination is " << destination.GetIPV4String() << std::endl;
+
 	while (validAddress)
 	{
 		std::getline(std::cin, message);
