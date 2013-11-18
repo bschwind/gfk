@@ -51,6 +51,10 @@ add_library(gfk-math STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/GUIDGenerator.cpp
 			)
 
+add_library(gfk-input STATIC
+	${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/GamePad.cpp
+)
+
 add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GraphicsDevice.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Color.cpp
@@ -79,6 +83,6 @@ if (NOT WIN32 AND NOT APPLE)
 	target_link_libraries(gfk-math ${UUID_LIBRARY})
 endif ()
 
-target_link_libraries(gfk gfk-math gfk-graphics gfk-network)
+target_link_libraries(gfk gfk-math gfk-input gfk-graphics gfk-network)
 
 add_subdirectory(test)
