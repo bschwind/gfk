@@ -23,6 +23,7 @@ add_definitions(-Wall)
 
 # Set up external libraries
 find_package(GLEW REQUIRED)
+find_package(LibEvent REQUIRED)
 
 # Link against libuuid for Linux
 if (NOT WIN32 AND NOT APPLE)
@@ -33,6 +34,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
 
 # Add header paths
 include_directories(${GLEW_INCLUDE_PATH})
+include_directories(${Event_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -68,6 +70,8 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
+
+target_link_libraries(gfk-network ${Event_LIBRARIES})
 
 target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES})
 
