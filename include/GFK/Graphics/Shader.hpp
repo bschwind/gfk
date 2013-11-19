@@ -31,12 +31,13 @@ public:
 
 	void Apply();
 	static Shader CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName);
+	static Shader CreateFromStringSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
 
 	NativeVars Natives;
 protected:
 private:
-	static GLuint LoadAndCompileShader(const std::string fileName, GLenum shaderType);
-	static void ReadShaderSource(const std::string fileName, std::vector<char> &buffer);
+	static GLuint LoadAndCompileShader(const char *source, GLenum shaderType);
+	static std::string GetShaderSource(const std::string fileName);
 };
 
 }
