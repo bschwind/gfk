@@ -61,6 +61,7 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PackedColor.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Shader.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/MonitorConfig.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PrimitiveBatch.cpp
 			)
 
 add_library(gfk-network STATIC
