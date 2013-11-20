@@ -38,6 +38,7 @@ protected:
 private:
 	static GLuint LoadAndCompileShader(const char *source, GLenum shaderType);
 	static std::string GetShaderSource(const std::string fileName);
+	static void BuildAttributeMap(GLuint shaderID);
 };
 
 }

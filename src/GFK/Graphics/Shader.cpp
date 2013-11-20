@@ -50,10 +50,31 @@ Shader Shader::CreateFromStringSource(const std::string &vertexShaderSource, con
 	glLinkProgram(shaderProgram);
 	glUseProgram(shaderProgram);
 
+	BuildAttributeMap(shaderProgram);
+
 	Shader returnShader;
 	returnShader.Natives.OpenGL.ShaderID = shaderProgram;
 
 	return returnShader;
+}
+
+void Shader::BuildAttributeMap(GLuint shaderID)
+{
+	GLint attributeCount = 0;
+
+	glGetProgramiv(shaderID, GL_ACTIVE_ATTRIBUTES, &attributeCount);
+
+	int attrNameLength = 0;
+	int attrSize = 0;
+	GLenum attrType = 0;
+	char tempAttrName[256];
+
+	for (int i = 0; i < attributeCount; i++)
+	{
+		glGetActiveAttrib(shaderID, i, 256, &attrNameLength, &attrSize, &attrType, tempAttrName);
+
+		std::cout << tempAttrName << " " << attrSize << std::endl;
+	}
 }
 
 GLuint Shader::LoadAndCompileShader(const char *source, GLenum shaderType)

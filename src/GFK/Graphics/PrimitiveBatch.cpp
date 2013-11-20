@@ -28,7 +28,7 @@ void PrimitiveBatch::Initialize() {
 
 	// A simple vertex and fragment shader. The vertex shader just passes the position through
 	// The fragment shader just returns white
-	std::string vertShaderSource = "#version 150\nin vec4 position;\nvoid main() {\ngl_Position = position;\n}\n";
+	std::string vertShaderSource = "#version 150\nin vec4 position;\nin vec4 color; out vec4 colorV; \nvoid main() {\ngl_Position = position; colorV = color;\n}\n";
 	std::string fragShaderSource = "#version 150\nout vec4 out_color;\nvoid main() {\nout_color = vec4(1.0, 1.0, 1.0, 1.0);\n}\n";
 
 	Shader shader = Shader::CreateFromStringSource(vertShaderSource, fragShaderSource);
