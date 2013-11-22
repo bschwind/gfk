@@ -591,14 +591,14 @@ void Matrix::CreateScale(float xScale, float yScale, float zScale, Matrix &resul
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateScale(Vector3 scales)
+Matrix Matrix::CreateScale(Vector3 &scales)
 {
 	Matrix m;
 	CreateScale(scales, m);
 	return m;
 }
 
-void Matrix::CreateScale(Vector3 scales, Matrix &result)
+void Matrix::CreateScale(Vector3 &scales, Matrix &result)
 {
 	result(1,1) = scales.X;
 	result(1,2) = 0.0f;
@@ -630,45 +630,45 @@ void Matrix::CreateTranslation(float xPosition, float yPosition, float zPosition
 	result(1,1) = 1.0f;
 	result(1,2) = 0.0f;
 	result(1,3) = 0.0f;
-	result(1,4) = 0.0f;
+	result(1,4) = xPosition;
 	result(2,1) = 0.0f;
 	result(2,2) = 1.0f;
 	result(2,3) = 0.0f;
-	result(2,4) = 0.0f;
+	result(2,4) = yPosition;
 	result(3,1) = 0.0f;
 	result(3,2) = 0.0f;
 	result(3,3) = 1.0f;
-	result(3,4) = 0.0f;
-	result(4,1) = xPosition;
-	result(4,2) = yPosition;
-	result(4,3) = zPosition;
+	result(3,4) = zPosition;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateTranslation(const Vector3 position)
+Matrix Matrix::CreateTranslation(const Vector3 &position)
 {
 	Matrix m;
 	CreateTranslation(position, m);
 	return m;
 }
 
-void Matrix::CreateTranslation(const Vector3 position, Matrix &result)
+void Matrix::CreateTranslation(const Vector3 &position, Matrix &result)
 {
 	result(1,1) = 1.0f;
 	result(1,2) = 0.0f;
 	result(1,3) = 0.0f;
-	result(1,4) = 0.0f;
+	result(1,4) = position.X;
 	result(2,1) = 0.0f;
 	result(2,2) = 1.0f;
 	result(2,3) = 0.0f;
-	result(2,4) = 0.0f;
+	result(2,4) = position.Y;
 	result(3,1) = 0.0f;
 	result(3,2) = 0.0f;
 	result(3,3) = 1.0f;
-	result(3,4) = 0.0f;
-	result(4,1) = position.X;
-	result(4,2) = position.Y;
-	result(4,3) = position.Z;
+	result(3,4) = position.Z;
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
 	result(4,4) = 1.0f;
 }
 

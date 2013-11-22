@@ -52,12 +52,12 @@ public:
 	static void CreateScale(float scale, Matrix &result);
 	static Matrix CreateScale(float xScale, float yScale, float zScale);
 	static void CreateScale(float xScale, float yScale, float zScale, Matrix &result);
-	static Matrix CreateScale(Vector3 scales);
-	static void CreateScale(Vector3 scales, Matrix &result);
+	static Matrix CreateScale(Vector3 &scales);
+	static void CreateScale(Vector3 &scales, Matrix &result);
 	static Matrix CreateTranslation(float xPosition, float yPosition, float zPosition);
 	static void CreateTranslation(float xPosition, float yPosition, float zPosition, Matrix &result);
-	static Matrix CreateTranslation(const Vector3 position);
-	static void CreateTranslation(const Vector3 position, Matrix &result);
+	static Matrix CreateTranslation(const Vector3 &position);
+	static void CreateTranslation(const Vector3 &position, Matrix &result);
 	// static Matrix CreateReflection(Plane value);
 	// static Matrix CreateReflection(Plane value, Matrix &result);
 	static Matrix CreateWorld(const Vector3 &position, const Vector3 &forward, const Vector3 &up);
