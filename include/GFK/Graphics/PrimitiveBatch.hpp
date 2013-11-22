@@ -25,6 +25,7 @@ private:
 	static const int bufferSize = 1024;
 	unsigned int vertCounter;
 	GLfloat vertexBuffer[bufferSize];
+	Shader shader;
 
 	void AddVertex(const Vector2 &vertex);
 };

@@ -21,7 +21,7 @@ void Shader::Apply()
 	glUseProgram(Natives.OpenGL.ShaderID);
 }
 
-Shader Shader::CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName)
+void Shader::CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName)
 {
 	std::string vertexShaderSource = GetShaderSource(vertexShaderFileName);
 	std::string fragmentShaderSource = GetShaderSource(fragmentShaderFileName);
@@ -29,8 +29,10 @@ Shader Shader::CreateFromFile(const std::string &vertexShaderFileName, const std
 	return CreateFromStringSource(vertexShaderSource, fragmentShaderSource);
 }
 
-Shader Shader::CreateFromStringSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource)
+void Shader::CreateFromStringSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource)
 {
+	Natives.OpenGL.ShaderID = glCreateProgram();
+
 	const char *vertexShaderStart = &vertexShaderSource[0];
 	const char *fragmentShaderStart = &fragmentShaderSource[0];
 
@@ -38,42 +40,37 @@ Shader Shader::CreateFromStringSource(const std::string &vertexShaderSource, con
 	GLuint fragmentShader = LoadAndCompileShader(fragmentShaderStart, GL_FRAGMENT_SHADER);
 
 	// Attach the above shader to a program
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	glAttachShader(Natives.OpenGL.ShaderID, vertexShader);
+	glAttachShader(Natives.OpenGL.ShaderID, fragmentShader);
 
 	// Flag the shaders for deletion
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	// Link and use the program
-	glLinkProgram(shaderProgram);
-	glUseProgram(shaderProgram);
+	glLinkProgram(Natives.OpenGL.ShaderID);
+	glUseProgram(Natives.OpenGL.ShaderID);
 
-	BuildAttributeMap(shaderProgram);
-
-	Shader returnShader;
-	returnShader.Natives.OpenGL.ShaderID = shaderProgram;
-
-	return returnShader;
+	BuildUniformMap(Natives.OpenGL.ShaderID);
 }
 
-void Shader::BuildAttributeMap(GLuint shaderID)
+void Shader::BuildUniformMap(GLuint shaderID)
 {
-	GLint attributeCount = 0;
+	GLint uniformCount = 0;
 
-	glGetProgramiv(shaderID, GL_ACTIVE_ATTRIBUTES, &attributeCount);
+	glGetProgramiv(shaderID, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-	int attrNameLength = 0;
-	int attrSize = 0;
-	GLenum attrType = 0;
-	char tempAttrName[256];
+	int uniformNameLength = 0;
+	int uniformSize = 0;
+	GLenum uniformType = 0;
+	char tempUniformName[256];
 
-	for (int i = 0; i < attributeCount; i++)
+	for (int i = 0; i < uniformCount; i++)
 	{
-		glGetActiveAttrib(shaderID, i, 256, &attrNameLength, &attrSize, &attrType, tempAttrName);
+		glGetActiveUniform(shaderID, i, 256, &uniformNameLength, &uniformSize, &uniformType, tempUniformName);
+		GLint uniformLocation = glGetUniformLocation(shaderID, tempUniformName);
 
-		std::cout << tempAttrName << " " << attrSize << std::endl;
+		uniformMap[tempUniformName] = uniformLocation;
 	}
 }
 
@@ -129,6 +126,31 @@ std::string Shader::GetShaderSource(const std::string fileName)
 	}
 
 	return "";
+}
+
+void Shader::SetUniform(std::string attribute, float value)
+{
+	GLint uniformLocation = uniformMap.at(attribute);
+	glUniform1f(uniformLocation, value);
+}
+
+void Shader::SetUniform(std::string attribute, Vector2 value)
+{
+	GLint uniformLocation = uniformMap.at(attribute);
+	glUniform2f(uniformLocation, value.X, value.Y);
+}
+
+void Shader::SetUniform(std::string attribute, Vector3 value)
+{
+	GLint uniformLocation = uniformMap.at(attribute);
+	glUniform3f(uniformLocation, value.X, value.Y, value.Z);
+}
+
+void Shader::SetUniform(std::string attribute, Color value)
+{
+	GLint uniformLocation = uniformMap.at(attribute);
+	std::cout << value.R << "," << value.G << "," << value.B << "," << value.A << std::endl;
+	glUniform4f(uniformLocation, value.R, value.G, value.B, value.A);
 }
 
 }

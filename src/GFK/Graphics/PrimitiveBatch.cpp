@@ -28,10 +28,10 @@ void PrimitiveBatch::Initialize() {
 
 	// A simple vertex and fragment shader. The vertex shader just passes the position through
 	// The fragment shader just returns white
-	std::string vertShaderSource = "#version 150\nin vec4 position;\nin vec4 color; out vec4 colorV; \nvoid main() {\ngl_Position = position; colorV = color;\n}\n";
-	std::string fragShaderSource = "#version 150\nout vec4 out_color;\nvoid main() {\nout_color = vec4(1.0, 1.0, 1.0, 1.0);\n}\n";
+	std::string vertShaderSource = "#version 150\nin vec4 position;\nvoid main() {\ngl_Position = position;\n}\n";
+	std::string fragShaderSource = "#version 150\nuniform vec4 lineColor;\nout vec4 out_color;\nvoid main() {\nout_color = lineColor;\n}\n";
 
-	Shader shader = Shader::CreateFromStringSource(vertShaderSource, fragShaderSource);
+	shader.CreateFromStringSource(vertShaderSource, fragShaderSource);
 
 	// Get the location of the attributes that enter into the vertex shader
 	GLint position_attribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
@@ -41,6 +41,9 @@ void PrimitiveBatch::Initialize() {
 
 	// Enable the attribute
 	glEnableVertexAttribArray(position_attribute);
+
+	// ?
+	glBindVertexArray(vao);
 }
 
 void PrimitiveBatch::Begin()
@@ -90,6 +93,10 @@ void PrimitiveBatch::Flush()
 	// if it comes to that.
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertCounter * sizeof(GLfloat), vertexBuffer);
+
+	shader.Apply();
+
+	shader.SetUniform("lineColor", Color::Red);
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_LINES, 0, vertCounter / 2);
