@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Matrix.hpp>
 #include <GFK/Graphics/Color.hpp>
 #include <string>
 #include <vector>
@@ -36,10 +37,11 @@ public:
 	void Apply();
 	void CreateFromFile(const std::string &vertexShaderFileName, const std::string &fragmentShaderFileName);
 	void CreateFromStringSource(const std::string &vertexShaderSource, const std::string &fragmentShaderSource);
-	void SetUniform(std::string attribute, float value);
-	void SetUniform(std::string attribute, Vector2 value);
-	void SetUniform(std::string attribute, Vector3 value);
-	void SetUniform(std::string attribute, Color value);
+	void SetUniform(const std::string attribute, float value);
+	void SetUniform(const std::string attribute, const Vector2 &value);
+	void SetUniform(const std::string attribute, const Vector3 &value);
+	void SetUniform(const std::string attribute, const Matrix &value);
+	void SetUniform(const std::string attribute, const Color &value);
 
 	NativeVars Natives;
 protected:

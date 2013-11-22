@@ -128,28 +128,33 @@ std::string Shader::GetShaderSource(const std::string fileName)
 	return "";
 }
 
-void Shader::SetUniform(std::string attribute, float value)
+void Shader::SetUniform(const std::string attribute, float value)
 {
 	GLint uniformLocation = uniformMap.at(attribute);
 	glUniform1f(uniformLocation, value);
 }
 
-void Shader::SetUniform(std::string attribute, Vector2 value)
+void Shader::SetUniform(const std::string attribute, const Vector2 &value)
 {
 	GLint uniformLocation = uniformMap.at(attribute);
 	glUniform2f(uniformLocation, value.X, value.Y);
 }
 
-void Shader::SetUniform(std::string attribute, Vector3 value)
+void Shader::SetUniform(const std::string attribute, const Vector3 &value)
 {
 	GLint uniformLocation = uniformMap.at(attribute);
 	glUniform3f(uniformLocation, value.X, value.Y, value.Z);
 }
 
-void Shader::SetUniform(std::string attribute, Color value)
+void Shader::SetUniform(const std::string attribute, const Matrix &value)
 {
 	GLint uniformLocation = uniformMap.at(attribute);
-	std::cout << value.R << "," << value.G << "," << value.B << "," << value.A << std::endl;
+	glUniformMatrix4fv(uniformLocation, 1, false, value.ToFloatArray());
+}
+
+void Shader::SetUniform(const std::string attribute, const Color &value)
+{
+	GLint uniformLocation = uniformMap.at(attribute);
 	glUniform4f(uniformLocation, value.R, value.G, value.B, value.A);
 }
 
