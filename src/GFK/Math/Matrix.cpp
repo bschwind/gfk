@@ -591,14 +591,14 @@ void Matrix::CreateScale(float xScale, float yScale, float zScale, Matrix &resul
 	result(4,4) = 1.0f;
 }
 
-Matrix Matrix::CreateScale(Vector3 &scales)
+Matrix Matrix::CreateScale(const Vector3 &scales)
 {
 	Matrix m;
 	CreateScale(scales, m);
 	return m;
 }
 
-void Matrix::CreateScale(Vector3 &scales, Matrix &result)
+void Matrix::CreateScale(const Vector3 &scales, Matrix &result)
 {
 	result(1,1) = scales.X;
 	result(1,2) = 0.0f;
