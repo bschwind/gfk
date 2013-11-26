@@ -15,6 +15,10 @@ public:
 	void Initialize();
 	void Begin();
 	void DrawLine(const Vector2 &v1, const Vector2 &v2);
+	void DrawTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3);
+	void DrawCircle(const Vector2 &center, float radius, int segments);
+	void DrawPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments);
+	void Draw2DGrid(int width, int height);
 	void End();
 	void Flush();
 protected:

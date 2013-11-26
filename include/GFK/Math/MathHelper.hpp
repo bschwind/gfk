@@ -6,6 +6,9 @@ namespace gfk
 class MathHelper
 {
 public:
+	static constexpr float Pi = 3.14159265358979f;
+	static constexpr float TwoPi = Pi * 2.0f;
+
 	static inline float Barycentric(float v1, float v2, float v3, float amount1, float amount2)
 	{
 		return v1 + (v2 - v1) * amount1 + (v3 - v1) * amount2;
