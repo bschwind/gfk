@@ -417,24 +417,25 @@ void Matrix::CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, 
 	{
 		throw std::invalid_argument("nearPlaneDistance >= farPlaneDistance");
 	}
+
 	float num = 1.0f / ((float) tan((double) (fieldOfView * 0.5f)));
 	float num9 = num / aspectRatio;
 	result(1,1) = num9;
 	result(1,2) = 0.0f;
 	result(1,3) = 0.0f;
 	result(1,4) = 0.0;
-	result(2,2) = num;
 	result(2,1) = 0.0f;
+	result(2,2) = num;
 	result(2,3) = 0.0f;
 	result(2,4) = 0.0f;
 	result(3,1) = 0.0f;
 	result(3,2) = 0.0f;
-	result(3,3) = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-	result(3,4) = -1.0f;
+	result(3,3) = (farPlaneDistance + nearPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+	result(3,4) = (2 * farPlaneDistance * nearPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 	result(4,1) = 0.0f;
 	result(4,2) = 0.0f;
+	result(4,3) = -1.0f;
 	result(4,4) = 0.0f;
-	result(4,3) = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
 }
 
 Matrix Matrix::CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float nearPlaneDistance, float farPlaneDistance)
