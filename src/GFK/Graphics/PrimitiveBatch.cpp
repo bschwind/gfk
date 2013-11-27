@@ -49,8 +49,10 @@ void PrimitiveBatch::Initialize() {
 	glBindVertexArray(vao);
 }
 
-void PrimitiveBatch::Begin()
+void PrimitiveBatch::Begin(PrimitiveType primitiveType)
 {
+	this->primitiveType = primitiveType;
+
 	if (hasBegun)
 	{
 		// throw error
@@ -139,6 +141,53 @@ void PrimitiveBatch::Draw2DGrid(int width, int height)
 	}
 }
 
+void PrimitiveBatch::FillTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3)
+{
+	AddVertex(v1);
+	AddVertex(v2);
+	AddVertex(v3);
+}
+
+void PrimitiveBatch::FillQuad(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Vector2 &v4)
+{
+	FillTriangle(v1, v2, v4);
+	FillTriangle(v2, v3, v4);
+}
+
+void PrimitiveBatch::FillCircle(const Vector2 &center, float radius, int segments)
+{
+	float startAngle = 0.0f;
+	float endAngle = MathHelper::TwoPi;
+	float delta = fabs(endAngle - startAngle) / segments;
+
+	for (int i = 0; i < segments; i++)
+	{
+		float start = startAngle + (i * delta);
+		float end = startAngle + ((i + 1) * delta);
+
+		FillTriangle(
+			center,
+			center + Vector2((float)cos(end) * radius, (float)sin(end) * radius),
+			center + Vector2((float)cos(start) * radius, (float)sin(start) * radius));
+	}
+}
+
+void PrimitiveBatch::FillPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments)
+{
+	float delta = fabs(endAngle - startAngle) / segments;
+
+	for (int i = 0; i < segments; i++)
+	{
+		float start = startAngle + (i * delta);
+		float end = startAngle + ((i + 1) * delta);
+
+		FillTriangle(
+			center,
+			center + Vector2((float)cos(end) * radius, (float)sin(end) * radius),
+			center + Vector2((float)cos(start) * radius, (float)sin(start) * radius));
+	}
+}
+
 void PrimitiveBatch::Flush()
 {
 	if (vertCounter <= 0)
@@ -164,7 +213,15 @@ void PrimitiveBatch::Flush()
 	shader.SetUniform("lineColor", Color::Green);
 
 	glBindVertexArray(vao);
-	glDrawArrays(GL_LINES, 0, vertCounter / 2);
+
+	int primitiveMode = GL_LINES;
+	if (primitiveType == PrimitiveType::TriangleList)
+	{
+		primitiveMode = GL_TRIANGLES;
+	}
+
+	// Later, we will divided by 3 instead of 2, for 3D positions
+	glDrawArrays(primitiveMode, 0, vertCounter / 2);
 
 	vertCounter = 0;
 }
