@@ -7,11 +7,11 @@
 namespace gfk
 {
 
-class PrimitiveBatch
+class PrimitiveBatch2D
 {
 public:
-	PrimitiveBatch();
-	~PrimitiveBatch();
+	PrimitiveBatch2D();
+	~PrimitiveBatch2D();
 
 	void Initialize();
 	void Begin(PrimitiveType primitiveType);

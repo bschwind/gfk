@@ -1,4 +1,4 @@
-#include <GFK/Graphics/PrimitiveBatch.hpp>
+#include <GFK/Graphics/PrimitiveBatch2D.hpp>
 #include <GFK/Math/Matrix.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <iostream>
@@ -7,17 +7,17 @@
 namespace gfk
 {
 
-PrimitiveBatch::PrimitiveBatch()
+PrimitiveBatch2D::PrimitiveBatch2D()
 {
 	vertCounter = 0;
 }
 
-PrimitiveBatch::~PrimitiveBatch()
+PrimitiveBatch2D::~PrimitiveBatch2D()
 {
 	glDeleteVertexArrays(1, &vao);
 }
 
-void PrimitiveBatch::Initialize() {
+void PrimitiveBatch2D::Initialize() {
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -69,10 +69,11 @@ void PrimitiveBatch::Initialize() {
 	glEnableVertexAttribArray(positionAttribute);
 	glEnableVertexAttribArray(colorAttribute);
 
+	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
 }
 
-void PrimitiveBatch::Begin(PrimitiveType primitiveType)
+void PrimitiveBatch2D::Begin(PrimitiveType primitiveType)
 {
 	this->primitiveType = primitiveType;
 
@@ -85,7 +86,7 @@ void PrimitiveBatch::Begin(PrimitiveType primitiveType)
 	hasBegun = true;
 }
 
-void PrimitiveBatch::Flush()
+void PrimitiveBatch2D::Flush()
 {
 	if (vertCounter <= 0)
 	{
@@ -121,7 +122,7 @@ void PrimitiveBatch::Flush()
 	vertCounter = 0;
 }
 
-void PrimitiveBatch::End()
+void PrimitiveBatch2D::End()
 {
 	if (!hasBegun)
 	{
@@ -134,7 +135,7 @@ void PrimitiveBatch::End()
 	hasBegun = false;
 }
 
-void PrimitiveBatch::AddVertex(const Vector2 &vertex, const Color &color)
+void PrimitiveBatch2D::AddVertex(const Vector2 &vertex, const Color &color)
 {
 	if (!hasBegun)
 	{
@@ -155,13 +156,13 @@ void PrimitiveBatch::AddVertex(const Vector2 &vertex, const Color &color)
 	vertCounter++;
 }
 
-void PrimitiveBatch::DrawLine(const Vector2 &v1, const Vector2 &v2, const Color &color1, const Color &color2)
+void PrimitiveBatch2D::DrawLine(const Vector2 &v1, const Vector2 &v2, const Color &color1, const Color &color2)
 {
 	AddVertex(v1, color1);
 	AddVertex(v2, color2);
 }
 
-void PrimitiveBatch::DrawTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Color &color1, const Color &color2, const Color &color3)
+void PrimitiveBatch2D::DrawTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Color &color1, const Color &color2, const Color &color3)
 {
 	AddVertex(v1, color1);
 	AddVertex(v2, color2);
@@ -173,7 +174,7 @@ void PrimitiveBatch::DrawTriangle(const Vector2 &v1, const Vector2 &v2, const Ve
 	AddVertex(v1, color1);
 }
 
-void PrimitiveBatch::DrawCircle(const Vector2 &center, float radius, int segments, const Color &color)
+void PrimitiveBatch2D::DrawCircle(const Vector2 &center, float radius, int segments, const Color &color)
 {
 	for (int i = 0; i < segments; i++)
 	{
@@ -186,7 +187,7 @@ void PrimitiveBatch::DrawCircle(const Vector2 &center, float radius, int segment
 	}
 }
 
-void PrimitiveBatch::DrawPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments, const Color &color)
+void PrimitiveBatch2D::DrawPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments, const Color &color)
 {
 	AddVertex(center, color);
 	AddVertex(center + Vector2((float)cos(startAngle), (float)sin(startAngle)) * radius, color);
@@ -205,7 +206,7 @@ void PrimitiveBatch::DrawPie(const Vector2 &center, float radius, float startAng
 	AddVertex(center, color);
 }
 
-void PrimitiveBatch::Draw2DGrid(int width, int height, const Color &color)
+void PrimitiveBatch2D::Draw2DGrid(int width, int height, const Color &color)
 {
 	for (int x = 0; x <= width; x++)
 	{
@@ -218,20 +219,20 @@ void PrimitiveBatch::Draw2DGrid(int width, int height, const Color &color)
 	}
 }
 
-void PrimitiveBatch::FillTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Color &color1, const Color &color2, const Color &color3)
+void PrimitiveBatch2D::FillTriangle(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Color &color1, const Color &color2, const Color &color3)
 {
 	AddVertex(v1, color1);
 	AddVertex(v2, color2);
 	AddVertex(v3, color3);
 }
 
-void PrimitiveBatch::FillQuad(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Vector2 &v4, const Color &color)
+void PrimitiveBatch2D::FillQuad(const Vector2 &v1, const Vector2 &v2, const Vector2 &v3, const Vector2 &v4, const Color &color)
 {
 	FillTriangle(v1, v2, v4, color, color, color);
 	FillTriangle(v2, v3, v4, color, color, color);
 }
 
-void PrimitiveBatch::FillCircle(const Vector2 &center, float radius, int segments, const Color &color)
+void PrimitiveBatch2D::FillCircle(const Vector2 &center, float radius, int segments, const Color &color)
 {
 	float startAngle = 0.0f;
 	float endAngle = MathHelper::TwoPi;
@@ -252,7 +253,7 @@ void PrimitiveBatch::FillCircle(const Vector2 &center, float radius, int segment
 	}
 }
 
-void PrimitiveBatch::FillPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments, const Color &color)
+void PrimitiveBatch2D::FillPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments, const Color &color)
 {
 	float delta = fabs(endAngle - startAngle) / segments;
 
