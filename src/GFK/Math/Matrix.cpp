@@ -282,20 +282,20 @@ void Matrix::CreateLookAt(const Vector3 &cameraPosition, const Vector3 &cameraTa
 	Vector3 vector2 = Vector3::Normalize(cross);
 	Vector3 vector3 = Vector3::Cross(vector, vector2);
 	result(1,1) = vector2.X;
-	result(1,2) = vector3.X;
-	result(1,3) = vector.X;
-	result(1,4) = 0.0f;
-	result(2,1) = vector2.Y;
+	result(1,2) = vector2.Y;
+	result(1,3) = vector2.Z;
+	result(1,4) = -Vector3::Dot(vector2, cameraPosition);
+	result(2,1) = vector3.X;
 	result(2,2) = vector3.Y;
-	result(2,3) = vector.Y;
-	result(2,4) = 0.0f;
-	result(3,1) = vector2.Z;
-	result(3,2) = vector3.Z;
+	result(2,3) = vector3.Z;
+	result(2,4) = -Vector3::Dot(vector3, cameraPosition);
+	result(3,1) = vector.X;
+	result(3,2) = vector.Y;
 	result(3,3) = vector.Z;
-	result(3,4) = 0.0f;
-	result(4,1) = -Vector3::Dot(vector2, cameraPosition);
-	result(4,2) = -Vector3::Dot(vector3, cameraPosition);
-	result(4,3) = -Vector3::Dot(vector, cameraPosition);
+	result(3,4) = -Vector3::Dot(vector, cameraPosition);
+	result(4,1) = 0.0f;
+	result(4,2) = 0.0f;
+	result(4,3) = 0.0f;
 	result(4,4) = 1.0f;
 }
 
