@@ -222,7 +222,7 @@ void PrimitiveBatch3D::FillSphere(const Vector3 &pos, float radius, int vertical
 			Vector3 v3 = Vector3(radius * (float)(cos(nextRadialAngle) * sin(nextBodyAngle)), radius * (float)cos(nextBodyAngle), radius * (float)(sin(-nextRadialAngle) * sin(nextBodyAngle)));
 			Vector3 v4 = Vector3(radius * (float)(cos(radialAngle) * sin(nextBodyAngle)), radius * (float)cos(nextBodyAngle), radius * (float)(sin(-radialAngle) * sin(nextBodyAngle)));
 
-			FillQuad(v1, v2, v3, v4, color);
+			FillQuad(pos + v1, pos + v2, pos + v3, pos + v4, color);
 		}
 	}
 }

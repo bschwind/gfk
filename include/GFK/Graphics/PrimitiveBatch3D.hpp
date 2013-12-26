@@ -36,8 +36,8 @@ private:
 		Color Color;
 	};
 
-	// bufferSize must be a multiple of 3
-	static const int bufferSize = 512 * 3;
+	// bufferSize must be a multiple of 6 to accomodate lines and triangles
+	static const int bufferSize = 256 * 6;
 	VertexPositionColor vertexBuffer[bufferSize];
 	GLuint vao;
 	GLuint vbo;
