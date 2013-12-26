@@ -17,7 +17,7 @@ public:
 	static inline float CatmullRom(float v1, float v2, float v3, float v4, float amount)
 	{
 		// Using formula from http://www.mvps.org/directx/articles/catmull/
-		// Internally using doubles not to lose precission
+		// Internally using doubles not to lose precision
 		double amountSquared = amount * amount;
 		double amountCubed = amountSquared * amount;
 		return (float)(0.5 * (2.0 * v2 +

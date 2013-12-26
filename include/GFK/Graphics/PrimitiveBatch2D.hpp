@@ -37,6 +37,7 @@ private:
 		Color Color;
 	};
 
+	// bufferSize must be a multiple of 2
 	static const int bufferSize = 1024;
 	VertexPositionColor vertexBuffer[bufferSize];
 	GLuint vao;
