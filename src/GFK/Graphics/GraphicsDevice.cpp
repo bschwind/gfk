@@ -39,7 +39,7 @@ void GraphicsDevice::Initialize()
 	std::cout << "Initialized GLEW" << std::endl;
 
 	primBatch.Initialize();
-	// glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
+	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 }
 
 void GraphicsDevice::InitializeWindows()
@@ -149,8 +149,10 @@ void GraphicsDevice::Clear()
 		glfwMakeContextCurrent(*iter);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		primBatch.Begin();
-		primBatch.DrawLine(Vector2(-1.0, 1.0), Vector2(1.0, -1.0));
+		primBatch.Begin(PrimitiveType::LineList);
+		primBatch.DrawXYGrid(50, 50, Color::Red);
+		primBatch.DrawXZGrid(50, 50, Color::Green);
+		primBatch.DrawYZGrid(50, 50, Color::Blue);
 		primBatch.End();
 	}
 }
@@ -176,12 +178,12 @@ void GraphicsDevice::SwapBuffers()
 	{
 		glfwSwapBuffers(*iter);
 	}
+
+	glfwPollEvents();
 }
 
 void GraphicsDevice::UpdateWindowEvents()
 {
-	glfwPollEvents();
-
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		if (glfwGetKey((*iter), GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(*iter)) {
