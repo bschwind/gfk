@@ -179,18 +179,150 @@ void PrimitiveBatch3D::DrawTriangle(const Vector3 &v1, const Vector3 &v2, const 
 	AddVertex(v1, color1);
 }
 
-// void PrimitiveBatch3D::Draw2DGrid(int width, int height, const Color &color)
-// {
-// 	for (int x = 0; x <= width; x++)
-// 	{
-// 		DrawLine(Vector3(x, 0), Vector3(x, height), color, color);
-// 	}
+void PrimitiveBatch3D::DrawQuad(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3, const Vector3 &v4, const Color &color)
+{
+	AddVertex(v1, color);
+	AddVertex(v2, color);
 
-// 	for (int y = 0; y <= height; y++)
-// 	{
-// 		DrawLine(Vector3(0, y), Vector3(width, y), color, color);
-// 	}
-// }
+	AddVertex(v2, color);
+	AddVertex(v3, color);
+
+	AddVertex(v3, color);
+	AddVertex(v4, color);
+
+	AddVertex(v4, color);
+	AddVertex(v1, color);
+}
+
+void PrimitiveBatch3D::DrawXYGrid(int width, int height, const Color &color)
+{
+	for (int x = 0; x <= width; x++)
+	{
+		DrawLine(Vector3(x, 0, 0), Vector3(x, height, 0), color, color);
+	}
+
+	for (int y = 0; y <= height; y++)
+	{
+		DrawLine(Vector3(0, y, 0), Vector3(width, y, 0), color, color);
+	}
+}
+
+void PrimitiveBatch3D::DrawXZGrid(int width, int depth, const Color &color)
+{
+	for (int x = 0; x <= width; x++)
+	{
+		DrawLine(Vector3(x, 0, 0), Vector3(x, 0, depth), color, color);
+	}
+
+	for (int z = 0; z <= depth; z++)
+	{
+		DrawLine(Vector3(0, 0, z), Vector3(width, 0, z), color, color);
+	}
+}
+
+void PrimitiveBatch3D::DrawYZGrid(int height, int depth, const Color &color)
+{
+	for (int y = 0; y <= height; y++)
+	{
+		DrawLine(Vector3(0, y, 0), Vector3(0, y, depth), color, color);
+	}
+
+	for (int z = 0; z <= depth; z++)
+	{
+		DrawLine(Vector3(0, 0, z), Vector3(0, height, z), color, color);
+	}
+}
+
+void PrimitiveBatch3D::DrawBox(const Vector3 &pos, const Vector3 &extents, const Color &color)
+{
+	// Top
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+
+	// Sides
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+
+	// Bottom
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color,
+		color);
+	DrawLine(
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color,
+		color);
+}
+
+void PrimitiveBatch3D::DrawSphere(const Vector3 &pos, float radius, int verticalSegments, int radialSegments, const Color &color)
+{
+	for (int i = 0; i < verticalSegments; i++)
+	{
+		float bodyAngle = ((float)i / verticalSegments) * MathHelper::Pi;
+		float nextBodyAngle = ((float)(i+1) / verticalSegments) * MathHelper::Pi;
+
+		for (int j = 0; j < radialSegments; j++)
+		{
+			float radialAngle = ((float)j / radialSegments) * MathHelper::TwoPi;
+			float nextRadialAngle = ((float)(j+1) / radialSegments) * MathHelper::TwoPi;
+
+			Vector3 v1 = Vector3(radius * (float)(cos(radialAngle) * sin(bodyAngle)), radius * (float)cos(bodyAngle), radius * (float)(sin(-radialAngle) * sin(bodyAngle)));
+			Vector3 v2 = Vector3(radius * (float)(cos(nextRadialAngle) * sin(bodyAngle)), radius * (float)cos(bodyAngle), radius * (float)(sin(-nextRadialAngle) * sin(bodyAngle)));
+			Vector3 v3 = Vector3(radius * (float)(cos(nextRadialAngle) * sin(nextBodyAngle)), radius * (float)cos(nextBodyAngle), radius * (float)(sin(-nextRadialAngle) * sin(nextBodyAngle)));
+			Vector3 v4 = Vector3(radius * (float)(cos(radialAngle) * sin(nextBodyAngle)), radius * (float)cos(nextBodyAngle), radius * (float)(sin(-radialAngle) * sin(nextBodyAngle)));
+
+			DrawQuad(pos + v1, pos + v2, pos + v3, pos + v4, color);
+		}
+	}
+}
 
 void PrimitiveBatch3D::FillTriangle(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3, const Color &color1, const Color &color2, const Color &color3)
 {
@@ -203,6 +335,51 @@ void PrimitiveBatch3D::FillQuad(const Vector3 &v1, const Vector3 &v2, const Vect
 {
 	FillTriangle(v1, v2, v4, color, color, color);
 	FillTriangle(v2, v3, v4, color, color, color);
+}
+
+void PrimitiveBatch3D::FillBox(const Vector3 &pos, const Vector3 &extents, const Color &color)
+{
+	FillQuad(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		color); // Top
+
+	FillQuad(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color); // Front
+
+	FillQuad(
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color); // Left
+
+	FillQuad(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X - extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color); // Back
+
+	FillQuad(
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y + extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		color); // Right
+
+	FillQuad(
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z + extents.Z),
+		Vector3(pos.X + extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		Vector3(pos.X - extents.X, pos.Y - extents.Y, pos.Z - extents.Z),
+		color); // Bottom
 }
 
 void PrimitiveBatch3D::FillSphere(const Vector3 &pos, float radius, int verticalSegments, int radialSegments, const Color &color)
