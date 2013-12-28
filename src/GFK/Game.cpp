@@ -72,7 +72,7 @@ void Game::UnloadContent()
 
 void Game::Update(const gfk::GameTime &gameTime)
 {
-	std::cout << (gameTime.TotalGameTime) << std::endl;
+
 }
 
 void Game::Draw(const gfk::GameTime &gameTime)

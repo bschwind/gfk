@@ -149,7 +149,7 @@ void GraphicsDevice::Clear()
 		glfwMakeContextCurrent(*iter);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		primBatch.Begin(PrimitiveType::LineList);
+		primBatch.Begin(PrimitiveType::LineList, camera);
 		primBatch.DrawXYGrid(50, 50, Color::Red);
 		primBatch.DrawXZGrid(50, 50, Color::Green);
 		primBatch.DrawYZGrid(50, 50, Color::Blue);

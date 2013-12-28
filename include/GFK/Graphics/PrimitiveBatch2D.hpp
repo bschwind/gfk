@@ -3,6 +3,7 @@
 #include <GFK/Graphics/Shader.hpp>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Graphics/PrimitiveType.hpp>
+#include <GFK/Graphics/Camera.hpp>
 
 namespace gfk
 {
@@ -14,7 +15,7 @@ public:
 	~PrimitiveBatch2D();
 
 	void Initialize();
-	void Begin(PrimitiveType primitiveType);
+	void Begin(PrimitiveType primitiveType, Camera &camera);
 	void End();
 	void Flush();
 
@@ -40,6 +41,8 @@ private:
 	// bufferSize must be a multiple of 6 to accomodate lines and triangles
 	static const int bufferSize = 256 * 6;
 	VertexPositionColor vertexBuffer[bufferSize];
+	Matrix view;
+	Matrix projection;
 	GLuint vao;
 	GLuint vbo;
 	Shader shader;

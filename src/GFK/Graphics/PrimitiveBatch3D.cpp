@@ -75,9 +75,11 @@ void PrimitiveBatch3D::Initialize() {
 	glBindVertexArray(0);
 }
 
-void PrimitiveBatch3D::Begin(PrimitiveType primitiveType)
+void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
 {
 	this->primitiveType = primitiveType;
+	view = camera.GetView();
+	projection = camera.GetProjection();
 
 	if (hasBegun)
 	{
@@ -103,16 +105,12 @@ void PrimitiveBatch3D::Flush()
 	glEnable(GL_DEPTH_TEST);
 
 	shader.Apply();
-
-	// Matrix world = Matrix::CreateTranslation(Vector3(0, 0, 0)) * Matrix::CreateRotationZ(MathHelper::Pi * 0.25f);
+	
 	Matrix world = Matrix::Identity;
-	Matrix view = Matrix::CreateLookAt(Vector3(0, 0, 100), Vector3(0, 0, 0), Vector3::Up);
-	// Matrix proj = Matrix::CreateOrthographic(1280, 720, 0.1f, 100);
-	Matrix proj = Matrix::CreatePerspectiveFieldOfView(MathHelper::Pi * 0.25f, 1280.0f / 720.0f, 0.1f, 1000.0f);
 
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
-	shader.SetUniform("proj", proj);
+	shader.SetUniform("proj", projection);
 
 	glBindVertexArray(vao);
 

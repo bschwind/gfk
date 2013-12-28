@@ -63,6 +63,8 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/MonitorConfig.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PrimitiveBatch2D.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PrimitiveBatch3D.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera2D.cpp
 			)
 
 add_library(gfk-network STATIC
