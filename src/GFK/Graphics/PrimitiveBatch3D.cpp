@@ -78,6 +78,23 @@ void PrimitiveBatch3D::Initialize() {
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
 {
 	this->primitiveType = primitiveType;
+	world = Matrix::Identity;
+	view = camera.GetView();
+	projection = camera.GetProjection();
+
+	if (hasBegun)
+	{
+		// throw error
+		return;
+	}
+
+	hasBegun = true;
+}
+
+void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera, const Matrix &worldMatrix)
+{
+	this->primitiveType = primitiveType;
+	world = worldMatrix;
 	view = camera.GetView();
 	projection = camera.GetProjection();
 
@@ -105,8 +122,6 @@ void PrimitiveBatch3D::Flush()
 	glEnable(GL_DEPTH_TEST);
 
 	shader.Apply();
-	
-	Matrix world = Matrix::Identity;
 
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
@@ -205,6 +220,19 @@ void PrimitiveBatch3D::DrawXYGrid(int width, int height, const Color &color)
 	}
 }
 
+void PrimitiveBatch3D::DrawXYGrid(int startX, int startY, int endX, int endY, const Color &color)
+{
+	for (int x = startX; x <= endX; x++)
+	{
+		DrawLine(Vector3(x, startY, 0), Vector3(x, endY, 0), color, color);
+	}
+
+	for (int y = startY; y <= endX; y++)
+	{
+		DrawLine(Vector3(startX, y, 0), Vector3(endX, y, 0), color, color);
+	}
+}
+
 void PrimitiveBatch3D::DrawXZGrid(int width, int depth, const Color &color)
 {
 	for (int x = 0; x <= width; x++)
@@ -218,6 +246,19 @@ void PrimitiveBatch3D::DrawXZGrid(int width, int depth, const Color &color)
 	}
 }
 
+void PrimitiveBatch3D::DrawXZGrid(int startX, int startZ, int endX, int endZ, const Color &color)
+{
+	for (int x = startX; x <= endX; x++)
+	{
+		DrawLine(Vector3(x, 0, startZ), Vector3(x, 0, endZ), color, color);
+	}
+
+	for (int z = startZ; z <= endZ; z++)
+	{
+		DrawLine(Vector3(startX, 0, z), Vector3(endX, 0, z), color, color);
+	}
+}
+
 void PrimitiveBatch3D::DrawYZGrid(int height, int depth, const Color &color)
 {
 	for (int y = 0; y <= height; y++)
@@ -228,6 +269,19 @@ void PrimitiveBatch3D::DrawYZGrid(int height, int depth, const Color &color)
 	for (int z = 0; z <= depth; z++)
 	{
 		DrawLine(Vector3(0, 0, z), Vector3(0, height, z), color, color);
+	}
+}
+
+void PrimitiveBatch3D::DrawYZGrid(int startY, int startZ, int endY, int endZ, const Color &color)
+{
+	for (int y = startY; y <= endY; y++)
+	{
+		DrawLine(Vector3(0, y, startZ), Vector3(0, y, endZ), color, color);
+	}
+
+	for (int z = startZ; z <= endZ; z++)
+	{
+		DrawLine(Vector3(0, startY, z), Vector3(0, endY, z), color, color);
 	}
 }
 
