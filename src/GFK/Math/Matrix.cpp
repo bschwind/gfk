@@ -493,8 +493,8 @@ void Matrix::CreateRotationX(float radians, Matrix &result)
 	float val2 = (float)sin(radians);
 
 	result(2,2) = val1;
-	result(2,3) = val2;
-	result(3,2) = -val2;
+	result(2,3) = -val2;
+	result(3,2) = val2;
 	result(3,3) = val1;
 }
 
@@ -513,8 +513,8 @@ void Matrix::CreateRotationY(float radians, Matrix &result)
 	float val2 = (float)sin(radians);
 
 	result(1,1) = val1;
-	result(1,3) = -val2;
-	result(3,1) = val2;
+	result(1,3) = val2;
+	result(3,1) = -val2;
 	result(3,3) = val1;
 }
 
@@ -533,8 +533,8 @@ void Matrix::CreateRotationZ(float radians, Matrix &result)
 	float val2 = (float)sin(radians);
 
 	result(1,1) = val1;
-	result(1,2) = val2;
-	result(2,1) = -val2;
+	result(1,2) = -val2;
+	result(2,1) = val2;
 	result(2,2) = val1;
 }
 
