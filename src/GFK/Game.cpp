@@ -3,6 +3,8 @@
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GLFW/glfw3.h>
 #include <GFK/Network/UDPSocket.hpp>
+#include <GFK/Input/Keyboard.hpp>
+#include <GFK/Input/Mouse.hpp>
 
 namespace gfk
 {
@@ -26,8 +28,8 @@ headless(headless)
 }
 
 Game::Game(const std::string &gameTitle,
-		   const int screenWidth,
-		   const int screenHeight) :
+		   int screenWidth,
+		   int screenHeight) :
 exitRequested(false),
 title(gameTitle),
 width(screenWidth),
@@ -52,6 +54,9 @@ void Game::Initialize()
 		MonitorConfig::SetupMonitor(width, height, title, false);
 		Device.Initialize();
 		Device.SetClearColor(Color::CornflowerBlue);
+
+		Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
+		Mouse::SetTargetWindow(Device.GetPrimaryWindow());
 	}
 
 	time.TotalGameTime = GameTime::GetSystemTime();

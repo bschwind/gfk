@@ -14,8 +14,8 @@ public:
 	Game();
 	Game(bool headless);
 	Game(const std::string &title, 
-		 const int screenWidth, 
-		 const int screenHeight);
+		 int screenWidth, 
+		 int screenHeight);
 	~Game();
 	void Run();
 	void Exit();
