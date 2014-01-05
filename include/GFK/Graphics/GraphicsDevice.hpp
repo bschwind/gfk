@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Camera.hpp>
 
 struct GLFWwindow;
@@ -31,6 +30,9 @@ public:
 	void SwapBuffers();
 	void UpdateWindowEvents();
 	bool WindowShouldClose();
+
+	GLFWwindow* GetPrimaryWindow();
+	std::vector<GLFWwindow*> GetWindows();
 protected:
 
 private:
@@ -39,7 +41,5 @@ private:
 	bool gameShouldClose;
 	static void error_callback(int error, const char* description);
 	void InitializeWindows();
-	PrimitiveBatch3D primBatch;
-	Camera camera;
 };
 }

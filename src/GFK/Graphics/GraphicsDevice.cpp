@@ -38,7 +38,6 @@ void GraphicsDevice::Initialize()
 
 	std::cout << "Initialized GLEW" << std::endl;
 
-	primBatch.Initialize();
 	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 }
 
@@ -148,13 +147,10 @@ void GraphicsDevice::Clear()
 	{
 		glfwMakeContextCurrent(*iter);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		primBatch.Begin(PrimitiveType::LineList, camera);
-		primBatch.DrawXYGrid(50, 50, Color::Red);
-		primBatch.DrawXZGrid(50, 50, Color::Green);
-		primBatch.DrawYZGrid(50, 50, Color::Blue);
-		primBatch.End();
 	}
+
+	glEnable (GL_BLEND);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void GraphicsDevice::ClearDepth()
@@ -186,7 +182,7 @@ void GraphicsDevice::UpdateWindowEvents()
 {
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
-		if (glfwGetKey((*iter), GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(*iter)) {
+		if (glfwWindowShouldClose(*iter)) {
 			gameShouldClose = true;
 		}
 	}
@@ -195,6 +191,16 @@ void GraphicsDevice::UpdateWindowEvents()
 bool GraphicsDevice::WindowShouldClose()
 {
 	return gameShouldClose;
+}
+
+GLFWwindow* GraphicsDevice::GetPrimaryWindow()
+{
+	return primaryWindow;
+}
+
+std::vector<GLFWwindow*> GraphicsDevice::GetWindows()
+{
+	return windows;
 }
 
 void GraphicsDevice::error_callback(int error, const char* description)
