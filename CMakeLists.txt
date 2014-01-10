@@ -84,6 +84,7 @@ add_library(gfk STATIC
 target_link_libraries(gfk-network ${Event_LIBRARIES})
 
 target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES})
+target_link_libraries(gfk-input gfk-math)
 
 if (NOT WIN32 AND NOT APPLE)
 	target_link_libraries(gfk-math ${UUID_LIBRARY})
