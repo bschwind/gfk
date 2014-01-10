@@ -4,7 +4,6 @@
 #include <GFK/Network/IPAddress.hpp>
 #include <unordered_map>
 #include <string>
-#include <thread>
 
 namespace gfk
 {
@@ -26,7 +25,7 @@ public:
 protected:
 private:
 	UDPSocket socket;
-	uint applicationID;
+	unsigned int applicationID;
 	volatile bool listening;
 	unsigned char receiveBuffer[256];
 	std::unordered_map<std::string, ClientInfo> clientMap;

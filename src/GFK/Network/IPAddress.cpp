@@ -81,7 +81,11 @@ int IPAddress::FromIPV4String(std::string address, unsigned short port, IPAddres
 {
 	// Get a sockaddr_in struct, so we can call inet_pton to parse the address
 	struct sockaddr_in sa;
+#if defined(PLATFORM_WINDOWS)
+	int result = InetPton(AF_INET, address.c_str(), &(sa.sin_addr));
+#elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX)
 	int result = inet_pton(AF_INET, address.c_str(), &(sa.sin_addr));
+#endif
 
 	if (result > 0)
 	{

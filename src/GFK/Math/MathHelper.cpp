@@ -3,6 +3,9 @@
 namespace gfk
 {
 
+const float MathHelper::Pi = 3.14159265358979f;
+const float MathHelper::TwoPi = 6.28318530718f;
+
 float MathHelper::Hermite(float v1, float tangent1, float v2, float tangent2, float amount)
 {
 	double d1 = v1, d2 = v2, t1 = tangent1, t2 = tangent2, s = amount, result;

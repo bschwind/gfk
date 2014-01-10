@@ -4,8 +4,10 @@
 
 #if defined(PLATFORM_WINDOWS)
 	#include <winsock2.h>
+	#include <WS2tcpip.h>
 	// This compiler directive tells the windows compiler to link to wsock32.lib
 	#pragma comment( lib, "wsock32.lib" )
+	#pragma comment( lib, "Ws2_32.lib" )
 #elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX)
 	#include <sys/socket.h>
 	#include <netinet/in.h>
