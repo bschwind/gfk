@@ -42,11 +42,11 @@ protected:
 private:
 	struct VertexPositionColor {
 		Vector3 Position;
-		Color Color;
+		gfk::Color Color;
 	};
 
 	// bufferSize must be a multiple of 6 to accomodate lines and triangles
-	static const int bufferSize = 256 * 6;
+	static const unsigned int bufferSize = 256 * 6;
 	VertexPositionColor vertexBuffer[bufferSize];
 	Matrix world;
 	Matrix view;

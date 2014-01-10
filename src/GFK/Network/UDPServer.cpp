@@ -3,7 +3,8 @@
 
 namespace gfk
 {
-	UDPServer::UDPServer()
+	UDPServer::UDPServer() :
+	listening(false)
 	{
 		UDPSocket::InitializeSocketLayer();
 	}

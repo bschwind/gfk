@@ -7,9 +7,11 @@
 namespace gfk
 {
 
-PrimitiveBatch2D::PrimitiveBatch2D()
+PrimitiveBatch2D::PrimitiveBatch2D() :
+hasBegun(false),
+vertCounter(0)
 {
-	vertCounter = 0;
+	
 }
 
 PrimitiveBatch2D::~PrimitiveBatch2D()

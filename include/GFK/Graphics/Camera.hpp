@@ -9,6 +9,8 @@ namespace gfk
 class Camera
 {
 public:
+	Camera();
+	~Camera();
 	virtual Matrix GetView();
 	virtual Matrix GetProjection();
 	virtual void Update(float dt);
@@ -17,7 +19,7 @@ protected:
 	Matrix projection;
 private:
 	Vector3 pos;
-	float totalTime = 0.0f;
+	float totalTime;
 };
 
 }

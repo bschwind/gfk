@@ -8,6 +8,17 @@
 namespace gfk
 {
 
+Camera::Camera() :
+totalTime(0.0f)
+{
+
+}
+
+Camera::~Camera()
+{
+
+}
+
 Matrix Camera::GetView()
 {
 	Matrix::CreateLookAt(pos, Vector3(0, 0, 0), Vector3::Up, view);
