@@ -6,6 +6,18 @@
 namespace gfk
 {
 
+Camera2D::Camera2D() :
+screenWidth(0.0f),
+screenHeight(0.0f)
+{
+
+}
+
+Camera2D::~Camera2D()
+{
+
+}
+
 Matrix Camera2D::GetView()
 {
 	Matrix::CreateLookAt(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3::Up, view);
@@ -14,7 +26,7 @@ Matrix Camera2D::GetView()
 
 Matrix Camera2D::GetProjection()
 {
-	Matrix::CreateOrthographic(1280, 720, 0.1f, 100, projection);
+	Matrix::CreateOrthographicUpperLeftOrigin(screenWidth, screenHeight, 0.0f, 1.0f, projection);
 	return projection;
 }
 

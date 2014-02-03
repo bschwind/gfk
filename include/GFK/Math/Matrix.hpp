@@ -43,6 +43,10 @@ public:
 	static void CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane, Matrix &result);
 	static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane);
 	static void CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNearPlane, float zFarPlane, Matrix &result);
+	static Matrix CreateOrthographicUpperLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance);
+	static void CreateOrthographicUpperLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance, Matrix &result);
+	static Matrix CreateOrthographicBottomLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance);
+	static void CreateOrthographicBottomLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance, Matrix &result);
 	static Matrix CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance);
 	static void CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance, Matrix &result);
 	static Matrix CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance);
