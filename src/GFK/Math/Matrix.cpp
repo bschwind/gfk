@@ -356,25 +356,25 @@ void Matrix::CreateOrthographicOffCenter(float left, float right, float bottom, 
 Matrix Matrix::CreateOrthographicUpperLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance)
 {
 	Matrix m;
-	CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0, nearPlaneDistance, farPlaneDistance, m);
+	CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, nearPlaneDistance, farPlaneDistance, m);
 	return m;
 }
 
 void Matrix::CreateOrthographicUpperLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance, Matrix &result)
 {
-	CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0, nearPlaneDistance, farPlaneDistance, result);
+	CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, nearPlaneDistance, farPlaneDistance, result);
 }
 
 Matrix Matrix::CreateOrthographicBottomLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance)
 {
 	Matrix m;
-	CreateOrthographicOffCenter(0.0f, screenWidth, 0, screenHeight, nearPlaneDistance, farPlaneDistance, m);
+	CreateOrthographicOffCenter(0.0f, screenWidth, 0.0f, screenHeight, nearPlaneDistance, farPlaneDistance, m);
 	return m;
 }
 
 void Matrix::CreateOrthographicBottomLeftOrigin(float screenWidth, float screenHeight, float nearPlaneDistance, float farPlaneDistance, Matrix &result)
 {
-	return CreateOrthographicOffCenter(0.0f, screenWidth, 0, screenHeight, nearPlaneDistance, farPlaneDistance, result);
+	return CreateOrthographicOffCenter(0.0f, screenWidth, 0.0f, screenHeight, nearPlaneDistance, farPlaneDistance, result);
 }
 
 Matrix Matrix::CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
