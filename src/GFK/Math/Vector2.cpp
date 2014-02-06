@@ -212,6 +212,11 @@ void Vector2::Normalize(const Vector2 &v, Vector2 &result)
 	result.Y *= val;
 }
 
+Vector2 Vector2::PerProduct(const Vector2 &v)
+{
+	return Vector2(-v.Y, v.X);
+}
+
 Vector2 Vector2::Reflect(const Vector2 &v, const Vector2 &normal)
 {
 	Vector2 result(0.0f, 0.0f);

@@ -46,6 +46,7 @@ public:
 	static void Negate(const Vector2 &v1, Vector2 &result);
 	static Vector2 Normalize(Vector2 &v);
 	static void Normalize(const Vector2 &v, Vector2 &result);
+	static Vector2 PerProduct(const Vector2 &v);
 	static Vector2 Reflect(const Vector2 &v, const Vector2 &normal);
 	static void Reflect(const Vector2 &v, const Vector2 &normal, Vector2 &result);
 	static Vector2 Rotate(const Vector2 &v, float angle);
