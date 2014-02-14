@@ -123,7 +123,7 @@ const Color Color::MediumAquamarine(0xffaacd66);
 const Color Color::MediumBlue(0xffcd0000);
 const Color Color::MediumOrchid(0xffd355ba);
 const Color Color::MediumPurple(0xffdb7093); 
-const Color MediumSeaGreen(0xff71b33c);
+const Color Color::MediumSeaGreen(0xff71b33c);
 const Color Color::MediumSlateBlue(0xffee687b);
 const Color Color::MediumSpringGreen(0xff9afa00);
 const Color Color::MediumTurquoise(0xffccd148);
