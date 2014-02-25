@@ -1,0 +1,9 @@
+-Download the android NDK
+-Place the NDK directory wherever, and add it to your PATH environment variable
+-At the root of your Android project:
+	-android update project -p . -t 3 (3, or whatever target you want from 'android list')
+	-Before running ndk-build, you need to set NDK_PROJECT_PATH to the root of your Android project
+	-run ndk-build
+	-run ant debug
+	-cd bin
+	-run adb install whatever.apk
