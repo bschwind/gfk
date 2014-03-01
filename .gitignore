@@ -5,4 +5,5 @@ gfk.sublime*
 android/obj/
 android/bin/
 android/gen/
+android/libs/
 
