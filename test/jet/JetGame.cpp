@@ -11,7 +11,8 @@ namespace jetGame
 JetGame::JetGame(const std::string &title, int width, int height) :
 Game(title, width, height)
 {
-
+	isFixedTimeStep = true;
+	targetFramesPerSecond = 60;
 }
 
 JetGame::~JetGame()
@@ -48,7 +49,7 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 	}
 }
 
-void JetGame::Draw(const gfk::GameTime &gameTime)
+void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
 	Device.Clear();
 

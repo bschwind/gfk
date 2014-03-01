@@ -1,7 +1,6 @@
 #pragma once
 #include <GFK/OSDetection.hpp>
 
-
 namespace gfk
 {
 

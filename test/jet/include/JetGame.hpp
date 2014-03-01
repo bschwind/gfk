@@ -18,7 +18,7 @@ public:
 	void LoadContent();
 	void UnloadContent();
 	void Update(const gfk::GameTime &gameTime);
-	void Draw(const gfk::GameTime &gameTime);
+	void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 private:
 	PrimitiveBatch3D primBatch;
 	Camera camera;

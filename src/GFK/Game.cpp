@@ -11,6 +11,7 @@ namespace gfk
 
 Game::Game() :
 exitRequested(false),
+isFixedTimeStep(false),
 title("GFK Game"),
 width(1280),
 height(720),
@@ -21,6 +22,7 @@ headless(false)
 
 Game::Game(bool headless) :
 exitRequested(false),
+isFixedTimeStep(false),
 title("GFK Game"),
 headless(headless)
 {
@@ -31,6 +33,7 @@ Game::Game(const std::string &gameTitle,
 		   int screenWidth,
 		   int screenHeight) :
 exitRequested(false),
+isFixedTimeStep(false),
 title(gameTitle),
 width(screenWidth),
 height(screenHeight),
@@ -60,6 +63,8 @@ void Game::Initialize()
 	}
 
 	time.TotalGameTime = GameTime::GetSystemTime();
+	currentTime = GameTime::GetSystemTime();
+	dt = 1.0 / targetFramesPerSecond;
 
 	LoadContent();
 	glfwSetTime(0.0);
@@ -80,7 +85,7 @@ void Game::Update(const gfk::GameTime &gameTime)
 
 }
 
-void Game::Draw(const gfk::GameTime &gameTime)
+void Game::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
 	Device.Clear();
 	Device.SwapBuffers();
@@ -88,21 +93,58 @@ void Game::Draw(const gfk::GameTime &gameTime)
 
 void Game::Tick()
 {
-	//Get the elapsed and total game time
-	double currentTime = GameTime::GetSystemTime();
-	time.ElapsedGameTime = currentTime - time.TotalGameTime;
-	time.TotalGameTime = currentTime;
-
-	if (!headless)
+	if (isFixedTimeStep)
 	{
-		HandleEvents();
+		// Implementation from http://gafferongames.com/game-physics/fix-your-timestep/
+
+		time.ElapsedGameTime = dt;
+
+		double newTime = GameTime::GetSystemTime();
+		double frameTime = newTime - currentTime;
+		if (frameTime > 0.25)
+		{
+			// Avoid the "spiral of death"
+			frameTime = 0.25;
+		}
+
+		currentTime = newTime;
+		accumulator += frameTime;
+
+		while (accumulator >= dt)
+		{
+			if (!headless)
+			{
+				HandleEvents();
+			}
+
+			Update(time);
+			time.TotalGameTime += dt;
+			accumulator -= dt;
+		}
+
+		if (!headless)
+		{
+			double interpolationFactor = accumulator / dt;
+			Draw(time, interpolationFactor);
+		}
 	}
-
-	Update(time);
-
-	if (!headless)
+	else
 	{
-		Draw(time);
+		double newTime = GameTime::GetSystemTime();
+		time.ElapsedGameTime = newTime - time.TotalGameTime;
+		time.TotalGameTime = newTime;
+
+		if (!headless)
+		{
+			HandleEvents();
+		}
+
+		Update(time);
+
+		if (!headless)
+		{
+			Draw(time, 1.0f);
+		}
 	}
 }
 

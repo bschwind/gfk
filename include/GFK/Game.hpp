@@ -22,12 +22,14 @@ public:
 protected:
 	gfk::GraphicsDevice Device;
 	bool exitRequested;
+	bool isFixedTimeStep;
+	int targetFramesPerSecond = 60;
 
 	virtual void Initialize();
 	virtual void LoadContent();
 	virtual void UnloadContent();
 	virtual void Update(const gfk::GameTime &gameTime);
-	virtual void Draw(const gfk::GameTime &gameTime);
+	virtual void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 private:
 	gfk::GameTime time;
 	std::string title;
@@ -35,6 +37,9 @@ private:
 	void HandleEvents();
 	void Tick();
 	bool headless;
+	double dt;
+	double accumulator = 0.0;
+	double currentTime = 0.0;
 };
 
 }
