@@ -83,7 +83,7 @@ int IPAddress::FromIPV4String(std::string address, unsigned short port, IPAddres
 	struct sockaddr_in sa;
 #if defined(PLATFORM_WINDOWS)
 	int result = InetPton(AF_INET, address.c_str(), &(sa.sin_addr));
-#elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX)
+#elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 	int result = inet_pton(AF_INET, address.c_str(), &(sa.sin_addr));
 #endif
 

@@ -4,7 +4,7 @@
 	#include <Windows.h>
 #elif defined(PLATFORM_MAC)
 	#include <mach/mach_time.h>
-#elif defined(PLATFORM_UNIX)
+#elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 	#include <sys/time.h>
 	#include <time.h>
 #endif
@@ -56,7 +56,7 @@ void GameTime::InitClock()
 
 		clockResolution = (double) info.numer / (info.denom * 1.0e9);
 		clockBase = GetRawTime();
-	#elif defined(PLATFORM_UNIX)
+	#elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 		clockResolution = 1.0e-6;
 		clockBase = GetRawTime();
 	#endif
@@ -110,7 +110,7 @@ long GameTime::GetRawTime()
 		return 0.0;
 	#elif defined(PLATFORM_MAC)
 		return mach_absolute_time();
-	#elif defined(PLATFORM_UNIX)
+	#elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
 		return (long) tv.tv_sec * (long) 1000000 + (long) tv.tv_usec;

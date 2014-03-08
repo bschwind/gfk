@@ -8,7 +8,7 @@
 	// This compiler directive tells the windows compiler to link to wsock32.lib
 	#pragma comment( lib, "wsock32.lib" )
 	#pragma comment( lib, "Ws2_32.lib" )
-#elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX)
+#elif defined(PLATFORM_MAC) || defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <fcntl.h>
