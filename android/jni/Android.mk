@@ -12,18 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-LOCAL_PATH:= $(call my-dir)
+LOCAL_PATH := $(call my-dir)
+GFK_PATH := $(LOCAL_PATH)/../..
+
+#LOCAL_SRC_FILES is relative to the jni directory
+GFK_SRC := ../../src
 
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libgfk
 LOCAL_CFLAGS    := -Werror
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/include/
+
+LOCAL_C_INCLUDES := $(GFK_PATH)/include/
 LOCAL_SRC_FILES := \
 	gfk_app.cpp \
-	GFK/Math/Vector2.cpp \
-	GFK/Math/MathHelper.cpp \
-	GFK/Network/IPAddress.cpp
+	$(GFK_SRC)/GFK/Math/Vector2.cpp \
+	$(GFK_SRC)/GFK/Math/MathHelper.cpp \
+	$(GFK_SRC)/GFK/Network/IPAddress.cpp
 
 LOCAL_LDLIBS    := -llog -lGLESv2
 
