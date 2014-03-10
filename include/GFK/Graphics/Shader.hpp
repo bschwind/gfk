@@ -1,7 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include <GFK/Graphics/GLHeader.hpp>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/Matrix.hpp>

@@ -17,7 +17,11 @@ public:
 		 int screenWidth, 
 		 int screenHeight);
 	~Game();
+	virtual void Initialize();
+	virtual void UnloadContent();
 	void Run();
+	void Tick();
+	void ResizeWindow(int width, int height);
 	void Exit();
 protected:
 	gfk::GraphicsDevice Device;
@@ -25,9 +29,7 @@ protected:
 	bool isFixedTimeStep;
 	int targetFramesPerSecond = 60;
 
-	virtual void Initialize();
 	virtual void LoadContent();
-	virtual void UnloadContent();
 	virtual void Update(const gfk::GameTime &gameTime);
 	virtual void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 private:
@@ -35,7 +37,6 @@ private:
 	std::string title;
 	int width, height;
 	void HandleEvents();
-	void Tick();
 	bool headless;
 	double dt;
 	double accumulator = 0.0;

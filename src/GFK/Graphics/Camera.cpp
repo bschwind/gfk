@@ -1,7 +1,10 @@
+#include <GFK/OSDetection.hpp>
 #include <GFK/Graphics/Camera.hpp>
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/MathHelper.hpp>
-#include <GFK/Input/Keyboard.hpp>
+#if not defined(PLATFORM_ANDROID)
+	#include <GFK/Input/Keyboard.hpp>
+#endif
 #include <iostream>
 #include <cmath>
 
@@ -36,7 +39,7 @@ void Camera::Update(float dt)
 	totalTime += dt;
 
 	pos.Z = 4;
-
+#if not defined(PLATFORM_ANDROID)
 	if (Keyboard::IsKeyDown(Keys::Left))
 	{
 		pos.X -= 50 * dt;
@@ -56,6 +59,7 @@ void Camera::Update(float dt)
 	{
 		pos.Y -= 10 * dt;
 	}
+#endif
 
 	// pos.X = (float)cos(totalTime) * 5;
 	// pos.Y = 2;

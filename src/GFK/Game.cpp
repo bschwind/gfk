@@ -1,10 +1,12 @@
+#include <GFK/OSDetection.hpp>
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/MonitorConfig.hpp>
-#include <GLFW/glfw3.h>
 #include <GFK/Network/UDPSocket.hpp>
-#include <GFK/Input/Keyboard.hpp>
-#include <GFK/Input/Mouse.hpp>
+#if not defined(PLATFORM_ANDROID)
+	#include <GFK/Input/Keyboard.hpp>
+	#include <GFK/Input/Mouse.hpp>
+#endif
 
 namespace gfk
 {
@@ -58,8 +60,10 @@ void Game::Initialize()
 		Device.Initialize();
 		Device.SetClearColor(Color::CornflowerBlue);
 
+#if not defined(PLATFORM_ANDROID)
 		Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
 		Mouse::SetTargetWindow(Device.GetPrimaryWindow());
+#endif
 	}
 
 	time.TotalGameTime = GameTime::GetSystemTime();
@@ -67,7 +71,9 @@ void Game::Initialize()
 	dt = 1.0 / targetFramesPerSecond;
 
 	LoadContent();
+#if not defined(PLATFORM_ANDROID)
 	glfwSetTime(0.0);
+#endif
 }
 
 void Game::LoadContent()
@@ -157,6 +163,13 @@ void Game::Run()
 	}
 
 	UnloadContent();
+}
+
+void Game::ResizeWindow(int width, int height)
+{
+	this->width = width;
+	this->height = height;
+	Device.ResizeWindow(width, height);
 }
 
 void Game::HandleEvents()

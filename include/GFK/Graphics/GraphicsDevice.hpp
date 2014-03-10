@@ -30,9 +30,10 @@ public:
 	void SwapBuffers();
 	void UpdateWindowEvents();
 	bool WindowShouldClose();
-
+#if not defined(PLATFORM_ANDROID)
 	GLFWwindow* GetPrimaryWindow();
 	std::vector<GLFWwindow*> GetWindows();
+#endif
 protected:
 
 private:
@@ -40,6 +41,7 @@ private:
 	std::vector<GLFWwindow*> windows;
 	bool gameShouldClose;
 	static void error_callback(int error, const char* description);
+	void InitializeGLEW();
 	void InitializeWindows();
 };
 }

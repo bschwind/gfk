@@ -21,14 +21,28 @@ GFK_SRC := ../../src
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libgfk
-LOCAL_CFLAGS    := -Werror
+LOCAL_CFLAGS    := -Werror -fexceptions
 
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/
 LOCAL_SRC_FILES := \
-	gfk_app.cpp \
+	GFKAndroidWrapper.cpp \
+	AndroidGame.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \
-	$(GFK_SRC)/GFK/Network/IPAddress.cpp
+	$(GFK_SRC)/GFK/Network/IPAddress.cpp \
+	$(GFK_SRC)/GFK/GameTime.cpp \
+	$(GFK_SRC)/GFK/Game.cpp \
+	$(GFK_SRC)/GFK/Network/UDPSocket.cpp \
+	$(GFK_SRC)/GFK/Graphics/MonitorConfig.cpp \
+	$(GFK_SRC)/GFK/Graphics/GraphicsDevice.cpp \
+	$(GFK_SRC)/GFK/Graphics/Color.cpp \
+	$(GFK_SRC)/GFK/Graphics/PackedColor.cpp \
+	$(GFK_SRC)/GFK/Graphics/Camera2D.cpp \
+	$(GFK_SRC)/GFK/Math/Matrix.cpp \
+	$(GFK_SRC)/GFK/Math/Quaternion.cpp \
+	$(GFK_SRC)/GFK/Math/Vector3.cpp \
+	$(GFK_SRC)/GFK/Graphics/Camera.cpp \
+	$(GFK_SRC)/GFK/Graphics/Shader.cpp
 
 LOCAL_LDLIBS    := -llog -lGLESv2
 

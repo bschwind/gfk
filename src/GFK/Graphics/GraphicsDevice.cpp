@@ -2,7 +2,7 @@
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/PackedColor.hpp>
-#include <GFK/Graphics/Shader.hpp>
+#include <GFK/Graphics/GLHeader.hpp>
 #include <iostream>
 
 namespace gfk
@@ -16,18 +16,28 @@ gameShouldClose(false)
 
 GraphicsDevice::~GraphicsDevice()
 {
+#if not defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwDestroyWindow(*iter);
 	}
 	
 	glfwTerminate();
+#endif
 }
 
 void GraphicsDevice::Initialize()
 {
+#if not defined(PLATFORM_ANDROID)
 	InitializeWindows();
+	InitializeGLEW();
+	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
+#endif
+}
 
+#if not defined(PLATFORM_ANDROID)
+void GraphicsDevice::InitializeGLEW()
+{
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
@@ -37,8 +47,6 @@ void GraphicsDevice::Initialize()
 	}
 
 	std::cout << "Initialized GLEW" << std::endl;
-
-	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 }
 
 void GraphicsDevice::InitializeWindows()
@@ -121,14 +129,19 @@ void GraphicsDevice::InitializeWindows()
 
 	glfwMakeContextCurrent(primaryWindow);
 }
+#endif
 
 void GraphicsDevice::SetClearColor(const gfk::Color &color)
 {
+#if defined(PLATFORM_ANDROID)
+	glClearColor(color.R, color.G, color.B, color.A);
+#else
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwMakeContextCurrent(*iter);
 		glClearColor(color.R, color.G, color.B, color.A);
 	}
+#endif
 }
 
 void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
@@ -138,16 +151,24 @@ void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
 
 void GraphicsDevice::SetDepthClearValue(float depth)
 {
+#if defined(PLATFORM_ANDROID)
+	glClearDepthf(depth);
+#else
 	glClearDepth(depth);
+#endif
 }
 
 void GraphicsDevice::Clear()
 {
+#if defined(PLATFORM_ANDROID)
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#else
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwMakeContextCurrent(*iter);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+#endif
 
 	glEnable (GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -170,22 +191,26 @@ void GraphicsDevice::ResizeWindow(int width, int height)
 
 void GraphicsDevice::SwapBuffers()
 {
+#if not defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwSwapBuffers(*iter);
 	}
 
 	glfwPollEvents();
+#endif
 }
 
 void GraphicsDevice::UpdateWindowEvents()
 {
+#if not defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		if (glfwWindowShouldClose(*iter)) {
 			gameShouldClose = true;
 		}
 	}
+#endif
 }
 
 bool GraphicsDevice::WindowShouldClose()
@@ -193,6 +218,7 @@ bool GraphicsDevice::WindowShouldClose()
 	return gameShouldClose;
 }
 
+#if not defined(PLATFORM_ANDROID)
 GLFWwindow* GraphicsDevice::GetPrimaryWindow()
 {
 	return primaryWindow;
@@ -202,6 +228,7 @@ std::vector<GLFWwindow*> GraphicsDevice::GetWindows()
 {
 	return windows;
 }
+#endif
 
 void GraphicsDevice::error_callback(int error, const char* description)
 {
