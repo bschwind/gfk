@@ -14,12 +14,12 @@ public:
 	virtual Matrix GetView();
 	virtual Matrix GetProjection();
 	virtual void Update(float dt);
+
+	Vector3 pos;
+	float screenWidth, screenHeight;
 protected:
 	Matrix view;
 	Matrix projection;
-private:
-	Vector3 pos;
-	float totalTime;
 };
 
 }

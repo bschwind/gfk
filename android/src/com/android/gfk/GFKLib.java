@@ -8,5 +8,4 @@ public class GFKLib {
 	 public static native void init();
 	 public static native void resize(int width, int height);
 	 public static native void step();
-	 public static native void onTouch(float x, float y);
 }

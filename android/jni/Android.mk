@@ -42,7 +42,9 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Math/Quaternion.cpp \
 	$(GFK_SRC)/GFK/Math/Vector3.cpp \
 	$(GFK_SRC)/GFK/Graphics/Camera.cpp \
-	$(GFK_SRC)/GFK/Graphics/Shader.cpp
+	$(GFK_SRC)/GFK/Graphics/Shader.cpp \
+	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch2D.cpp \
+	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch3D.cpp \
 
 LOCAL_LDLIBS    := -llog -lGLESv2
 

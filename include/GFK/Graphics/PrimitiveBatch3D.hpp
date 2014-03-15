@@ -40,6 +40,9 @@ public:
 	void FillSphere(const Vector3 &pos, float radius, int verticalSegments, int radialSegments, const Color &color);
 protected:
 private:
+	void InitializeShader();
+	void BindAttributes();
+
 	struct VertexPositionColor {
 		Vector3 Position;
 		gfk::Color Color;
@@ -57,6 +60,8 @@ private:
 	PrimitiveType primitiveType;
 	bool hasBegun;
 	unsigned int vertCounter;
+	GLint positionAttribute;
+	GLint colorAttribute;
 };
 
 }

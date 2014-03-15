@@ -417,11 +417,6 @@ class GFKView extends GLSurfaceView {
 		private boolean mUsesCoverageAa;
 	}
 
-	public boolean onTouchEvent(final MotionEvent event) {
-		GFKLib.onTouch(event.getX(), event.getY());
-		return true;
-	}
-
 	private static class Renderer implements GLSurfaceView.Renderer {
 		public void onDrawFrame(GL10 gl) {
 			GFKLib.step();

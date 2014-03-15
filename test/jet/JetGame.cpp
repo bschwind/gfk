@@ -13,6 +13,9 @@ Game(title, width, height)
 {
 	isFixedTimeStep = true;
 	targetFramesPerSecond = 60;
+
+	camera.screenWidth = width;
+	camera.screenHeight = height;
 }
 
 JetGame::~JetGame()

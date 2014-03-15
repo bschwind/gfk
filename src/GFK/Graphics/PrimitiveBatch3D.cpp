@@ -16,13 +16,17 @@ vertCounter(0)
 
 PrimitiveBatch3D::~PrimitiveBatch3D()
 {
+#if not defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
+#endif
 }
 
 void PrimitiveBatch3D::Initialize() {
+#if not defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+#endif
 
 	// Create a Vertex Buffer Object that will store the vertices on video memory
 	glGenBuffers(1, &vbo);
@@ -31,6 +35,19 @@ void PrimitiveBatch3D::Initialize() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_DYNAMIC_DRAW);
 
+	InitializeShader();
+
+	BindAttributes();
+
+#if not defined(PLATFORM_ANDROID)
+	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
+	glBindVertexArray(0);
+#endif
+}
+
+void PrimitiveBatch3D::InitializeShader()
+{
+#if not defined(PLATFORM_ANDROID)
 	// A simple vertex and fragment shader. The vertex shader just passes the position and color through
 	// The fragment shader just returns the color from the vertex shader
 	std::string vertShaderSource =
@@ -56,13 +73,40 @@ void PrimitiveBatch3D::Initialize() {
 	"{ "
 		"out_color = vertColor; "
 	"}";
+#else
+	// A simple vertex and fragment shader. The vertex shader just passes the position and color through
+	// The fragment shader just returns the color from the vertex shader
+	std::string vertShaderSource =
+	"uniform mat4 world; "
+	"uniform mat4 view; "
+	"uniform mat4 proj; "
+	"attribute vec4 position; "
+	"attribute vec4 color; "
+	"varying vec4 vertColor; "
+	"void main() "
+	"{ "
+		"gl_Position = proj * (view * (world * position)); "
+		"vertColor = color; "
+	"}";
+	
+	std::string fragShaderSource =
+	"precision mediump float;\n"
+	"varying vec4 vertColor; "
+	"void main() "
+	"{ "
+		"gl_FragColor = vertColor; "
+	"}";
+#endif
 
 	shader.CreateFromStringSource(vertShaderSource, fragShaderSource);
 
 	// Get the location of the attributes that enter into the vertex shader
-	GLint positionAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
-	GLint colorAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "color");
+	positionAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
+	colorAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "color");
+}
 
+void PrimitiveBatch3D::BindAttributes()
+{
 	int stride = sizeof(VertexPositionColor);
 
 	// Specify how the data for position can be accessed
@@ -72,9 +116,6 @@ void PrimitiveBatch3D::Initialize() {
 	// Enable the attribute
 	glEnableVertexAttribArray(positionAttribute);
 	glEnableVertexAttribArray(colorAttribute);
-
-	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
-	glBindVertexArray(0);
 }
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
@@ -116,6 +157,8 @@ void PrimitiveBatch3D::Flush()
 		return;
 	}
 
+	shader.Apply();
+
 	// Copy our vertex data from CPU to GPU
 	// Consider "double buffering" the vertex data for performance,
 	// if it comes to that.
@@ -123,13 +166,15 @@ void PrimitiveBatch3D::Flush()
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertCounter * sizeof(VertexPositionColor), vertexBuffer);
 	glEnable(GL_DEPTH_TEST);
 
-	shader.Apply();
-
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
 	shader.SetUniform("proj", projection);
 
+#if not defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
+#else
+	BindAttributes();
+#endif
 
 	int primitiveMode = GL_LINES;
 	if (primitiveType == PrimitiveType::TriangleList)

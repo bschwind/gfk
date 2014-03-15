@@ -33,6 +33,9 @@ public:
 	void FillPie(const Vector2 &center, float radius, float startAngle, float endAngle, int segments, const Color &color);
 protected:
 private:
+	void InitializeShader();
+	void BindAttributes();
+
 	struct VertexPositionColor {
 		Vector2 Position;
 		gfk::Color Color;
@@ -49,6 +52,8 @@ private:
 	PrimitiveType primitiveType;
 	bool hasBegun;
 	unsigned int vertCounter;
+	GLint positionAttribute;
+	GLint colorAttribute;
 };
 
 }
