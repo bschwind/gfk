@@ -49,6 +49,7 @@ add_library(gfk-math STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Quaternion.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Transform.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/GUIDGenerator.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/EasingFunctions.cpp
 			)
 
 add_library(gfk-input STATIC
