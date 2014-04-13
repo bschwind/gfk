@@ -5,20 +5,20 @@
 namespace gfk
 {
 
-float EasingFunctions::easeInBack(float t, float b, float c, float d)
+float EasingFunctions::EaseInBack(float t, float b, float c, float d)
 {
 	float s = 1.70158f;
 	float postFix = t /= d;
 	return c * (postFix) * t * ((s + 1) * t - s) + b;
 }
 
-float EasingFunctions::easeOutBack(float t, float b, float c, float d)
+float EasingFunctions::EaseOutBack(float t, float b, float c, float d)
 {	
 	float s = 1.70158f;
 	return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 }
 
-float EasingFunctions::easeInOutBack(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutBack(float t, float b, float c, float d)
 {
 	float s = 1.70158f;
 
@@ -33,12 +33,12 @@ float EasingFunctions::easeInOutBack(float t, float b, float c, float d)
 	}
 }
 
-float EasingFunctions::easeInBounce(float t, float b, float c, float d)
+float EasingFunctions::EaseInBounce(float t, float b, float c, float d)
 {
-	return c - easeOutBounce(d - t, 0, c, d) + b;
+	return c - EaseOutBounce(d - t, 0, c, d) + b;
 }
 
-float EasingFunctions::easeOutBounce(float t, float b, float c, float d)
+float EasingFunctions::EaseOutBounce(float t, float b, float c, float d)
 {
 	if ((t /= d) < (1 / 2.75f))
 	{
@@ -60,29 +60,29 @@ float EasingFunctions::easeOutBounce(float t, float b, float c, float d)
 	}
 }
 
-float EasingFunctions::easeInOutBounce(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutBounce(float t, float b, float c, float d)
 {
 	if (t < d / 2)
 	{
-		return easeInBounce(t * 2, 0, c, d) * 0.5f + b;
+		return EaseInBounce(t * 2, 0, c, d) * 0.5f + b;
 	}
 	else
 	{
-		return easeOutBounce(t * 2 - d, 0, c, d) * 0.5f + c * 0.5f + b;
+		return EaseOutBounce(t * 2 - d, 0, c, d) * 0.5f + c * 0.5f + b;
 	}
 }
 
-float EasingFunctions::easeInCirc(float t, float b, float c, float d)
+float EasingFunctions::EaseInCirc(float t, float b, float c, float d)
 {
 	return -c * (sqrt(1 - (t /= d) * t) - 1) + b;
 }
 
-float EasingFunctions::easeOutCirc(float t, float b, float c, float d)
+float EasingFunctions::EaseOutCirc(float t, float b, float c, float d)
 {
 	return c * sqrt(1 - (t = t / d - 1) * t) + b;
 }
 
-float EasingFunctions::easeInOutCirc(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutCirc(float t, float b, float c, float d)
 {
 	if ((t /= d / 2) < 1)
 	{
@@ -90,21 +90,21 @@ float EasingFunctions::easeInOutCirc(float t, float b, float c, float d)
 	}
 	else
 	{
-		return c / 2 * (sqrt(1 - t * (t -= 2)) + 1) + b;
+		return c / 2 * (sqrt(1 - (t -= 2) * t) + 1) + b;
 	}
 }
 
-float EasingFunctions::easeInCubic(float t, float b, float c, float d)
+float EasingFunctions::EaseInCubic(float t, float b, float c, float d)
 {
 	return c * (t /= d) * t * t + b;
 }
 
-float EasingFunctions::easeOutCubic(float t, float b, float c, float d)
+float EasingFunctions::EaseOutCubic(float t, float b, float c, float d)
 {
 	return c * ((t = t / d - 1) * t * t + 1) + b;
 }
 
-float EasingFunctions::easeInOutCubic(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutCubic(float t, float b, float c, float d)
 {
 	if ((t /= d / 2) < 1)
 	{
@@ -116,7 +116,7 @@ float EasingFunctions::easeInOutCubic(float t, float b, float c, float d)
 	}
 }
 
-float EasingFunctions::easeInElastic(float t, float b, float c, float d)
+float EasingFunctions::EaseInElastic(float t, float b, float c, float d)
 {
 	if (t == 0)
 	{
@@ -129,14 +129,12 @@ float EasingFunctions::easeInElastic(float t, float b, float c, float d)
 	}
 
 	float p = d * 0.3f;
-	float a = c;
 	float s = p / 4;
-	float postFix = a * pow(2, 10 * (t -= 1));
 
-	return -(postFix * sin((t * d - s) * (2 * MathHelper::Pi) / p)) + b;
+	return -(c * pow(2, 10 * (t -= 1)) * sin((t * d - s) * (2 * MathHelper::Pi) / p)) + b;
 }
 
-float EasingFunctions::easeOutElastic(float t, float b, float c, float d)
+float EasingFunctions::EaseOutElastic(float t, float b, float c, float d)
 {
 	if (t == 0)
 	{
@@ -155,7 +153,7 @@ float EasingFunctions::easeOutElastic(float t, float b, float c, float d)
 	return (a * pow(2, -10 * t) * sin((t * d - s) * (2 * MathHelper::Pi) / p) + c + b);
 }
 
-float EasingFunctions::easeInOutElastic(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutElastic(float t, float b, float c, float d)
 {
 	if (t == 0)
 	{
@@ -182,17 +180,17 @@ float EasingFunctions::easeInOutElastic(float t, float b, float c, float d)
 	return postFix * sin((t * d - s) * (2 * MathHelper::Pi) / p) * 0.5f + c + b;
 }
 
-float EasingFunctions::easeInExpo(float t, float b, float c, float d)
+float EasingFunctions::EaseInExpo(float t, float b, float c, float d)
 {
 	return (t == 0) ? b : c * pow(2, 10 * (t / d - 1)) + b;
 }
 
-float EasingFunctions::easeOutExpo(float t, float b, float c, float d)
+float EasingFunctions::EaseOutExpo(float t, float b, float c, float d)
 {
 	return (t == d) ? b + c : c * (-pow(2, -10 * t / d) + 1) + b;
 }
 
-float EasingFunctions::easeInOutExpo(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutExpo(float t, float b, float c, float d)
 {
 	if (t == 0)
 	{
@@ -212,32 +210,32 @@ float EasingFunctions::easeInOutExpo(float t, float b, float c, float d)
 	return c / 2 * (-pow(2, -10 * --t) + 2) + b;
 }
 
-float EasingFunctions::easeInLinear(float t, float b, float c, float d)
+float EasingFunctions::EaseInLinear(float t, float b, float c, float d)
 {
 	return c * t / d + b;
 }
 
-float EasingFunctions::easeOutLinear(float t, float b, float c, float d)
+float EasingFunctions::EaseOutLinear(float t, float b, float c, float d)
 {	
 	return c * t / d + b;
 }
 
-float EasingFunctions::easeInOutLinear(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutLinear(float t, float b, float c, float d)
 {
 	return c * t / d + b;
 }
 
-float EasingFunctions::easeInQuad(float t, float b, float c, float d)
+float EasingFunctions::EaseInQuad(float t, float b, float c, float d)
 {
 	return c * (t /= d) * t + b;
 }
 
-float EasingFunctions::easeOutQuad(float t, float b, float c, float d)
+float EasingFunctions::EaseOutQuad(float t, float b, float c, float d)
 {
 	return -c * (t /= d) * (t - 2) + b;
 }
 
-float EasingFunctions::easeInOutQuad(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutQuad(float t, float b, float c, float d)
 {
 	if ((t /= d / 2) < 1)
 	{
@@ -245,21 +243,21 @@ float EasingFunctions::easeInOutQuad(float t, float b, float c, float d)
 	}
 	else
 	{
-		return -c / 2 * (((t - 2) * (--t)) - 1) + b;
+		return -c / 2 * ((--t) * (t - 2) - 1) + b;
 	}
 }
 
-float EasingFunctions::easeInQuart(float t, float b, float c, float d)
+float EasingFunctions::EaseInQuart(float t, float b, float c, float d)
 {
 	return c * (t /= d) * t * t * t + b;
 }
 
-float EasingFunctions::easeOutQuart(float t, float b, float c, float d)
+float EasingFunctions::EaseOutQuart(float t, float b, float c, float d)
 {
 	return -c * ((t = t / d - 1) * t * t * t - 1) + b;
 }
 
-float EasingFunctions::easeInOutQuart(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutQuart(float t, float b, float c, float d)
 {
 	if ((t /= d / 2) < 1)
 	{
@@ -271,17 +269,17 @@ float EasingFunctions::easeInOutQuart(float t, float b, float c, float d)
 	}
 }
 
-float EasingFunctions::easeInQuint(float t, float b, float c, float d)
+float EasingFunctions::EaseInQuint(float t, float b, float c, float d)
 {
 	return c * (t /= d) * t * t * t * t + b;
 }
 
-float EasingFunctions::easeOutQuint(float t, float b, float c, float d)
+float EasingFunctions::EaseOutQuint(float t, float b, float c, float d)
 {
 	return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
 }
 
-float EasingFunctions::easeInOutQuint(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutQuint(float t, float b, float c, float d)
 {
 	if ((t /= d / 2) < 1)
 	{
@@ -293,17 +291,17 @@ float EasingFunctions::easeInOutQuint(float t, float b, float c, float d)
 	}
 }
 
-float EasingFunctions::easeInSine(float t, float b, float c, float d)
+float EasingFunctions::EaseInSine(float t, float b, float c, float d)
 {
 	return -c * cos(t / d * (MathHelper::Pi / 2)) + c + b;
 }
 
-float EasingFunctions::easeOutSine(float t, float b, float c, float d)
+float EasingFunctions::EaseOutSine(float t, float b, float c, float d)
 {	
 	return c * sin(t / d * (MathHelper::Pi / 2)) + b;
 }
 
-float EasingFunctions::easeInOutSine(float t, float b, float c, float d)
+float EasingFunctions::EaseInOutSine(float t, float b, float c, float d)
 {
 	return -c / 2 * (cos(MathHelper::Pi * t / d) - 1) + b;
 }
