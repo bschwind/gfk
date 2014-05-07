@@ -57,7 +57,6 @@ void Game::Initialize()
 	if (!headless)
 	{
 		MonitorConfig::SetupMonitor(width, height, title, false);
-		Device.Initialize();
 		Device.SetClearColor(Color::CornflowerBlue);
 
 #if not defined(PLATFORM_ANDROID)
