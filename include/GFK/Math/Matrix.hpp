@@ -15,6 +15,10 @@ class Matrix
 // |2  6  10 14|
 // |3  7  11 15|
 
+// Elements 12, 13, and 14 are the translation component
+
+// For example, M23 = 9, M31 = 2, M14 = 12, etc.
+
 public:
 	Matrix();
 	Matrix(
