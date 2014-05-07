@@ -1340,9 +1340,11 @@ Matrix operator* (const Matrix &op1, const Matrix &op2)
 Vector3 operator* (const Matrix &op1, const Vector3 &op2)
 {
 	Vector3 result;
-	result.X = op2.X * op1(0,0) + op2.Y * op1(0,1) + op2.Z * op1(0,2) + op1(0,3);
-	result.Y = op2.X * op1(1,0) + op2.Y * op1(1,1) + op2.Z * op1(1,2) + op1(1,3);
-	result.Z = op2.X * op1(2,0) + op2.Y * op1(2,1) + op2.Z * op1(2,2) + op1(2,3);
+
+	result.X = (op2.X * op1(1,1)) + (op2.Y * op1(2,1)) + (op2.Z * op1(3,1)) + op1(4,1);
+	result.Y = (op2.X * op1(1,2)) + (op2.Y * op1(2,2)) + (op2.Z * op1(3,2)) + op1(4,2);
+	result.Z = (op2.X * op1(1,3)) + (op2.Y * op1(2,3)) + (op2.Z * op1(3,3)) + op1(4,3);
+
 	return result;
 }
 
