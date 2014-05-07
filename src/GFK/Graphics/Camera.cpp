@@ -11,7 +11,8 @@
 namespace gfk
 {
 
-Camera::Camera()
+Camera::Camera() :
+pos(Vector3(-30, 10, 0))
 {
 
 }
@@ -35,7 +36,7 @@ Matrix Camera::GetProjection()
 
 void Camera::Update(float dt)
 {
-	pos.Z = 4;
+	pos.Z = 0;
 #if not defined(PLATFORM_ANDROID)
 	if (Keyboard::IsKeyDown(Keys::Left))
 	{
