@@ -4,6 +4,7 @@
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Graphics/PrimitiveType.hpp>
 #include <GFK/Graphics/Camera.hpp>
+#include <GFK/Graphics/Mesh.hpp>
 
 namespace gfk
 {
@@ -38,6 +39,8 @@ public:
 	void FillQuad(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3, const Vector3 &v4, const Color &color);
 	void FillBox(const Vector3 &pos, const Vector3 &extents, const Color &color);
 	void FillSphere(const Vector3 &pos, float radius, int verticalSegments, int radialSegments, const Color &color);
+
+	void DrawMesh(const Mesh &mesh);
 protected:
 private:
 	void InitializeShader();
@@ -60,8 +63,6 @@ private:
 	PrimitiveType primitiveType;
 	bool hasBegun;
 	unsigned int vertCounter;
-	GLint positionAttribute;
-	GLint colorAttribute;
 };
 
 }
