@@ -31,11 +31,13 @@ if (NOT WIN32 AND NOT APPLE)
 endif ()
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp)
 
 # Add header paths
 include_directories(${GLEW_INCLUDE_PATH})
 include_directories(${LIBUV_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the subdirectories
@@ -68,6 +70,7 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PrimitiveBatch3D.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera2D.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/AssImpBridge.cpp
 			)
 
 add_library(gfk-network STATIC
@@ -84,7 +87,7 @@ add_library(gfk STATIC
 
 target_link_libraries(gfk-network ${LIBUV_LIBRARY})
 
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES})
+target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES} assimp)
 target_link_libraries(gfk-input gfk-math)
 
 if (NOT WIN32 AND NOT APPLE)
