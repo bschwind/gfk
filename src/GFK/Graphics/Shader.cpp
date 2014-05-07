@@ -47,6 +47,11 @@ void Shader::CreateFromStringSource(const std::string &vertexShaderSource, const
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	for (auto iter = GLSL_ATTRIB_MAP.begin(); iter != GLSL_ATTRIB_MAP.end(); iter++)
+	{
+		glBindAttribLocation(Natives.OpenGL.ShaderID, iter->second, iter->first.c_str());
+	}
+
 	// Link and use the program
 	glLinkProgram(Natives.OpenGL.ShaderID);
 	glUseProgram(Natives.OpenGL.ShaderID);

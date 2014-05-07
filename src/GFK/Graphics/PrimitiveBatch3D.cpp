@@ -19,6 +19,8 @@ PrimitiveBatch3D::~PrimitiveBatch3D()
 #if not defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
 #endif
+
+	glDeleteBuffers(1, &vbo);
 }
 
 void PrimitiveBatch3D::Initialize() {
@@ -99,10 +101,6 @@ void PrimitiveBatch3D::InitializeShader()
 #endif
 
 	shader.CreateFromStringSource(vertShaderSource, fragShaderSource);
-
-	// Get the location of the attributes that enter into the vertex shader
-	positionAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
-	colorAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "color");
 }
 
 void PrimitiveBatch3D::BindAttributes()
@@ -110,12 +108,12 @@ void PrimitiveBatch3D::BindAttributes()
 	int stride = sizeof(VertexPositionColor);
 
 	// Specify how the data for position can be accessed
-	glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
-	glVertexAttribPointer(colorAttribute, 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
+	glVertexAttribPointer(GLSL_ATTRIB_MAP["position"], 3, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
+	glVertexAttribPointer(GLSL_ATTRIB_MAP["color"], 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
 
 	// Enable the attribute
-	glEnableVertexAttribArray(positionAttribute);
-	glEnableVertexAttribArray(colorAttribute);
+	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["position"]);
+	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["color"]);
 }
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
@@ -185,6 +183,21 @@ void PrimitiveBatch3D::Flush()
 	glDrawArrays(primitiveMode, 0, vertCounter);
 
 	vertCounter = 0;
+}
+
+void PrimitiveBatch3D::DrawMesh(const Mesh &mesh)
+{
+	shader.Apply();
+	mesh.Bind();
+	glEnable(GL_DEPTH_TEST);
+
+	shader.SetUniform("world", world);
+	shader.SetUniform("view", view);
+	shader.SetUniform("proj", projection);
+
+	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
+
+	mesh.Unbind();
 }
 
 void PrimitiveBatch3D::End()
