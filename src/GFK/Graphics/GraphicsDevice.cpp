@@ -11,7 +11,7 @@ namespace gfk
 GraphicsDevice::GraphicsDevice() :
 gameShouldClose(false)
 {
-
+	Initialize();
 }
 
 GraphicsDevice::~GraphicsDevice()
