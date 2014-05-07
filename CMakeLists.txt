@@ -70,6 +70,7 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/PrimitiveBatch3D.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Camera2D.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Mesh.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/AssImpBridge.cpp
 			)
 

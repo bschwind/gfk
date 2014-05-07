@@ -2,6 +2,7 @@
 
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
+#include <GFK/Graphics/Mesh.hpp>
 
 using namespace gfk;
 
@@ -23,6 +24,7 @@ public:
 private:
 	PrimitiveBatch3D primBatch;
 	Camera camera;
+	Mesh mesh;
 };
 
 }
