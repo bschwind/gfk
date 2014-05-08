@@ -4,12 +4,23 @@ GFK_PATH := $(LOCAL_PATH)/../..
 #LOCAL_SRC_FILES is relative to the jni directory
 GFK_SRC := ../../src
 
+# AssImp
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libassimp
+LOCAL_SRC_FILES := $(TARGET_ARCH_ABI)/libassimp.so
+LOCAL_EXPORT_C_INCLUDES := $(GFK_PATH)/lib/assimp/include
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+# GFK
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libgfk
-LOCAL_CFLAGS    := -Werror -fexceptions
+LOCAL_CFLAGS    := -fexceptions
 
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/
+
 LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
 	AndroidGame.cpp \
@@ -31,7 +42,10 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Graphics/Shader.cpp \
 	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch2D.cpp \
 	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch3D.cpp \
+	$(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
+	$(GFK_SRC)/GFK/Graphics/Mesh.cpp \
 
 LOCAL_LDLIBS    := -llog -lGLESv2
+LOCAL_SHARED_LIBRARIES := libassimp
 
 include $(BUILD_SHARED_LIBRARY)

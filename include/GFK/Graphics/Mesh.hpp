@@ -26,7 +26,7 @@ public:
 
 	struct VertexPositionColor {
 		Vector3 Position;
-		Color Color;
+		gfk::Color Color;
 	};
 	
 	std::vector<VertexPositionColor> vertexBuffer;
