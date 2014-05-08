@@ -158,12 +158,6 @@ ADD_SUBDIRECTORY( code/ )
 SET ( ASSIMP_BUILD_ASSIMP_TOOLS ON CACHE BOOL
 	"If the supplementary tools for Assimp are built in addition to the library."
 )
-IF ( ASSIMP_BUILD_ASSIMP_TOOLS )
-	IF ( WIN32 )
-		ADD_SUBDIRECTORY( tools/assimp_view/ )
-	ENDIF ( WIN32 )
-	ADD_SUBDIRECTORY( tools/assimp_cmd/ )
-ENDIF ( ASSIMP_BUILD_ASSIMP_TOOLS )
 
 SET ( ASSIMP_BUILD_SAMPLES OFF CACHE BOOL
 	"If the official samples are built as well (needs Glut)."
