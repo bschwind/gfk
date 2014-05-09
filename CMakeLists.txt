@@ -80,21 +80,25 @@ add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPServer.cpp
 			)
 
+add_library(gfk-system STATIC
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/System/Logger.cpp
+			)
+
 add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network ${LIBUV_LIBRARY})
+target_link_libraries(gfk-network ${LIBUV_LIBRARY} gfk-system)
 
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES} assimp)
-target_link_libraries(gfk-input gfk-math)
+target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES} assimp gfk-system)
+target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)
-	target_link_libraries(gfk-math ${UUID_LIBRARY})
+	target_link_libraries(gfk-math ${UUID_LIBRARY} gfk-system)
 endif ()
 
-target_link_libraries(gfk gfk-math gfk-input gfk-graphics gfk-network)
+target_link_libraries(gfk gfk-math gfk-input gfk-graphics gfk-network gfk-system)
 
 add_subdirectory(test)

@@ -1,4 +1,5 @@
 #include <GFK/Network/UDPServer.hpp>
+#include <GFK/System/Logger.hpp>
 #include <iostream>
 
 namespace gfk
@@ -20,7 +21,7 @@ namespace gfk
 		// std::thread worker(&UDPServer::Listen, this);
 
 		listening = socket.Bind(port);
-		std::cout << "UDP Server started" << std::endl;
+		Logger::Log("UPD Server started");
 
 		IPAddress sender;
 
@@ -36,7 +37,7 @@ namespace gfk
 			socket.Send(sender, receiveBuffer, sizeof(receiveBuffer));
 		}
 
-		std::cout << "UDP Server stopped" << std::endl;
+		Logger::Log("UDP Server stopped");
 	}
 
 	void UDPServer::Stop()

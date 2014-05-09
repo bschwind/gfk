@@ -3,6 +3,7 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/PackedColor.hpp>
 #include <GFK/Graphics/GLHeader.hpp>
+#include <GFK/System/Logger.hpp>
 #include <iostream>
 
 namespace gfk
@@ -41,12 +42,12 @@ void GraphicsDevice::InitializeGLEW()
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
-		std::cerr << "Failed to initialize GLEW" << std::endl;
+		Logger::LogError("Failed to initalize GLEW");
 		glfwTerminate();
 		exit(-1);
 	}
 
-	std::cout << "Initialized GLEW" << std::endl;
+	Logger::Log("Intialized GLEW");
 }
 
 void GraphicsDevice::InitializeWindows()

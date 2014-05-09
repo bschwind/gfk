@@ -44,8 +44,10 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch3D.cpp \
 	$(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
 	$(GFK_SRC)/GFK/Graphics/Mesh.cpp \
+	$(GFK_SRC)/GFK/System/Logger.cpp \
 
 LOCAL_LDLIBS    := -llog -lGLESv2
 LOCAL_SHARED_LIBRARIES := libassimp
+LOCAL_SHARED_LIBRARIES += libandroid
 
 include $(BUILD_SHARED_LIBRARY)

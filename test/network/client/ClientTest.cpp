@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <GFK/Network/UDPSocket.hpp>
+#include <GFK/System/Logger.hpp>
 
 using namespace gfk;
 
@@ -8,7 +9,7 @@ int main(int argc, char* argv[])
 {
 	if (argc != 2)
 	{
-		std::cout << "Please provide a port to bind the client to" << std::endl;
+		Logger::Log("Please provide a port to bind the client to");
 		return 1;
 	}
 
@@ -24,12 +25,12 @@ int main(int argc, char* argv[])
 
 	std::string message;
 
-	unsigned char receiveBuffer[256];
+	unsigned char receiveBuffer[length];
 	IPAddress sender;
 	IPAddress destination;
 	int validAddress = IPAddress::FromIPV4String("127.0.0.1", 55777, destination);
 
-	std::cout << "Destination is " << destination.GetIPV4String() << std::endl;
+	Logger::Log(std::string("Destination is ") + destination.GetIPV4String());
 
 	while (validAddress)
 	{
