@@ -1,3 +1,1 @@
-ant clean
-ndk-build
-ant debug install
+ant clean && ndk-build && ant debug install
