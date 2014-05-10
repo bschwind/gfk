@@ -29,20 +29,26 @@ Mesh::Mesh(const std::string &fileName)
 #if not defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
+	GLErrorCheck();
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #endif
 	// Create a Vertex Buffer Object that will store the vertices on video memory
 	glGenBuffers(1, &vbo);
+	GLErrorCheck();
 
 	// Allocate space and upload the data from CPU to GPU
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPositionColor) * vertexBuffer.size(), &vertexBuffer.front(), GL_STATIC_DRAW);
+	GLErrorCheck();
 
 	BindAttributes();
 
 #if not defined(PLATFORM_ANDROID)
 	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
+	GLErrorCheck();
 #endif
 }
 
@@ -50,8 +56,10 @@ Mesh::~Mesh()
 {
 #if not defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
+	GLErrorCheck();
 #endif
 	glDeleteBuffers(1, &vbo);
+	GLErrorCheck();
 }
 
 void printAiSceneInfo(const aiScene *aiSceneP)
@@ -139,8 +147,10 @@ void Mesh::Bind() const
 {
 #if not defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #endif
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	BindAttributes();
 }
 
@@ -148,8 +158,10 @@ void Mesh::Unbind() const
 {
 #if not defined(PLATFORM_ANDROID)
 	glBindVertexArray(0);
+	GLErrorCheck();
 #endif
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLErrorCheck();
 }
 
 void Mesh::BindAttributes() const
@@ -158,11 +170,15 @@ void Mesh::BindAttributes() const
 
 	// Specify how the data for position can be accessed
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["position"], 3, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
+	GLErrorCheck();
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["color"], 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
+	GLErrorCheck();
 
 	// Enable the attribute
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["position"]);
+	GLErrorCheck();
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["color"]);
+	GLErrorCheck();
 }
 
 }

@@ -44,6 +44,7 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Graphics/PrimitiveBatch3D.cpp \
 	$(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
 	$(GFK_SRC)/GFK/Graphics/Mesh.cpp \
+	$(GFK_SRC)/GFK/Graphics/GLErrorHandling.cpp \
 	$(GFK_SRC)/GFK/System/Logger.cpp \
 
 LOCAL_LDLIBS    := -llog -lGLESv2

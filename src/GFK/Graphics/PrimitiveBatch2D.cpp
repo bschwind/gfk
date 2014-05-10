@@ -18,6 +18,7 @@ PrimitiveBatch2D::~PrimitiveBatch2D()
 {
 #if not defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
+	GLErrorCheck();
 #endif
 }
 
@@ -25,15 +26,20 @@ void PrimitiveBatch2D::Initialize() {
 #if not defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
+	GLErrorCheck();
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #endif
 
 	// Create a Vertex Buffer Object that will store the vertices on video memory
 	glGenBuffers(1, &vbo);
+	GLErrorCheck();
 
 	// Allocate space and upload the data from CPU to GPU
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_DYNAMIC_DRAW);
+	GLErrorCheck();
 
 	InitializeShader();
 
@@ -42,6 +48,7 @@ void PrimitiveBatch2D::Initialize() {
 #if not defined(PLATFORM_ANDROID)
 	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
+	GLErrorCheck();
 #endif
 }
 
@@ -98,8 +105,10 @@ void PrimitiveBatch2D::InitializeShader()
 	shader.CreateFromStringSource(vertShaderSource, fragShaderSource);
 
 	// Get the location of the attributes that enter into the vertex shader
-	positionAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "position");
-	colorAttribute = glGetAttribLocation(shader.Natives.OpenGL.ShaderID, "color");
+	positionAttribute = glGetAttribLocation(shader.natives.OpenGL.ShaderID, "position");
+	GLErrorCheck();
+	colorAttribute = glGetAttribLocation(shader.natives.OpenGL.ShaderID, "color");
+	GLErrorCheck();
 }
 
 void PrimitiveBatch2D::BindAttributes()
@@ -108,11 +117,15 @@ void PrimitiveBatch2D::BindAttributes()
 
 	// Specify how the data for position can be accessed
 	glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
+	GLErrorCheck();
 	glVertexAttribPointer(colorAttribute, 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
+	GLErrorCheck();
 
 	// Enable the attribute
 	glEnableVertexAttribArray(positionAttribute);
+	GLErrorCheck();
 	glEnableVertexAttribArray(colorAttribute);
+	GLErrorCheck();
 }
 
 void PrimitiveBatch2D::Begin(PrimitiveType primitiveType, Camera &camera)
@@ -143,7 +156,9 @@ void PrimitiveBatch2D::Flush()
 	// Consider "double buffering" the vertex data for performance,
 	// if it comes to that.
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertCounter * sizeof(VertexPositionColor), vertexBuffer);
+	GLErrorCheck();
 
 	Matrix world = Matrix::Identity;
 
@@ -153,6 +168,7 @@ void PrimitiveBatch2D::Flush()
 
 #if not defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #else
 	BindAttributes();
 #endif
@@ -164,6 +180,7 @@ void PrimitiveBatch2D::Flush()
 	}
 
 	glDrawArrays(primitiveMode, 0, vertCounter);
+	GLErrorCheck();
 
 	vertCounter = 0;
 }

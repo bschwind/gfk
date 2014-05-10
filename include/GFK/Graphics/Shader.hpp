@@ -42,7 +42,7 @@ public:
 	void SetUniform(const std::string attribute, const Matrix &value);
 	void SetUniform(const std::string attribute, const Color &value);
 
-	NativeVars Natives;
+	NativeVars natives;
 protected:
 private:
 	static GLuint LoadAndCompileShader(const char *source, GLenum shaderType);

@@ -47,6 +47,10 @@ void GraphicsDevice::InitializeGLEW()
 		exit(-1);
 	}
 
+	// glewInit() will cause an error which we can ignore.
+	// Clear it out because it's annoying
+	glGetError();
+
 	Logger::Log("Intialized GLEW");
 }
 
@@ -136,11 +140,13 @@ void GraphicsDevice::SetClearColor(const gfk::Color &color)
 {
 #if defined(PLATFORM_ANDROID)
 	glClearColor(color.R, color.G, color.B, color.A);
+	GLErrorCheck();
 #else
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwMakeContextCurrent(*iter);
 		glClearColor(color.R, color.G, color.B, color.A);
+		GLErrorCheck();
 	}
 #endif
 }
@@ -148,6 +154,7 @@ void GraphicsDevice::SetClearColor(const gfk::Color &color)
 void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
 {
 	glClearColor(color.GetR(), color.GetG(), color.GetB(), color.GetA());
+	GLErrorCheck();
 }
 
 void GraphicsDevice::SetDepthClearValue(float depth)
@@ -157,37 +164,45 @@ void GraphicsDevice::SetDepthClearValue(float depth)
 #else
 	glClearDepth(depth);
 #endif
+	GLErrorCheck();
 }
 
 void GraphicsDevice::Clear()
 {
 #if defined(PLATFORM_ANDROID)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLErrorCheck();
 #else
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwMakeContextCurrent(*iter);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLErrorCheck();
 	}
 #endif
 
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	GLErrorCheck();
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GLErrorCheck();
 }
 
 void GraphicsDevice::ClearDepth()
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
+	GLErrorCheck();
 }
 
 void GraphicsDevice::ClearColor()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
+	GLErrorCheck();
 }
 
 void GraphicsDevice::ResizeWindow(int width, int height)
 {
 	glViewport(0, 0, width, height);
+	GLErrorCheck();
 }
 
 void GraphicsDevice::SwapBuffers()

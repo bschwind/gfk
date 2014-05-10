@@ -18,24 +18,30 @@ PrimitiveBatch3D::~PrimitiveBatch3D()
 {
 #if not defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
+	GLErrorCheck();
 #endif
-
 	glDeleteBuffers(1, &vbo);
+	GLErrorCheck();
 }
 
 void PrimitiveBatch3D::Initialize() {
 #if not defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
+	GLErrorCheck();
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #endif
 
 	// Create a Vertex Buffer Object that will store the vertices on video memory
 	glGenBuffers(1, &vbo);
+	GLErrorCheck();
 
 	// Allocate space and upload the data from CPU to GPU
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_DYNAMIC_DRAW);
+	GLErrorCheck();
 
 	InitializeShader();
 
@@ -44,6 +50,7 @@ void PrimitiveBatch3D::Initialize() {
 #if not defined(PLATFORM_ANDROID)
 	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
+	GLErrorCheck();
 #endif
 }
 
@@ -109,11 +116,15 @@ void PrimitiveBatch3D::BindAttributes()
 
 	// Specify how the data for position can be accessed
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["position"], 3, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
+	GLErrorCheck();
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["color"], 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
+	GLErrorCheck();
 
 	// Enable the attribute
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["position"]);
+	GLErrorCheck();
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["color"]);
+	GLErrorCheck();
 }
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
@@ -161,8 +172,11 @@ void PrimitiveBatch3D::Flush()
 	// Consider "double buffering" the vertex data for performance,
 	// if it comes to that.
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertCounter * sizeof(VertexPositionColor), vertexBuffer);
+	GLErrorCheck();
 	glEnable(GL_DEPTH_TEST);
+	GLErrorCheck();
 
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
@@ -170,8 +184,10 @@ void PrimitiveBatch3D::Flush()
 
 #if not defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
+	GLErrorCheck();
 #else
 	BindAttributes();
+	GLErrorCheck();
 #endif
 
 	int primitiveMode = GL_LINES;
@@ -181,6 +197,7 @@ void PrimitiveBatch3D::Flush()
 	}
 
 	glDrawArrays(primitiveMode, 0, vertCounter);
+	GLErrorCheck();
 
 	vertCounter = 0;
 }
@@ -190,12 +207,14 @@ void PrimitiveBatch3D::DrawMesh(const Mesh &mesh)
 	shader.Apply();
 	mesh.Bind();
 	glEnable(GL_DEPTH_TEST);
+	GLErrorCheck();
 
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
 	shader.SetUniform("proj", projection);
 
 	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
+	GLErrorCheck();
 
 	mesh.Unbind();
 }

@@ -12,6 +12,9 @@
 	#include <GLFW/glfw3.h>
 #endif
 
+namespace gfk
+{
+
 static std::map<std::string, GLint> GLSL_ATTRIB_MAP = {
 	{"position", 0},
 	{"color", 1},
@@ -19,3 +22,7 @@ static std::map<std::string, GLint> GLSL_ATTRIB_MAP = {
 	{"normal", 3},
 	{"tangent", 4}
 };
+
+bool GLErrorCheck();
+
+}
