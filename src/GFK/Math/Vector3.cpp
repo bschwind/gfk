@@ -411,4 +411,9 @@ Vector3 operator/ (const Vector3 &op2, float divisor)
 	return Vector3(op2.X / divisor, op2.Y / divisor, op2.Z / divisor);
 }
 
+Vector3 operator- (const Vector3 &op1)
+{
+	return Vector3(-op1.X, -op1.Y, -op1.Z);
+}
+
 }

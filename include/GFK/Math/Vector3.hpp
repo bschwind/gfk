@@ -84,5 +84,6 @@ Vector3 operator- (const Vector3 &op1, const Vector3 &op2);
 Vector3 operator* (const Vector3 &op1, float scalar);
 Vector3 operator* (float scalar, const Vector3 &op2);
 Vector3 operator/ (const Vector3 &op1, float divisor);
+Vector3 operator- (const Vector3 &op1);
 
 }

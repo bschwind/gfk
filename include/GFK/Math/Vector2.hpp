@@ -76,5 +76,6 @@ Vector2 operator- (const Vector2 &op1, const Vector2 &op2);
 Vector2 operator* (const Vector2 &op1, float scalar);
 Vector2 operator* (float scalar, const Vector2 &op2);
 Vector2 operator/ (const Vector2 &op1, float divisor);
+Vector2 operator- (const Vector2 &op1);
 
 }

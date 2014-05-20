@@ -367,4 +367,9 @@ Vector2 operator/ (const Vector2 &op2, float divisor)
 	return Vector2(op2.X / divisor, op2.Y / divisor);
 }
 
+Vector2 operator- (const Vector2 &op1)
+{
+	return Vector2(-op1.X, -op1.Y);
+}
+
 }
