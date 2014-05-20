@@ -321,6 +321,21 @@ void Vector3::Transform(const Vector3 &position, const Matrix &matrix, Vector3 &
 	result.Z = (position.X * matrix(1,3)) + (position.Y * matrix(2,3)) + (position.Z * matrix(3,3)) + matrix(4,3);
 }
 
+Vector3 Vector3::TransformNormal(const Vector3 &normal, const Matrix &matrix)
+{
+	return Vector3(
+		(normal.X * matrix(1,1)) + (normal.Y * matrix(2,1)) + (normal.Z * matrix(3,1)),
+		(normal.X * matrix(1,2)) + (normal.Y * matrix(2,2)) + (normal.Z * matrix(3,2)),
+		(normal.X * matrix(1,3)) + (normal.Y * matrix(2,3)) + (normal.Z * matrix(3,3)));
+}
+
+void Vector3::TransformNormal(const Vector3 &normal, const Matrix &matrix, Vector3 &result)
+{
+	result.X = (normal.X * matrix(1,1)) + (normal.Y * matrix(2,1)) + (normal.Z * matrix(3,1));
+	result.Y = (normal.X * matrix(1,2)) + (normal.Y * matrix(2,2)) + (normal.Z * matrix(3,2));
+	result.Z = (normal.X * matrix(1,3)) + (normal.Y * matrix(2,3)) + (normal.Z * matrix(3,3));
+}
+
 float Vector3::Length()
 {
 	return sqrt(X * X + Y * Y + Z * Z);
