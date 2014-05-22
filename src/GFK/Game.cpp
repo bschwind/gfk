@@ -73,7 +73,7 @@ void Game::Initialize()
 
 	time.TotalGameTime = GameTime::GetSystemTime();
 	currentTime = GameTime::GetSystemTime();
-	dt = 1.0 / targetFramesPerSecond;
+	dt = 1.0 / targetUpdateFramesPerSecond;
 
 	LoadContent();
 #if not defined(PLATFORM_ANDROID)

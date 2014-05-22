@@ -12,8 +12,8 @@ JetGame::JetGame(const std::string &title, int width, int height) :
 Game(title, width, height),
 mesh("Airplane F18 N120712.3DS")
 {
-	isFixedTimeStep = false;
-	targetFramesPerSecond = 60;
+	isFixedTimeStep = true;
+	targetUpdateFramesPerSecond = 60;
 
 	camera.screenWidth = width;
 	camera.screenHeight = height;
@@ -75,7 +75,7 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 	{
 		for (int j = 0; j < num; j++)
 		{
-			world = Matrix::CreateTranslation(Vector3((i-num*0.5) * 30, 0, (j-num*0.5) * 30)) * Matrix::CreateRotationX(gameTime.TotalGameTime);
+			world = Matrix::CreateTranslation(Vector3((i-num*0.5) * 30, 0, (j-num*0.5) * 30)) * Matrix::CreateRotationX(gameTime.TotalGameTime + (interpolationFactor * gameTime.ElapsedGameTime));
 
 			primBatch.Begin(PrimitiveType::TriangleList, camera, world);
 			primBatch.DrawMesh(mesh);

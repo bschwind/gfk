@@ -26,7 +26,7 @@ protected:
 	gfk::GraphicsDevice Device;
 	static bool exitRequested;
 	bool isFixedTimeStep;
-	int targetFramesPerSecond = 60;
+	int targetUpdateFramesPerSecond = 60;
 
 	virtual void LoadContent();
 	virtual void Update(const gfk::GameTime &gameTime);
