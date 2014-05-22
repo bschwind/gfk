@@ -50,8 +50,6 @@ void GraphicsDevice::InitializeGLEW()
 	// glewInit() will cause an error which we can ignore.
 	// Clear it out because it's annoying
 	glGetError();
-
-	Logger::Log("Intialized GLEW");
 }
 
 void GraphicsDevice::InitializeWindows()

@@ -18,16 +18,7 @@ Game::Game() :
 isFixedTimeStep(false),
 title("GFK Game"),
 width(1280),
-height(720),
-headless(false)
-{
-
-}
-
-Game::Game(bool headless) :
-isFixedTimeStep(false),
-title("GFK Game"),
-headless(headless)
+height(720)
 {
 
 }
@@ -38,8 +29,7 @@ Game::Game(const std::string &gameTitle,
 isFixedTimeStep(false),
 title(gameTitle),
 width(screenWidth),
-height(screenHeight),
-headless(false)
+height(screenHeight)
 {
 
 }
@@ -73,16 +63,13 @@ void Game::Initialize()
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();
 
-	if (!headless)
-	{
-		MonitorConfig::SetupMonitor(width, height, title, false);
-		Device.SetClearColor(Color::CornflowerBlue);
+	MonitorConfig::SetupMonitor(width, height, title, false);
+	Device.SetClearColor(Color::CornflowerBlue);
 
 #if not defined(PLATFORM_ANDROID)
-		Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
-		Mouse::SetTargetWindow(Device.GetPrimaryWindow());
+	Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
+	Mouse::SetTargetWindow(Device.GetPrimaryWindow());
 #endif
-	}
 
 	time.TotalGameTime = GameTime::GetSystemTime();
 	currentTime = GameTime::GetSystemTime();
@@ -136,21 +123,15 @@ void Game::Tick()
 
 		while (accumulator >= dt)
 		{
-			if (!headless)
-			{
-				HandleEvents();
-			}
+			HandleEvents();
 
 			Update(time);
 			time.TotalGameTime += dt;
 			accumulator -= dt;
 		}
 
-		if (!headless)
-		{
-			double interpolationFactor = accumulator / dt;
-			Draw(time, interpolationFactor);
-		}
+		double interpolationFactor = accumulator / dt;
+		Draw(time, interpolationFactor);
 	}
 	else
 	{
@@ -158,24 +139,17 @@ void Game::Tick()
 		time.ElapsedGameTime = newTime - time.TotalGameTime;
 		time.TotalGameTime = newTime;
 
-		if (!headless)
-		{
-			HandleEvents();
-		}
+		HandleEvents();
 
 		Update(time);
-
-		if (!headless)
-		{
-			Draw(time, 1.0f);
-		}
+		Draw(time, 1.0f);
 	}
 }
 
 void Game::Run()
 {
 	Initialize();
-	
+
 	while(!exitRequested && !Device.WindowShouldClose())
 	{
 		Tick();

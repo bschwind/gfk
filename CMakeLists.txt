@@ -87,6 +87,7 @@ add_library(gfk-system STATIC
 
 add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/ConsoleGame.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
