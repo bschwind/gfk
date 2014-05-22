@@ -25,7 +25,7 @@ public:
 	void Exit();
 protected:
 	gfk::GraphicsDevice Device;
-	bool exitRequested;
+	static bool exitRequested;
 	bool isFixedTimeStep;
 	int targetFramesPerSecond = 60;
 
@@ -41,6 +41,8 @@ private:
 	double dt;
 	double accumulator = 0.0;
 	double currentTime = 0.0;
+
+	static void SignalHandler(int signal);
 };
 
 }

@@ -6,13 +6,15 @@
 #if not defined(PLATFORM_ANDROID)
 	#include <GFK/Input/Keyboard.hpp>
 	#include <GFK/Input/Mouse.hpp>
+	#include <signal.h>
 #endif
 
 namespace gfk
 {
 
+bool Game::exitRequested = false;
+
 Game::Game() :
-exitRequested(false),
 isFixedTimeStep(false),
 title("GFK Game"),
 width(1280),
@@ -23,7 +25,6 @@ headless(false)
 }
 
 Game::Game(bool headless) :
-exitRequested(false),
 isFixedTimeStep(false),
 title("GFK Game"),
 headless(headless)
@@ -34,7 +35,6 @@ headless(headless)
 Game::Game(const std::string &gameTitle,
 		   int screenWidth,
 		   int screenHeight) :
-exitRequested(false),
 isFixedTimeStep(false),
 title(gameTitle),
 width(screenWidth),
@@ -49,8 +49,27 @@ Game::~Game()
 	UDPSocket::ShutdownSocketLayer();
 }
 
+void Game::SignalHandler(int signal)
+{
+	if (signal == SIGINT)
+	{
+		// CTRL-C was pressed
+		exitRequested = true;
+	}
+}
+
 void Game::Initialize()
 {
+#if not defined(PLATFORM_ANDROID)
+	// Catch signals such as CTRL-C
+	struct sigaction sigIntHandler;
+	sigIntHandler.sa_handler = SignalHandler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+
+	sigaction(SIGINT, &sigIntHandler, NULL);
+#endif
+
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();
 
@@ -156,6 +175,7 @@ void Game::Tick()
 void Game::Run()
 {
 	Initialize();
+	
 	while(!exitRequested && !Device.WindowShouldClose())
 	{
 		Tick();
