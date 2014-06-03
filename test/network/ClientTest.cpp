@@ -37,21 +37,21 @@ int main(int argc, char* argv[])
 		std::getline(std::cin, message);
 		char *sendBuffer = (char*)message.c_str();
 
-		socket.Send(destination, sendBuffer, length);
+		socket.Send(destination, sendBuffer, strlen(sendBuffer));
 
 		// Receive an echo from the server
-		while (true)
-		{
-			int byteReadCount = socket.Receive(sender, receiveBuffer, sizeof(receiveBuffer));
+		// while (true)
+		// {
+		// 	int byteReadCount = socket.Receive(sender, receiveBuffer, sizeof(receiveBuffer));
 
-			if (!byteReadCount)
-			{
-				continue;
-			}
+		// 	if (!byteReadCount)
+		// 	{
+		// 		continue;
+		// 	}
 
-			std::cout << receiveBuffer << std::endl;
-			break;
-		}
+		// 	std::cout << receiveBuffer << std::endl;
+		// 	break;
+		// }
 	}
 
 	UDPSocket::ShutdownSocketLayer();

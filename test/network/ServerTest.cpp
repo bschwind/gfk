@@ -22,7 +22,9 @@ int main()
 			continue;
 		}
 
-		std::cout << receiveBuffer << std::endl;
+		float *x = (float*)receiveBuffer;
+
+		std::cout << *x << std::endl;
 
 		// Echo the contents back to the client
 		socket.Send(sender, receiveBuffer, sizeof(receiveBuffer));
