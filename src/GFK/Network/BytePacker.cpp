@@ -1,3 +1,4 @@
+#include <GFK/Network/SocketHeader.hpp>
 #include <GFK/Network/BytePacker.hpp>
 
 namespace gfk
@@ -113,6 +114,44 @@ float BytePacker::UnpackFloat(unsigned long int packedFloat)
 double BytePacker::UnpackDouble(unsigned long long int packedDouble)
 {
 	return Unpack754(packedDouble, 64, 11);
+}
+
+// From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
+unsigned long long int BytePacker::htonll(unsigned long long int value)
+{
+	static const int num = 42;
+
+	// Check the endianness
+	if (*reinterpret_cast<const char*>(&num) == num)
+	{
+		const uint32_t high_part = htonl(static_cast<uint32_t>(value >> 32));
+		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFLL));
+
+		return (static_cast<unsigned long long int>(low_part) << 32) | high_part;
+	}
+	else
+	{
+		return value;
+	}
+}
+
+// From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
+unsigned long long int BytePacker::ntohll(unsigned long long int value)
+{
+	static const int num = 42;
+
+	// Check the endianness
+	if (*reinterpret_cast<const char*>(&num) == num)
+	{
+		const uint32_t high_part = htonl(static_cast<uint32_t>(value >> 32));
+		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFLL));
+
+		return (static_cast<unsigned long long int>(low_part) << 32) | high_part;
+	}
+	else
+	{
+		return value;
+	}
 }
 
 }
