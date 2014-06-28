@@ -6,6 +6,18 @@ using namespace gfk;
 
 int main()
 {
+	// These checks are made to guarantee the types are at least a certain size.
+	// The network code relies on data types being at least a certain size
+	static_assert(sizeof(bool) >= 1, "bool is not one byte");
+	static_assert(sizeof(signed short int) >= 2, "signed short int is not two bytes");
+	static_assert(sizeof(unsigned short int) >= 2, "unsigned short int is not two bytes");
+	static_assert(sizeof(signed int) >= 4, "signed int is not four bytes");
+	static_assert(sizeof(unsigned int) >= 4, "unsigned int is not four bytes");
+	static_assert(sizeof(signed long int) >= 8, "signed long int is not eight bytes");
+	static_assert(sizeof(unsigned long int) >= 8, "unsigned long int is not eight bytes");
+	static_assert(sizeof(float) >= 4, "float is not four bytes");
+	static_assert(sizeof(double) >= 8, "double is not eight bytes");
+
 	std::cout << "bool                    = " << sizeof(bool) << " bytes" << std::endl;
 	std::cout << "char                    = " << sizeof(char) << " bytes" << std::endl;
 	std::cout << "char16_t                = " << sizeof(char16_t) << " bytes" << std::endl;

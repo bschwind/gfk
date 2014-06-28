@@ -17,11 +17,11 @@ int main()
 	double unpackedDouble;
 	unsigned long long int packedDouble;
 
-	packedFloat = BytePacker::PackFloat(f);
-	packedDouble = BytePacker::PackDouble(d);
+	packedFloat = BytePacker::PackFloat32(f);
+	packedDouble = BytePacker::PackFloat64(d);
 
-	unpackedFloat = BytePacker::UnpackFloat(packedFloat);
-	unpackedDouble = BytePacker::UnpackDouble(packedDouble);
+	unpackedFloat = BytePacker::UnpackFloat32(packedFloat);
+	unpackedDouble = BytePacker::UnpackFloat64(packedDouble);
 
 	std::cout << "Original float:    " << f << std::endl;
 	std::cout << "Packed float:      " << packedFloat << std::endl;

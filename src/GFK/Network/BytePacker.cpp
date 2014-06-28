@@ -96,28 +96,28 @@ long double BytePacker::Unpack754(unsigned long long int i, unsigned bits, unsig
 	return result;
 }
 
-unsigned long int BytePacker::PackFloat(float f)
+unsigned int BytePacker::PackFloat32(float f)
 {
 	return Pack754(f, 32, 8);
 }
 
-unsigned long long int BytePacker::PackDouble(double d)
+unsigned long int BytePacker::PackFloat64(double d)
 {
 	return Pack754(d, 64, 11);
 }
 
-float BytePacker::UnpackFloat(unsigned long int packedFloat)
+float BytePacker::UnpackFloat32(unsigned int packedFloat)
 {
 	return Unpack754(packedFloat, 32, 8);
 }
 
-double BytePacker::UnpackDouble(unsigned long long int packedDouble)
+double BytePacker::UnpackFloat64(unsigned long int packedDouble)
 {
 	return Unpack754(packedDouble, 64, 11);
 }
 
 // From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
-unsigned long long int BytePacker::htonll(unsigned long long int value)
+unsigned long int BytePacker::htonll(unsigned long int value)
 {
 	static const int num = 42;
 
@@ -125,9 +125,9 @@ unsigned long long int BytePacker::htonll(unsigned long long int value)
 	if (*reinterpret_cast<const char*>(&num) == num)
 	{
 		const uint32_t high_part = htonl(static_cast<uint32_t>(value >> 32));
-		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFLL));
+		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFL));
 
-		return (static_cast<unsigned long long int>(low_part) << 32) | high_part;
+		return (static_cast<unsigned long int>(low_part) << 32) | high_part;
 	}
 	else
 	{
@@ -136,7 +136,7 @@ unsigned long long int BytePacker::htonll(unsigned long long int value)
 }
 
 // From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
-unsigned long long int BytePacker::ntohll(unsigned long long int value)
+unsigned long int BytePacker::ntohll(unsigned long int value)
 {
 	static const int num = 42;
 
@@ -144,9 +144,9 @@ unsigned long long int BytePacker::ntohll(unsigned long long int value)
 	if (*reinterpret_cast<const char*>(&num) == num)
 	{
 		const uint32_t high_part = htonl(static_cast<uint32_t>(value >> 32));
-		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFLL));
+		const uint32_t low_part = htonl(static_cast<uint32_t>(value & 0xFFFFFFFFL));
 
-		return (static_cast<unsigned long long int>(low_part) << 32) | high_part;
+		return (static_cast<unsigned long int>(low_part) << 32) | high_part;
 	}
 	else
 	{

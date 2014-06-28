@@ -9,3 +9,6 @@ target_link_libraries(udpServer gfk-network)
 
 add_executable(bytePackerTest BytePackerTest.cpp)
 target_link_libraries(bytePackerTest gfk-network)
+
+add_executable(networkBufferTest NetworkBufferTest.cpp)
+target_link_libraries(networkBufferTest gfk-network)
