@@ -10,7 +10,7 @@ namespace jetGame
 
 JetGame::JetGame(const std::string &title, int width, int height) :
 Game(title, width, height),
-mesh("Airplane F18 N120712.3DS")
+mesh("assets/Airplane F18 N120712.3DS")
 {
 	isFixedTimeStep = true;
 	targetUpdateFramesPerSecond = 60;
