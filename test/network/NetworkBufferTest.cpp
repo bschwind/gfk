@@ -14,8 +14,8 @@ int main()
 	unsigned short int usi = 64000;
 	signed int si = -150000;
 	unsigned int ui = 4000000;
-	signed long int sli = -800000;
-	unsigned long int uli = 370000000;
+	signed long long int sli = -800000;
+	unsigned long long int uli = 370000000;
 	float f = 3.1415926f;
 	double d = 3.141592653589793;
 
@@ -39,8 +39,8 @@ int main()
 	std::cout << "Read unsigned short int " << netBuffer.ReadUnsignedInt16() << std::endl;
 	std::cout << "Read signed int " << netBuffer.ReadSignedInt32() << std::endl;
 	std::cout << "Read unsigned int " << netBuffer.ReadUnsignedInt32() << std::endl;
-	std::cout << "Read signed long int " << netBuffer.ReadSignedInt64() << std::endl;
-	std::cout << "Read unsigned long int " << netBuffer.ReadUnsignedInt64() << std::endl;
+	std::cout << "Read signed long long int " << netBuffer.ReadSignedInt64() << std::endl;
+	std::cout << "Read unsigned long long int " << netBuffer.ReadUnsignedInt64() << std::endl;
 	std::cout << "Read float " << netBuffer.ReadFloat32() << std::endl;
 	std::cout << "Read double " << netBuffer.ReadFloat64() << std::endl;
 

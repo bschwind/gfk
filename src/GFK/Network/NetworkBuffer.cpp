@@ -73,7 +73,7 @@ void NetworkBuffer::WriteUnsignedInt32(unsigned int i)
 	bufferCounter += 4;
 }
 
-void NetworkBuffer::WriteSignedInt64(signed long int i)
+void NetworkBuffer::WriteSignedInt64(signed long long int i)
 {
 	i = BytePacker::htonll(i);
 	dataBuffer[bufferCounter]     = (i & 0xff00000000000000) >> 56;
@@ -88,7 +88,7 @@ void NetworkBuffer::WriteSignedInt64(signed long int i)
 
 }
 
-void NetworkBuffer::WriteUnsignedInt64(unsigned long int i)
+void NetworkBuffer::WriteUnsignedInt64(unsigned long long int i)
 {
 	i = BytePacker::htonll(i);
 	dataBuffer[bufferCounter]     = (i & 0xff00000000000000) >> 56;
@@ -170,33 +170,33 @@ unsigned int NetworkBuffer::ReadUnsignedInt32()
 	return value;
 }
 
-signed long int NetworkBuffer::ReadSignedInt64()
+signed long long int NetworkBuffer::ReadSignedInt64()
 {
-	signed long int value =
-		((unsigned long int)dataBuffer[readCounter++] << 56)
-		| ((unsigned long int)dataBuffer[readCounter++] << 48)
-		| ((unsigned long int)dataBuffer[readCounter++] << 40)
-		| ((unsigned long int)dataBuffer[readCounter++] << 32)
-		| ((unsigned long int)dataBuffer[readCounter++] << 24)
-		| ((unsigned long int)dataBuffer[readCounter++] << 16)
-		| ((unsigned long int)dataBuffer[readCounter++] << 8)
-		| (unsigned long int)dataBuffer[readCounter++];
+	signed long long int value =
+		((unsigned long long int)dataBuffer[readCounter++] << 56)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 48)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 40)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 32)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 24)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 16)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 8)
+		| (unsigned long long int)dataBuffer[readCounter++];
 
-	value = static_cast<signed long int>(BytePacker::ntohll(value));
+	value = static_cast<signed long long int>(BytePacker::ntohll(value));
 	return value;
 }
 
-unsigned long int NetworkBuffer::ReadUnsignedInt64()
+unsigned long long int NetworkBuffer::ReadUnsignedInt64()
 {
-	unsigned long int value =
-		((unsigned long int)dataBuffer[readCounter++] << 56)
-		| ((unsigned long int)dataBuffer[readCounter++] << 48)
-		| ((unsigned long int)dataBuffer[readCounter++] << 40)
-		| ((unsigned long int)dataBuffer[readCounter++] << 32)
-		| ((unsigned long int)dataBuffer[readCounter++] << 24)
-		| ((unsigned long int)dataBuffer[readCounter++] << 16)
-		| ((unsigned long int)dataBuffer[readCounter++] << 8)
-		| (unsigned long int)dataBuffer[readCounter++];
+	unsigned long long int value =
+		((unsigned long long int)dataBuffer[readCounter++] << 56)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 48)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 40)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 32)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 24)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 16)
+		| ((unsigned long long int)dataBuffer[readCounter++] << 8)
+		| (unsigned long long int)dataBuffer[readCounter++];
 
 	value = BytePacker::ntohll(value);
 	return value;

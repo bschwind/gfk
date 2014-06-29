@@ -13,8 +13,8 @@ int main()
 	static_assert(sizeof(unsigned short int) >= 2, "unsigned short int is not two bytes");
 	static_assert(sizeof(signed int) >= 4, "signed int is not four bytes");
 	static_assert(sizeof(unsigned int) >= 4, "unsigned int is not four bytes");
-	static_assert(sizeof(signed long int) >= 8, "signed long int is not eight bytes");
-	static_assert(sizeof(unsigned long int) >= 8, "unsigned long int is not eight bytes");
+	static_assert(sizeof(signed long long int) >= 8, "signed long long int is not eight bytes");
+	static_assert(sizeof(unsigned long long int) >= 8, "unsigned long long int is not eight bytes");
 	static_assert(sizeof(float) >= 4, "float is not four bytes");
 	static_assert(sizeof(double) >= 8, "double is not eight bytes");
 
