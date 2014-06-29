@@ -129,9 +129,10 @@ signed char NetworkBuffer::ReadSignedByte()
 signed short int NetworkBuffer::ReadSignedInt16()
 {
 	signed short int value =
-		(dataBuffer[readCounter++] << 8)
-		| dataBuffer[readCounter++];
+		(dataBuffer[readCounter] << 8)
+		| dataBuffer[readCounter + 1];
 
+	readCounter += 2;
 	value = ntohs(value);
 	return value;
 }
@@ -139,9 +140,10 @@ signed short int NetworkBuffer::ReadSignedInt16()
 unsigned short int NetworkBuffer::ReadUnsignedInt16()
 {
 	unsigned short int value =
-		(dataBuffer[readCounter++] << 8)
-		| dataBuffer[readCounter++];
+		(dataBuffer[readCounter] << 8)
+		| dataBuffer[readCounter + 1];
 
+	readCounter += 2;
 	value = ntohs(value);
 	return value;
 }
@@ -149,11 +151,12 @@ unsigned short int NetworkBuffer::ReadUnsignedInt16()
 signed int NetworkBuffer::ReadSignedInt32()
 {
 	signed int value =
-		(dataBuffer[readCounter++] << 24)
-		| (dataBuffer[readCounter++] << 16)
-		| (dataBuffer[readCounter++] << 8)
-		| dataBuffer[readCounter++];
+		(dataBuffer[readCounter] << 24)
+		| (dataBuffer[readCounter + 1] << 16)
+		| (dataBuffer[readCounter + 2] << 8)
+		| dataBuffer[readCounter + 3];
 
+	readCounter += 4;
 	value = ntohl(value);
 	return value;
 }
@@ -161,11 +164,12 @@ signed int NetworkBuffer::ReadSignedInt32()
 unsigned int NetworkBuffer::ReadUnsignedInt32()
 {
 	unsigned int value =
-		(dataBuffer[readCounter++] << 24)
-		| (dataBuffer[readCounter++] << 16)
-		| (dataBuffer[readCounter++] << 8)
-		| dataBuffer[readCounter++];
+		(dataBuffer[readCounter] << 24)
+		| (dataBuffer[readCounter + 1] << 16)
+		| (dataBuffer[readCounter + 2] << 8)
+		| dataBuffer[readCounter + 3];
 
+	readCounter += 4;
 	value = ntohl(value);
 	return value;
 }
@@ -173,15 +177,16 @@ unsigned int NetworkBuffer::ReadUnsignedInt32()
 signed long long int NetworkBuffer::ReadSignedInt64()
 {
 	signed long long int value =
-		((unsigned long long int)dataBuffer[readCounter++] << 56)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 48)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 40)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 32)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 24)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 16)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 8)
-		| (unsigned long long int)dataBuffer[readCounter++];
+		((unsigned long long int)dataBuffer[readCounter] << 56)
+		| ((unsigned long long int)dataBuffer[readCounter + 1] << 48)
+		| ((unsigned long long int)dataBuffer[readCounter + 2] << 40)
+		| ((unsigned long long int)dataBuffer[readCounter + 3] << 32)
+		| ((unsigned long long int)dataBuffer[readCounter + 4] << 24)
+		| ((unsigned long long int)dataBuffer[readCounter + 5] << 16)
+		| ((unsigned long long int)dataBuffer[readCounter + 6] << 8)
+		| (unsigned long long int)dataBuffer[readCounter + 7];
 
+	readCounter += 8;
 	value = static_cast<signed long long int>(BytePacker::ntohll(value));
 	return value;
 }
@@ -189,15 +194,16 @@ signed long long int NetworkBuffer::ReadSignedInt64()
 unsigned long long int NetworkBuffer::ReadUnsignedInt64()
 {
 	unsigned long long int value =
-		((unsigned long long int)dataBuffer[readCounter++] << 56)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 48)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 40)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 32)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 24)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 16)
-		| ((unsigned long long int)dataBuffer[readCounter++] << 8)
-		| (unsigned long long int)dataBuffer[readCounter++];
+		((unsigned long long int)dataBuffer[readCounter] << 56)
+		| ((unsigned long long int)dataBuffer[readCounter + 1] << 48)
+		| ((unsigned long long int)dataBuffer[readCounter + 2] << 40)
+		| ((unsigned long long int)dataBuffer[readCounter + 3] << 32)
+		| ((unsigned long long int)dataBuffer[readCounter + 4] << 24)
+		| ((unsigned long long int)dataBuffer[readCounter + 5] << 16)
+		| ((unsigned long long int)dataBuffer[readCounter + 6] << 8)
+		| (unsigned long long int)dataBuffer[readCounter + 7];
 
+	readCounter += 8;
 	value = BytePacker::ntohll(value);
 	return value;
 }
