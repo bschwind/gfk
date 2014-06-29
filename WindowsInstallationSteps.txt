@@ -8,5 +8,6 @@
 -Run CMake
 	-Typically, you create a build directory in the top level project folder
 	-cd into the build directory, and call 'cmake ..'
+	-Make sure ASSIMP_BUILD_STATIC_LIB is set to TRUE
 -Test
 	-If everything went well, you should have an ALL_BUILD.vcxproj file in your build directory. Open it with Visual Studio (I used Visual C++ Express 10), and try to run one of the test projects
