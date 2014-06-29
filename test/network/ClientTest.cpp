@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <GFK/GameTime.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/System/Logger.hpp>
@@ -13,6 +14,9 @@ int main(int argc, char* argv[])
 		Logger::Log("Please provide a port to bind the client to");
 		return 1;
 	}
+
+	GameTime::InitClock();
+	GameTime gameTime;
 
 	std::cout.precision(16);
 
@@ -60,6 +64,7 @@ int main(int argc, char* argv[])
 		netBuffer.WriteFloat64(d);
 
 		socket.Send(destination, netBuffer.GetDataBuffer(), 1024);
+		double sentTime = gameTime.GetSystemTime();
 
 		// Receive echo from server
 		while (true)
@@ -68,6 +73,12 @@ int main(int argc, char* argv[])
 
 			if (!byteReadCount)
 			{
+				if (gameTime.GetSystemTime() - sentTime > 5)
+				{
+					std::cout << "Server took too long to respond" << std::endl;
+					netBuffer.Reset();
+					break;
+				}
 				continue;
 			}
 

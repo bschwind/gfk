@@ -1,5 +1,5 @@
 add_executable(client ClientTest.cpp)
-target_link_libraries(client gfk-network)
+target_link_libraries(client gfk)
 
 add_executable(server ServerTest.cpp)
 target_link_libraries(server gfk-network)

@@ -25,6 +25,9 @@ int main()
 			continue;
 		}
 
+		// Echo the contents back to the client immediately
+		socket.Send(sender, netBuffer.GetDataBuffer(), 1024);
+
 		std::cout << "--------Received Packet (from " << sender.GetIPV4String() << ")" << std::endl;
 		std::cout << "Read signed byte: " << (int)netBuffer.ReadSignedByte() << std::endl;
 		std::cout << "Read unsigned byte: " << (int)netBuffer.ReadUnsignedByte() << std::endl;
@@ -37,9 +40,6 @@ int main()
 		std::cout << "Read float " << netBuffer.ReadFloat32() << std::endl;
 		std::cout << "Read double " << netBuffer.ReadFloat64() << std::endl;
 		std::cout << "--------End Packet --------------------" << std::endl;
-
-		// Echo the contents back to the client
-		socket.Send(sender, netBuffer.GetDataBuffer(), 1024);
 
 		netBuffer.Reset();
 	}
