@@ -20,7 +20,7 @@ public:
 	virtual void UnloadContent();
 	void Run();
 	void Tick();
-	void ResizeWindow(int width, int height);
+	virtual void ResizeWindow(int width, int height);
 	void Exit();
 protected:
 	gfk::GraphicsDevice Device;
@@ -41,6 +41,7 @@ private:
 	double currentTime = 0.0;
 
 	static void SignalHandler(int signal);
+	static void WindowResizeHandler(GLFWwindow *window, int width, int height);
 };
 
 }

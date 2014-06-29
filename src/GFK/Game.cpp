@@ -69,6 +69,12 @@ void Game::Initialize()
 #if !defined(PLATFORM_ANDROID)
 	Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
 	Mouse::SetTargetWindow(Device.GetPrimaryWindow());
+
+	// Window resize logic - The GLFW resize callback can't call non-static
+	// member functions. So we set the pointer to the Game (this) on the
+	// window, where we can retrieve it in the callback
+	glfwSetWindowUserPointer(Device.GetPrimaryWindow(), this);
+	glfwSetWindowSizeCallback(Device.GetPrimaryWindow(), WindowResizeHandler);
 #endif
 
 	time.TotalGameTime = GameTime::GetSystemTime();
@@ -156,6 +162,12 @@ void Game::Run()
 	}
 
 	UnloadContent();
+}
+
+void Game::WindowResizeHandler(GLFWwindow *window, int width, int height)
+{
+	Game *gameToResize = static_cast<Game *>(glfwGetWindowUserPointer(window));
+	gameToResize->ResizeWindow(width, height);
 }
 
 void Game::ResizeWindow(int width, int height)

@@ -86,4 +86,12 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 	Device.SwapBuffers();
 }
 
+void JetGame::ResizeWindow(int width, int height)
+{
+	gfk::Game::ResizeWindow(width, height);
+
+	camera.screenWidth = width;
+	camera.screenHeight = height;
+}
+
 }
