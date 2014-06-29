@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <GFK/Graphics/Camera.hpp>
 
 struct GLFWwindow;
 
