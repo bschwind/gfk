@@ -50,7 +50,7 @@ void Game::SignalHandler(int signal)
 
 void Game::Initialize()
 {
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_WINDOWS)
 	// Catch signals such as CTRL-C
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = SignalHandler;

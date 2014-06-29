@@ -30,6 +30,7 @@ void ConsoleGame::SignalHandler(int signal)
 
 void ConsoleGame::Initialize()
 {
+#if !defined(PLATFORM_WINDOWS)
 	// Catch signals such as CTRL-C
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = SignalHandler;
@@ -37,6 +38,7 @@ void ConsoleGame::Initialize()
 	sigIntHandler.sa_flags = 0;
 
 	sigaction(SIGINT, &sigIntHandler, NULL);
+#endif
 
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();

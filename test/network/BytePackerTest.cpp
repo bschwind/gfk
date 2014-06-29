@@ -1,4 +1,5 @@
 #include <iostream>
+#include <GFK/Network/SocketHeader.hpp>
 #include <GFK/Network/BytePacker.hpp>
 #include <GFK/System/Logger.hpp>
 #include <bitset>
