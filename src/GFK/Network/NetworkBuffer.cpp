@@ -218,4 +218,10 @@ double NetworkBuffer::ReadFloat64()
 	return BytePacker::UnpackFloat64(ReadUnsignedInt64());
 }
 
+void NetworkBuffer::Reset()
+{
+	bufferCounter = 0;
+	readCounter = 0;
+}
+
 }

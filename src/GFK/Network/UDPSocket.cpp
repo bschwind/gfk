@@ -69,6 +69,14 @@ bool UDPSocket::Bind(unsigned short port)
 		}
 	#endif
 
+	int broadcast = 1;
+
+	if (setsockopt(handle, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof broadcast) == -1)
+	{
+		std::cerr << "Could not set socket with handle " << handle << " to broadcast mode" << std::endl;
+		return false;
+	}
+
 	return true;
 }
 

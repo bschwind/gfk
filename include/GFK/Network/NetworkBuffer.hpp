@@ -33,6 +33,8 @@ public:
 	unsigned long long int ReadUnsignedInt64();
 	float ReadFloat32();
 	double ReadFloat64();
+
+	void Reset();
 protected:
 private:
 	static const unsigned int bufferSize = 1024;
