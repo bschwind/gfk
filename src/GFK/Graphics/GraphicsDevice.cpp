@@ -17,7 +17,7 @@ gameShouldClose(false)
 
 GraphicsDevice::~GraphicsDevice()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwDestroyWindow(*iter);
@@ -29,14 +29,14 @@ GraphicsDevice::~GraphicsDevice()
 
 void GraphicsDevice::Initialize()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	InitializeWindows();
 	InitializeGLEW();
 	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 #endif
 }
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 void GraphicsDevice::InitializeGLEW()
 {
 	// Initialize GLEW
@@ -205,7 +205,7 @@ void GraphicsDevice::ResizeWindow(int width, int height)
 
 void GraphicsDevice::SwapBuffers()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwSwapBuffers(*iter);
@@ -217,7 +217,7 @@ void GraphicsDevice::SwapBuffers()
 
 void GraphicsDevice::UpdateWindowEvents()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		if (glfwWindowShouldClose(*iter)) {
@@ -232,7 +232,7 @@ bool GraphicsDevice::WindowShouldClose()
 	return gameShouldClose;
 }
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 GLFWwindow* GraphicsDevice::GetPrimaryWindow()
 {
 	return primaryWindow;

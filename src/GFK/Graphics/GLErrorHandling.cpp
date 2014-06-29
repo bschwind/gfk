@@ -26,7 +26,7 @@ bool GLErrorCheck()
 		case GL_INVALID_OPERATION:
 			Logger::Log("GL_INVALID_OPERATION");
 			break;
-	#if not defined(PLATFORM_ANDROID)
+	#if !defined(PLATFORM_ANDROID)
 		case GL_STACK_UNDERFLOW:
 			Logger::Log("GL_STACK_UNDERFLOW");
 			break;

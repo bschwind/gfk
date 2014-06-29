@@ -2,7 +2,7 @@
 #include <GFK/Graphics/Camera.hpp>
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/MathHelper.hpp>
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	#include <GFK/Input/Keyboard.hpp>
 #endif
 #include <iostream>
@@ -37,7 +37,7 @@ Matrix Camera::GetProjection()
 void Camera::Update(float dt)
 {
 	pos.Z = 0;
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	if (Keyboard::IsKeyDown(Keys::Left))
 	{
 		pos.X -= 50 * dt;

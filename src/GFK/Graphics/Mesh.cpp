@@ -26,7 +26,7 @@ Mesh::Mesh(const std::string &fileName)
 
 	numVertices = vertexBuffer.size();
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
 	GLErrorCheck();
@@ -45,7 +45,7 @@ Mesh::Mesh(const std::string &fileName)
 
 	BindAttributes();
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
 	GLErrorCheck();
@@ -54,7 +54,7 @@ Mesh::Mesh(const std::string &fileName)
 
 Mesh::~Mesh()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
 	GLErrorCheck();
 #endif
@@ -145,7 +145,7 @@ void Mesh::AddNodeRecursive(const aiScene *scene, const aiNode *node, const Matr
 
 void Mesh::Bind() const
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
 	GLErrorCheck();
 #endif
@@ -156,7 +156,7 @@ void Mesh::Bind() const
 
 void Mesh::Unbind() const
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glBindVertexArray(0);
 	GLErrorCheck();
 #endif

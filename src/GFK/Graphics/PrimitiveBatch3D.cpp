@@ -16,7 +16,7 @@ vertCounter(0)
 
 PrimitiveBatch3D::~PrimitiveBatch3D()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glDeleteVertexArrays(1, &vao);
 	GLErrorCheck();
 #endif
@@ -25,7 +25,7 @@ PrimitiveBatch3D::~PrimitiveBatch3D()
 }
 
 void PrimitiveBatch3D::Initialize() {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// Use a Vertex Array Object
 	glGenVertexArrays(1, &vao);
 	GLErrorCheck();
@@ -47,7 +47,7 @@ void PrimitiveBatch3D::Initialize() {
 
 	BindAttributes();
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
 	glBindVertexArray(0);
 	GLErrorCheck();
@@ -56,7 +56,7 @@ void PrimitiveBatch3D::Initialize() {
 
 void PrimitiveBatch3D::InitializeShader()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// A simple vertex and fragment shader. The vertex shader just passes the position and color through
 	// The fragment shader just returns the color from the vertex shader
 	std::string vertShaderSource =
@@ -182,7 +182,7 @@ void PrimitiveBatch3D::Flush()
 	shader.SetUniform("view", view);
 	shader.SetUniform("proj", projection);
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glBindVertexArray(vao);
 	GLErrorCheck();
 #else

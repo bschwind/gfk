@@ -3,7 +3,7 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GFK/Network/UDPSocket.hpp>
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	#include <GFK/Input/Keyboard.hpp>
 	#include <GFK/Input/Mouse.hpp>
 	#include <signal.h>
@@ -50,7 +50,7 @@ void Game::SignalHandler(int signal)
 
 void Game::Initialize()
 {
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	// Catch signals such as CTRL-C
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = SignalHandler;
@@ -66,7 +66,7 @@ void Game::Initialize()
 	MonitorConfig::SetupMonitor(width, height, title, false);
 	Device.SetClearColor(Color::CornflowerBlue);
 
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
 	Mouse::SetTargetWindow(Device.GetPrimaryWindow());
 #endif
@@ -76,7 +76,7 @@ void Game::Initialize()
 	dt = 1.0 / targetUpdateFramesPerSecond;
 
 	LoadContent();
-#if not defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_ANDROID)
 	glfwSetTime(0.0);
 #endif
 }
