@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	UDPSocket socket;
 	socket.Bind(port);
 
-	IPAddress sender;
+	// The destination will be the broadcast address at first to find the server
 	IPAddress destination;
 	int validAddress = IPAddress::FromIPV4String("192.168.1.255", 55777, destination);
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 		// Receive echo from server
 		while (true)
 		{
-			int byteReadCount = socket.Receive(sender, netBuffer.GetDataBuffer(), 1024); // 1024 should really be buffer size
+			int byteReadCount = socket.Receive(destination, netBuffer.GetDataBuffer(), 1024); // 1024 should really be buffer size
 
 			if (!byteReadCount)
 			{
@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
 			}
 
 			std::cout << "Echo back from server (" << byteReadCount << " bytes)" << std::endl;
+			std::cout << "Server destination is " << destination.GetIPV4String() << std::endl;
 			std::cout << "--------Received Packet--------" << std::endl;
 			std::cout << "Read signed byte: " << (int)netBuffer.ReadSignedByte() << std::endl;
 			std::cout << "Read unsigned byte: " << (int)netBuffer.ReadUnsignedByte() << std::endl;
