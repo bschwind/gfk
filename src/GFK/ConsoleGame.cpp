@@ -9,7 +9,10 @@ namespace gfk
 bool ConsoleGame::exitRequested = false;
 
 ConsoleGame::ConsoleGame() :
-isFixedTimeStep(true)
+isFixedTimeStep(true),
+targetUpdateFramesPerSecond(60),
+accumulator(0.0),
+currentTime(0.0)
 {
 
 }

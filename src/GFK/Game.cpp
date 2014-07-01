@@ -17,8 +17,11 @@ bool Game::exitRequested = false;
 Game::Game() :
 isFixedTimeStep(false),
 title("GFK Game"),
+targetUpdateFramesPerSecond(60),
 width(1280),
-height(720)
+height(720),
+accumulator(0.0),
+currentTime(0.0)
 {
 
 }
