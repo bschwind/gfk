@@ -167,11 +167,13 @@ void Game::Run()
 	UnloadContent();
 }
 
+#if !defined(PLATFORM_ANDROID)
 void Game::WindowResizeHandler(GLFWwindow *window, int width, int height)
 {
 	Game *gameToResize = static_cast<Game *>(glfwGetWindowUserPointer(window));
 	gameToResize->ResizeWindow(width, height);
 }
+#endif
 
 void Game::ResizeWindow(int width, int height)
 {
