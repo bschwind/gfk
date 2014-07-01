@@ -26,7 +26,7 @@ protected:
 	gfk::GraphicsDevice Device;
 	static bool exitRequested;
 	bool isFixedTimeStep;
-	int targetUpdateFramesPerSecond = 60;
+	int targetUpdateFramesPerSecond;
 
 	virtual void LoadContent();
 	virtual void Update(const gfk::GameTime &gameTime);
@@ -37,8 +37,8 @@ private:
 	int width, height;
 	void HandleEvents();
 	double dt;
-	double accumulator = 0.0;
-	double currentTime = 0.0;
+	double accumulator;
+	double currentTime;
 
 	static void SignalHandler(int signal);
 	static void WindowResizeHandler(GLFWwindow *window, int width, int height);

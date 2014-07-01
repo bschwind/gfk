@@ -20,15 +20,15 @@ public:
 protected:
 	static bool exitRequested;
 	bool isFixedTimeStep;
-	int targetUpdateFramesPerSecond = 60;
+	int targetUpdateFramesPerSecond;
 
 	virtual void LoadContent();
 	virtual void Update(const gfk::GameTime &gameTime);
 private:
 	gfk::GameTime time;
 	double dt;
-	double accumulator = 0.0;
-	double currentTime = 0.0;
+	double accumulator;
+	double currentTime;
 
 	static void SignalHandler(int signal);
 };

@@ -38,8 +38,8 @@ public:
 protected:
 private:
 	static const unsigned int bufferSize = 1024;
-	int bufferCounter = 0;
-	int readCounter = 0;
+	int bufferCounter;
+	int readCounter;
 	unsigned char dataBuffer[bufferSize];
 };
 

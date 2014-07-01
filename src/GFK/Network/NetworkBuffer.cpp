@@ -5,7 +5,9 @@
 namespace gfk
 {
 
-NetworkBuffer::NetworkBuffer()
+NetworkBuffer::NetworkBuffer() :
+bufferCounter(0),
+readCounter(0)
 {
 	
 }
