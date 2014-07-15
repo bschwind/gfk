@@ -11,6 +11,7 @@ class Mouse
 public:
 	static void SetTargetWindow(GLFWwindow* window);
 	static Vector2 GetPos();
+	static void SetPos(const Vector2 &pos);
 protected:
 private:
 	// The window to get mouse events from
