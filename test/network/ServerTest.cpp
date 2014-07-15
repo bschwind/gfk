@@ -19,14 +19,14 @@ int main()
 	IPAddress sender;
 	while (true)
 	{
-		int byteReadCount = socket.Receive(sender, netBuffer.GetDataBuffer(), 1024); // 1024 should really be buffer size
+		int byteReadCount = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
 		if (!byteReadCount)
 		{
 			continue;
 		}
 
 		// Echo the contents back to the client immediately
-		socket.Send(sender, netBuffer.GetDataBuffer(), 1024);
+		socket.Send(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
 
 		std::cout << "--------Received Packet (from " << sender.GetIPV4String() << ")" << std::endl;
 		std::cout << "Read signed byte: " << (int)netBuffer.ReadSignedByte() << std::endl;

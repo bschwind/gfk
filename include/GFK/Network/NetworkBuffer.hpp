@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GFK/Network/UDPSocket.hpp>
+
 namespace gfk
 {
 
@@ -9,7 +11,8 @@ public:
 	NetworkBuffer();
 	~NetworkBuffer();
 
-	int GetBufferCount();
+	unsigned int GetBufferCapacity();
+	unsigned int GetBufferCount();
 	unsigned char* GetDataBuffer();
 
 	void WriteSignedByte(signed char c);
@@ -34,13 +37,15 @@ public:
 	float ReadFloat32();
 	double ReadFloat64();
 
+	IPAddress ReadAllPackets(const UDPSocket &socket);
+
 	void Reset();
 protected:
 private:
-	static const unsigned int bufferSize = 1024;
+	static const unsigned int bufferCapacity = 4096;
 	int bufferCounter;
 	int readCounter;
-	unsigned char dataBuffer[bufferSize];
+	unsigned char dataBuffer[bufferCapacity];
 };
 
 }

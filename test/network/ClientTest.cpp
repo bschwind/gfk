@@ -63,13 +63,13 @@ int main(int argc, char* argv[])
 		netBuffer.WriteFloat32(f);
 		netBuffer.WriteFloat64(d);
 
-		socket.Send(destination, netBuffer.GetDataBuffer(), 1024);
+		socket.Send(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
 		double sentTime = gameTime.GetSystemTime();
 
 		// Receive echo from server
 		while (true)
 		{
-			int byteReadCount = socket.Receive(destination, netBuffer.GetDataBuffer(), 1024); // 1024 should really be buffer size
+			int byteReadCount = socket.Receive(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
 
 			if (!byteReadCount)
 			{

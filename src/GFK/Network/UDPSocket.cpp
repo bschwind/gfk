@@ -1,4 +1,6 @@
+#include <GFK/GameTime.hpp>
 #include <GFK/Network/UDPSocket.hpp>
+#include <GFK/Network/NetworkBuffer.hpp>
 #include <iostream>
 
 namespace gfk
@@ -119,7 +121,7 @@ bool UDPSocket::Send(const IPAddress &destination, const void *data, int size)
 	return sent_bytes == size;
 }
 
-int UDPSocket::Receive(IPAddress &sender, void *data, int size)
+int UDPSocket::Receive(IPAddress &sender, void *data, int size) const
 {
 	if (handle == 0 || size <= 0)
 	{

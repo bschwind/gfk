@@ -1,6 +1,7 @@
 #include <GFK/Network/SocketHeader.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/Network/BytePacker.hpp>
+#include <GFK/Network/IPAddress.hpp>
 
 namespace gfk
 {
@@ -17,7 +18,12 @@ NetworkBuffer::~NetworkBuffer()
 
 }
 
-int NetworkBuffer::GetBufferCount()
+unsigned int NetworkBuffer::GetBufferCapacity()
+{
+	return bufferCapacity;
+}
+
+unsigned int NetworkBuffer::GetBufferCount()
 {
 	return bufferCounter;
 }
@@ -218,6 +224,31 @@ float NetworkBuffer::ReadFloat32()
 double NetworkBuffer::ReadFloat64()
 {
 	return BytePacker::UnpackFloat64(ReadUnsignedInt64());
+}
+
+IPAddress NetworkBuffer::ReadAllPackets(const UDPSocket &socket)
+{
+	IPAddress sender;
+
+	bufferCounter = 0;
+
+	unsigned char *dataAddress = GetDataBuffer();
+	unsigned int remainingSpace = GetBufferCapacity();
+
+	while (true)
+	{
+		int byteReadCount = socket.Receive(sender, dataAddress, remainingSpace);
+		bufferCounter += byteReadCount;
+		dataAddress += byteReadCount;
+		remainingSpace -= byteReadCount;
+
+		if (!byteReadCount || remainingSpace <= 0)
+		{
+			break;
+		}
+	}
+
+	return sender;
 }
 
 void NetworkBuffer::Reset()

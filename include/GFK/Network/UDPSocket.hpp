@@ -15,7 +15,7 @@ public:
 	void Close();
 	bool IsOpen() const;
 	bool Send(const IPAddress &destination, const void *data, int size);
-	int Receive(IPAddress &sender, void *data, int size);
+	int Receive(IPAddress &sender, void *data, int size) const;
 
 	static bool InitializeSocketLayer();
 	static void ShutdownSocketLayer();
