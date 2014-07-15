@@ -10,7 +10,7 @@ namespace gfk
 class ConsoleGame
 {
 public:
-	ConsoleGame();
+	ConsoleGame(bool isFixedTimeStep, int targetUpdateFramesPerSecond);
 	~ConsoleGame();
 	virtual void Initialize();
 	virtual void UnloadContent();
