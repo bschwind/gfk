@@ -83,7 +83,7 @@ add_library(gfk-network STATIC
 			)
 
 add_library(gfk-system STATIC
-			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/GameTime.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/System/GameTime.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/System/Logger.cpp
 			)
 
