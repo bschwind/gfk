@@ -226,26 +226,27 @@ Matrix Matrix::CreateFromQuaternion(const Quaternion &quaternion)
 
 void Matrix::CreateFromQuaternion(const Quaternion &quaternion, Matrix &result)
 {
-	float num9 = quaternion.X * quaternion.X;
-	float num8 = quaternion.Y * quaternion.Y;
-	float num7 = quaternion.Z * quaternion.Z;
-	float num6 = quaternion.X * quaternion.Y;
-	float num5 = quaternion.Z * quaternion.W;
-	float num4 = quaternion.Z * quaternion.X;
-	float num3 = quaternion.Y * quaternion.W;
-	float num2 = quaternion.Y * quaternion.Z;
-	float num = quaternion.X * quaternion.W;
-	result(1,1) = 1.0f - (2.0f * (num8 + num7));
-	result(1,2) = 2.0f * (num6 + num5);
-	result(1,3) = 2.0f * (num4 - num3);
+	float xx = quaternion.X * quaternion.X;
+	float yy = quaternion.Y * quaternion.Y;
+	float zz = quaternion.Z * quaternion.Z;
+	float xy = quaternion.X * quaternion.Y;
+	float zw = quaternion.Z * quaternion.W;
+	float zx = quaternion.Z * quaternion.X;
+	float yw = quaternion.Y * quaternion.W;
+	float yz = quaternion.Y * quaternion.Z;
+	float xw = quaternion.X * quaternion.W;
+
+	result(1,1) = 1.0f - (2.0f * (yy + zz));
+	result(1,2) = 2.0f * (xy - zw);
+	result(1,3) = 2.0f * (zx + yw);
 	result(1,4) = 0.0f;
-	result(2,1) = 2.0f * (num6 - num5);
-	result(2,2) = 1.0f - (2.0f * (num7 + num9));
-	result(2,3) = 2.0f * (num2 + num);
+	result(2,1) = 2.0f * (xy + zw);
+	result(2,2) = 1.0f - (2.0f * (xx + zz));
+	result(2,3) = 2.0f * (yz - xw);
 	result(2,4) = 0.0f;
-	result(3,1) = 2.0f * (num4 + num3);
-	result(3,2) = 2.0f * (num2 - num);
-	result(3,3) = 1.0f - (2.0f * (num8 + num9));
+	result(3,1) = 2.0f * (zx - yw);
+	result(3,2) = 2.0f * (yz + xw);
+	result(3,3) = 1.0f - (2.0f * (xx + yy));
 	result(3,4) = 0.0f;
 	result(4,1) = 0.0f;
 	result(4,2) = 0.0f;
@@ -1002,7 +1003,7 @@ void Matrix::Subtract(const Matrix &m1, const Matrix &m2, Matrix &result)
 	result(4,4) = m1(4,4) - m2(4,4);
 }
 
-bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation)
+bool Matrix::Decompose(Vector3 &scale, Quaternion &rotation, Vector3 &translation) // todo - this needs to be transposed
 {
 	translation.X = m41;
 	translation.Y = m42;
@@ -1065,65 +1066,65 @@ float Matrix::Determinant()
 
 Vector3 Matrix::GetBackward()
 {
-	return Vector3(m31, m32, m33);
+	return Vector3(m13, m23, m33);
 }
 
 Vector3 Matrix::GetForward()
 {
-	return Vector3(-m31, -m32, -m33);
+	return Vector3(-m13, -m23, -m33);
 }
 
 void Matrix::SetForward(const Vector3 &v)
 {
-	m31 = -v.X;
-	m32 = -v.Y;
+	m13 = -v.X;
+	m23 = -v.Y;
 	m33 = -v.Z;
 }
 
 Vector3 Matrix::GetRight()
 {
-	return Vector3(m11, m12, m13);
+	return Vector3(m11, m21, m31);
 }
 
 void Matrix::SetRight(const Vector3 &v)
 {
 	m11 = v.X;
-	m12 = v.Y;
-	m13 = v.Z;
+	m21 = v.Y;
+	m31 = v.Z;
 }
 
 Vector3 Matrix::GetLeft()
 {
-	return Vector3(-m11, -m12, -m13);
+	return Vector3(-m11, -m21, -m31);
 }
 
 Vector3 Matrix::GetUp()
 {
-	return Vector3(m21, m22, m23);
+	return Vector3(m12, m22, m32);
 }
 
 void Matrix::SetUp(const Vector3 &v)
 {
-	m21 = v.X;
+	m12 = v.X;
 	m22 = v.Y;
-	m23 = v.Z;
+	m32 = v.Z;
 }
 
 Vector3 Matrix::GetDown()
 {
-	return Vector3(-m21, -m22, -m23);
+	return Vector3(-m12, -m22, -m32);
 }
 
 Vector3 Matrix::GetTranslation()
 {
-	return Vector3(m41, m42, m43);
+	return Vector3(m14, m24, m34);
 }
 
 void Matrix::SetTranslation(const Vector3 &v)
 {
-	m41 = v.X;
-	m42 = v.Y;
-	m43 = v.Z;
+	m14 = v.X;
+	m24 = v.Y;
+	m34 = v.Z;
 }
 
 Matrix Matrix::operator+= (const Matrix &op2)
