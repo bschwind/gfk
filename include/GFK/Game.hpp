@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GFK/GameTime.hpp>
+#include <GFK/System/GameTime.hpp>
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <iostream>
 #include <string>

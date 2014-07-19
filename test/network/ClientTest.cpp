@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <GFK/GameTime.hpp>
+#include <GFK/System/GameTime.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/System/Logger.hpp>

@@ -1,4 +1,4 @@
-#include <GFK/GameTime.hpp>
+#include <GFK/System/GameTime.hpp>
 
 #if defined(PLATFORM_WINDOWS)
 	#include <Windows.h>
