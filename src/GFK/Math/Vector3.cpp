@@ -1,6 +1,7 @@
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/Vector2.hpp>
 #include <GFK/Math/Matrix.hpp>
+#include <GFK/Math/Quaternion.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <cmath>
 
@@ -319,6 +320,29 @@ void Vector3::Transform(const Vector3 &position, const Matrix &matrix, Vector3 &
 	result.X = (position.X * matrix(1,1)) + (position.Y * matrix(2,1)) + (position.Z * matrix(3,1)) + matrix(4,1);
 	result.Y = (position.X * matrix(1,2)) + (position.Y * matrix(2,2)) + (position.Z * matrix(3,2)) + matrix(4,2);
 	result.Z = (position.X * matrix(1,3)) + (position.Y * matrix(2,3)) + (position.Z * matrix(3,3)) + matrix(4,3);
+}
+
+Vector3 Vector3::Transform(const Vector3 &position, const Quaternion &quaternion)
+{
+	float x = 2 * (quaternion.Y * position.Z - quaternion.Z * position.Y);
+	float y = 2 * (quaternion.Z * position.X - quaternion.X * position.Z);
+	float z = 2 * (quaternion.X * position.Y - quaternion.Y * position.X);
+
+	return Vector3(
+		position.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y),
+		position.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z),
+		position.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x));
+}
+
+void Vector3::Transform(const Vector3 &position, const Quaternion &quaternion, Vector3 &result)
+{
+	float x = 2 * (quaternion.Y * position.Z - quaternion.Z * position.Y);
+	float y = 2 * (quaternion.Z * position.X - quaternion.X * position.Z);
+	float z = 2 * (quaternion.X * position.Y - quaternion.Y * position.X);
+
+	result.X = position.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y);
+	result.Y = position.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z);
+	result.Z = position.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x);
 }
 
 Vector3 Vector3::TransformNormal(const Vector3 &normal, const Matrix &matrix)

@@ -422,6 +422,30 @@ Quaternion Quaternion::operator*= (float scalar)
 	return *this;
 }
 
+Quaternion Quaternion::operator*= (const Quaternion &op2)
+{
+	Quaternion quaternion;
+
+	float x = X;
+	float y = Y;
+	float z = Z;
+	float w = W;
+	float num4 = op2.X;
+	float num3 = op2.Y;
+	float num2 = op2.Z;
+	float num = op2.W;
+	float num12 = (y * num2) - (z * num3);
+	float num11 = (z * num4) - (x * num2);
+	float num10 = (x * num3) - (y * num4);
+	float num9 = ((x * num4) + (y * num3)) + (z * num2);
+	X = ((x * num) + (num4 * w)) + num12;
+	Y = ((y * num) + (num3 * w)) + num11;
+	Z = ((z * num) + (num2 * w)) + num10;
+	W = (w * num) - num9;
+	
+	return *this;
+}
+
 Quaternion Quaternion::operator/= (float scalar)
 {
 	X /= scalar;
@@ -495,6 +519,21 @@ Quaternion operator* (const Quaternion &op1, const Quaternion &op2)
 	quaternion.Z = ((z * num) + (num2 * w)) + num10;
 	quaternion.W = (w * num) - num9;
 	return quaternion;
+}
+
+Vector3 operator* (const Quaternion &op1, const Vector3 &op2)
+{
+	Vector3 result;
+
+	float x = 2 * (op1.Y * op2.Z - op1.Z * op2.Y);
+	float y = 2 * (op1.Z * op2.X - op1.X * op2.Z);
+	float z = 2 * (op1.X * op2.Y - op1.Y * op2.X);
+
+	result.X = op2.X + x * op1.W + (op1.Y * z - op1.Z * y);
+	result.Y = op2.Y + y * op1.W + (op1.Z * x - op1.X * z);
+	result.Z = op2.Z + z * op1.W + (op1.X * y - op1.Y * x);
+
+	return result;
 }
 
 Quaternion operator* (const Quaternion &op1, float op2)

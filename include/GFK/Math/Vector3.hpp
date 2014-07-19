@@ -5,6 +5,7 @@ namespace gfk
 
 class Vector2;
 class Matrix;
+class Quaternion;
 
 class Vector3
 {
@@ -64,6 +65,8 @@ public:
 	static void Subtract(const Vector3 &v1, const Vector3 &v2, Vector3 &result);
 	static Vector3 Transform(const Vector3 &position, const Matrix &matrix);
 	static void Transform(const Vector3 &position, const Matrix &matrix, Vector3 &result);
+	static Vector3 Transform(const Vector3 &position, const Quaternion &quaternion);
+	static void Transform(const Vector3 &position, const Quaternion &quaternion, Vector3 &result);
 	static Vector3 TransformNormal(const Vector3 &normal, const Matrix &matrix);
 	static void TransformNormal(const Vector3 &normal, const Matrix &matrix, Vector3 &result);
 

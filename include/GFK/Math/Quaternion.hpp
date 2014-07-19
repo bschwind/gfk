@@ -53,6 +53,7 @@ public:
 	Quaternion operator+= (const Quaternion &op2);
 	Quaternion operator-= (const Quaternion &op2);
 	Quaternion operator*= (float scalar);
+	Quaternion operator*= (const Quaternion &op2);
 	Quaternion operator/= (float divisor);
 protected:
 private:
@@ -63,6 +64,7 @@ Quaternion operator- (const Quaternion &op1, const Quaternion &op2);
 Quaternion operator- (const Quaternion &op1);
 Quaternion operator* (const Quaternion &op1, const Quaternion &op2);
 Quaternion operator* (const Quaternion &op1, float op2);
+Vector3 operator* (const Quaternion &op1, const Vector3 &op2);
 Quaternion operator/ (const Quaternion &op1, const Quaternion &op2);
 
 }
