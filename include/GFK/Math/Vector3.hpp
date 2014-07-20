@@ -56,7 +56,7 @@ public:
 	static void Multiply(const Vector3 &v1, float scalar, Vector3 &result);
 	static Vector3 Negate(Vector3 &v1);
 	static void Negate(const Vector3 &v1, Vector3 &result);
-	static Vector3 Normalize(Vector3 &v);
+	static Vector3 Normalize(const Vector3 &v);
 	static void Normalize(const Vector3 &v, Vector3 &result);
 	static Vector3 Reflect(const Vector3 &v, const Vector3 &normal);
 	static void Reflect(const Vector3 &v, const Vector3 &normal, Vector3 &result);
@@ -65,8 +65,8 @@ public:
 	static void Subtract(const Vector3 &v1, const Vector3 &v2, Vector3 &result);
 	static Vector3 Transform(const Vector3 &position, const Matrix &matrix);
 	static void Transform(const Vector3 &position, const Matrix &matrix, Vector3 &result);
-	static Vector3 Transform(const Vector3 &position, const Quaternion &quaternion);
-	static void Transform(const Vector3 &position, const Quaternion &quaternion, Vector3 &result);
+	static Vector3 Transform(const Vector3 &normal, const Quaternion &quaternion);
+	static void Transform(const Vector3 &normal, const Quaternion &quaternion, Vector3 &result);
 	static Vector3 TransformNormal(const Vector3 &normal, const Matrix &matrix);
 	static void TransformNormal(const Vector3 &normal, const Matrix &matrix, Vector3 &result);
 

@@ -151,6 +151,58 @@ void Quaternion::CreateFromRotationMatrix(const Matrix &matrix, Quaternion &resu
 	}
 }
 
+Quaternion Quaternion::CreateFromBasisVectors(const Vector3 &right, const Vector3 &up)
+{
+	Quaternion q;
+	CreateFromBasisVectors(right, up, q);
+	return q;
+}
+
+void Quaternion::CreateFromBasisVectors(const Vector3 &right, const Vector3 &up, Quaternion &result)
+{
+	Vector3 rightN = Vector3::Normalize(right);
+	Vector3 upN = Vector3::Normalize(up);
+	Vector3 forwardN = Vector3::Cross(up, right);
+
+	float num8 = (rightN.X + upN.Y) + forwardN.Z;
+	if (num8 > 0.0f)
+	{
+		float num = (float) sqrt((double) (num8 + 1.0f));
+		result.W = num * 0.5f;
+		num = 0.5f / num;
+		result.X = (upN.Z - forwardN.Y) * num;
+		result.Y = (forwardN.X - rightN.Z) * num;
+		result.Z = (rightN.Y - upN.X) * num;
+	}
+	else if ((rightN.X >= upN.Y) && (rightN.X >= forwardN.Z))
+	{
+		float num7 = (float) sqrt((double) (((1.0f + rightN.X) - upN.Y) - forwardN.Z));
+		float num4 = 0.5f / num7;
+		result.X = 0.5f * num7;
+		result.Y = (rightN.Y + upN.X) * num4;
+		result.Z = (rightN.Z + forwardN.X) * num4;
+		result.W = (upN.Z - forwardN.Y) * num4;
+	}
+	else if (upN.Y > forwardN.Z)
+	{
+		float num6 = (float) sqrt((double) (((1.0f + upN.Y) - rightN.X) - forwardN.Z));
+		float num3 = 0.5f / num6;
+		result.X = (upN.X + rightN.Y) * num3;
+		result.Y = 0.5f * num6;
+		result.Z = (forwardN.Y + upN.Z) * num3;
+		result.W = (forwardN.X - rightN.Z) * num3;
+	}
+	else
+	{
+		float num5 = (float) sqrt((double) (((1.0f + forwardN.Z) - rightN.X) - upN.Y));
+		float num2 = 0.5f / num5;
+		result.X = (forwardN.X + rightN.Z) * num2;
+		result.Y = (forwardN.Y + upN.Z) * num2;
+		result.Z = 0.5f * num5;
+		result.W = (rightN.Y - upN.X) * num2;
+	}
+}
+
 Quaternion Quaternion::CreateFromYawPitchRoll(float yaw, float pitch, float roll)
 {
 	Quaternion q;

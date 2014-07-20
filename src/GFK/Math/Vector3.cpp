@@ -247,13 +247,11 @@ void Vector3::Negate(const Vector3 &v, Vector3 &result)
 	result.Z = -v.Z;
 }
 
-Vector3 Vector3::Normalize(Vector3 &v)
+Vector3 Vector3::Normalize(const Vector3 &v)
 {
-	float val = 1.0f / sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
-	v.X *= val;
-	v.Y *= val;
-	v.Z *= val;
-	return v;
+	Vector3 result;
+	Normalize(v, result);
+	return result;
 }
 
 void Vector3::Normalize(const Vector3 &v, Vector3 &result)
@@ -322,27 +320,27 @@ void Vector3::Transform(const Vector3 &position, const Matrix &matrix, Vector3 &
 	result.Z = (position.X * matrix(1,3)) + (position.Y * matrix(2,3)) + (position.Z * matrix(3,3)) + matrix(4,3);
 }
 
-Vector3 Vector3::Transform(const Vector3 &position, const Quaternion &quaternion)
+Vector3 Vector3::Transform(const Vector3 &normal, const Quaternion &quaternion)
 {
-	float x = 2 * (quaternion.Y * position.Z - quaternion.Z * position.Y);
-	float y = 2 * (quaternion.Z * position.X - quaternion.X * position.Z);
-	float z = 2 * (quaternion.X * position.Y - quaternion.Y * position.X);
+	float x = 2 * (quaternion.Y * normal.Z - quaternion.Z * normal.Y);
+	float y = 2 * (quaternion.Z * normal.X - quaternion.X * normal.Z);
+	float z = 2 * (quaternion.X * normal.Y - quaternion.Y * normal.X);
 
 	return Vector3(
-		position.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y),
-		position.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z),
-		position.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x));
+		normal.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y),
+		normal.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z),
+		normal.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x));
 }
 
-void Vector3::Transform(const Vector3 &position, const Quaternion &quaternion, Vector3 &result)
+void Vector3::Transform(const Vector3 &normal, const Quaternion &quaternion, Vector3 &result)
 {
-	float x = 2 * (quaternion.Y * position.Z - quaternion.Z * position.Y);
-	float y = 2 * (quaternion.Z * position.X - quaternion.X * position.Z);
-	float z = 2 * (quaternion.X * position.Y - quaternion.Y * position.X);
+	float x = 2 * (quaternion.Y * normal.Z - quaternion.Z * normal.Y);
+	float y = 2 * (quaternion.Z * normal.X - quaternion.X * normal.Z);
+	float z = 2 * (quaternion.X * normal.Y - quaternion.Y * normal.X);
 
-	result.X = position.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y);
-	result.Y = position.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z);
-	result.Z = position.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x);
+	result.X = normal.X + x * quaternion.W + (quaternion.Y * z - quaternion.Z * y);
+	result.Y = normal.Y + y * quaternion.W + (quaternion.Z * x - quaternion.X * z);
+	result.Z = normal.Z + z * quaternion.W + (quaternion.X * y - quaternion.Y * x);
 }
 
 Vector3 Vector3::TransformNormal(const Vector3 &normal, const Matrix &matrix)

@@ -26,6 +26,8 @@ public:
 	static void CreateFromAxisAngle(const Vector3 &axis, float angle, Quaternion &result);
 	static Quaternion CreateFromRotationMatrix(const Matrix &matrix);
 	static void CreateFromRotationMatrix(const Matrix &matrix, Quaternion &result);
+	static Quaternion CreateFromBasisVectors(const Vector3 &right, const Vector3 &up);
+	static void CreateFromBasisVectors(const Vector3 &right, const Vector3 &up, Quaternion &result);
 	static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll);
 	static void CreateFromYawPitchRoll(float yaw, float pitch, float roll, Quaternion &result);
 	static void Divide(const Quaternion &q1, const Quaternion &q2, Quaternion &result);
