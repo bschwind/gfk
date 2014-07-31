@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GFK/Math/Matrix.hpp>
-#include <GFK/Math/Vector3.hpp>
 
 namespace gfk
 {
@@ -13,13 +12,14 @@ public:
 	~Camera();
 	virtual Matrix GetView();
 	virtual Matrix GetProjection();
-	virtual void Update(float dt);
 
-	Vector3 pos;
-	float screenWidth, screenHeight;
+	void SetScreenWidth(int screenWidth);
+	void SetScreenHeight(int screenHeight);
 protected:
 	Matrix view;
 	Matrix projection;
+	int screenWidth, screenHeight;
+private:
 };
 
 }
