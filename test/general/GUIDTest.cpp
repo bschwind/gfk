@@ -9,7 +9,7 @@ int main()
 {
 	while (true)
 	{
-		Logger::Log(GUIDGenerator::GenerateGUID());
+		Logger::Logf("%s\n", GUIDGenerator::GenerateGUID().c_str());
 	}
 	
 	return 0;
