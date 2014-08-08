@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 {
 	if (argc != 2)
 	{
-		Logger::Log("Please provide a port to bind the client to");
+		Logger::Log("Please provide a port to bind the client to\n");
 		return 1;
 	}
 
@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
 	IPAddress destination;
 	int validAddress = IPAddress::FromIPV4String("192.168.1.255", 55777, destination);
 
-	Logger::Log(std::string("Destination is ") + destination.GetIPV4String());
+	Logger::Logf("Destination is %s\n", destination.GetIPV4String().c_str());
 
 	while (validAddress)
 	{
-		std::cout << "Press enter to send a test packet" << std::endl;
+		Logger::Log("Press enter to send a test packet\n");
 		std::string message;
 		std::getline(std::cin, message);
 
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 			{
 				if (gameTime.GetSystemTime() - sentTime > 5)
 				{
-					std::cout << "Server took too long to respond" << std::endl;
+					Logger::Log("Server took too long to respond\n");
 					netBuffer.Reset();
 					break;
 				}
