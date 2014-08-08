@@ -1,6 +1,7 @@
 #include <GFK/System/GameTime.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
+#include <GFK/System/Logger.hpp>
 #include <iostream>
 
 namespace gfk
@@ -32,7 +33,7 @@ bool UDPSocket::Bind(unsigned short port)
 
 	if (handle <= 0)
 	{
-		std::cerr << "Failed to create a UDP socket on port " << port << std::endl;
+		Logger::LogErrorf("Failed to create a UDP socket on port %u\n", port);
 		Close();
 		return false;
 	}
@@ -45,28 +46,28 @@ bool UDPSocket::Bind(unsigned short port)
 
 	if (bind(handle, (const sockaddr*)&address, sizeof(sockaddr_in)) < 0)
 	{
-		std::cerr << "Failed to bind UDP socket with handle " << handle << " on port " << port << std::endl;
+		Logger::LogErrorf("Failed to bind UDP socket with handle %i on port %u\n", handle, port);
 		Close();
 		return false;
 	}
 
 	socketPort = port;
 
-	printf("Opened UDP socket on port %u with handle %d\n", socketPort, handle);
+	Logger::Logf("Opened UDP socket on port %u with handle %d\n", socketPort, handle);
 
 	// Set socket to non-blocking mode
 	#if defined(PLATFORM_WINDOWS)
 		DWORD nonBlocking = 1;
 		if (ioctlsocket(handle, FIONBIO, &nonBlocking) != 0)
 		{
-			std::cerr << "Could not set socket with handle " << handle << " to non-blocking IO" << std::endl;
+			Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
 			return false;
 		}
 	#else
 		int nonBlocking = 1;
 		if (fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
 		{
-			std::cerr << "Could not set socket with handle " << handle << " to non-blocking IO" << std::endl;
+			Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
 			return false;
 		}
 	#endif
@@ -75,7 +76,7 @@ bool UDPSocket::Bind(unsigned short port)
 
 	if (setsockopt(handle, SOL_SOCKET, SO_BROADCAST, (char *)&broadcast, sizeof broadcast) == -1)
 	{
-		std::cerr << "Could not set socket with handle " << handle << " to broadcast mode" << std::endl;
+		Logger::LogErrorf("Could not set socket with handle %i to broadcast mode\n", handle);
 		return false;
 	}
 
@@ -86,7 +87,7 @@ void UDPSocket::Close()
 {
 	if (IsOpen())
 	{
-		printf("Closing socket with handle %d on port %u\n", handle, socketPort);
+		Logger::Logf("Closing socket with handle %d on port %u\n", handle, socketPort);
 
 		#if defined(PLATFORM_WINDOWS)
 			closesocket(handle);

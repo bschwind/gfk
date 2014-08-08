@@ -1,5 +1,6 @@
 #include <GFK/Graphics/Mesh.hpp>
 #include <GFK/Graphics/AssImpBridge.hpp>
+#include <GFK/System/Logger.hpp>
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp> 
 #include <assimp/postprocess.h>
@@ -64,26 +65,26 @@ Mesh::~Mesh()
 
 void printAiSceneInfo(const aiScene *aiSceneP)
 {
-	printf("void printAiSceneInfo(const aiScene* aiSceneP)...\n");
-	printf("aiSceneP->HasMeshes(): %i\n", aiSceneP->HasMeshes());
+	Logger::Log("void printAiSceneInfo(const aiScene* aiSceneP)...\n");
+	Logger::Logf("aiSceneP->HasMeshes(): %i\n", aiSceneP->HasMeshes());
 
 	if (aiSceneP->HasMeshes())
 	{
-		printf("aiScene->mNumMeshes: %i\n", aiSceneP->mNumMeshes);
+		Logger::Logf("aiScene->mNumMeshes: %i\n", aiSceneP->mNumMeshes);
 
 		for (int i(0); i<aiSceneP->mNumMeshes; i++)
 		{
-			printf("aiScene->mMeshes[%i]: \n", i);
+			Logger::Logf("aiScene->mMeshes[%i]: \n", i);
 
 			for (int j(0); j<AI_MAX_NUMBER_OF_COLOR_SETS; j++)
 			{
-				printf("aiScene->mMeshes[%i]->HasVertexColors[%i]: %i\n", i, j, aiSceneP->mMeshes[i]->HasVertexColors(j));
+				Logger::Logf("aiScene->mMeshes[%i]->HasVertexColors[%i]: %i\n", i, j, aiSceneP->mMeshes[i]->HasVertexColors(j));
 
 				if (aiSceneP->mMeshes[i]->HasVertexColors(j))
 				{
 					for (int k(0); k < aiSceneP->mMeshes[i]->mNumVertices; k++)
 					{
-						printf("aiScene->mMeshes[%i]->mColors[%i][%i]: [%f, %f, %f, %f]\n",
+						Logger::Logf("aiScene->mMeshes[%i]->mColors[%i][%i]: [%f, %f, %f, %f]\n",
 						i,
 						j,
 						k,
@@ -95,7 +96,7 @@ void printAiSceneInfo(const aiScene *aiSceneP)
 				}
 				else
 				{
-					printf("aiScene->mMeshes[%i]->mColors[%i]: None\n", i, j);
+					Logger::Logf("aiScene->mMeshes[%i]->mColors[%i]: None\n", i, j);
 				}
 			}
 		}
