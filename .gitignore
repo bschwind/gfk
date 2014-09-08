@@ -6,4 +6,5 @@ android/obj/
 android/bin/
 android/gen/
 android/libs/
+.idea/workspace.xml
 
