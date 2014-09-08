@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GFK/Graphics/Camera.hpp>
+#include <GFK/Math/Vector3.hpp>
 
 namespace gfk
 {
@@ -11,11 +12,11 @@ public:
 	Camera2D();
 	~Camera2D();
 
-	float screenWidth, screenHeight;
-
 	Matrix GetView();
 	Matrix GetProjection();
-	void Update(float dt);
+	void SetPos(const Vector3 &position);
+private:
+	Vector3 pos;
 };
 
 }

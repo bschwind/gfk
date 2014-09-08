@@ -34,7 +34,8 @@ Game(title, width, height),
 t(0.0f),
 duration(2.5f)
 {
-
+	camera.SetScreenWidth(width);
+	camera.SetScreenHeight(height);
 }
 
 EasingTest::~EasingTest()
@@ -46,9 +47,6 @@ void EasingTest::Initialize()
 {
 	gfk::Game::Initialize();
 	primBatch.Initialize();
-
-	camera.screenWidth = 1280;
-	camera.screenHeight = 720;
 
 	Device.SetClearColor(Color::White);
 }
@@ -66,7 +64,6 @@ void EasingTest::UnloadContent()
 void EasingTest::Update(const gfk::GameTime &gameTime)
 {
 	float dt = gameTime.ElapsedGameTime;
-	camera.Update(dt);
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{

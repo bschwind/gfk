@@ -30,7 +30,8 @@ private:
 Graphics2DTest::Graphics2DTest(const std::string &title, int width, int height) :
 Game(title, width, height)
 {
-
+	camera.SetScreenWidth(width);
+	camera.SetScreenHeight(height);
 }
 
 Graphics2DTest::~Graphics2DTest()
@@ -42,9 +43,6 @@ void Graphics2DTest::Initialize()
 {
 	gfk::Game::Initialize();
 	primBatch.Initialize();
-
-	camera.screenWidth = 1280;
-	camera.screenHeight = 720;
 
 	Device.SetClearColor(Color::White);
 }
@@ -61,9 +59,6 @@ void Graphics2DTest::UnloadContent()
 
 void Graphics2DTest::Update(const gfk::GameTime &gameTime)
 {
-	float dt = gameTime.ElapsedGameTime;
-	camera.Update(dt);
-
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
 		gfk::Game::Exit();

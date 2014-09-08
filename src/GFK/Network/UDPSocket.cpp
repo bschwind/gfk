@@ -72,8 +72,8 @@ bool UDPSocket::Bind(unsigned short port)
 		}
 	#endif
 
+	// Enable UDP broadcast
 	int broadcast = 1;
-
 	if (setsockopt(handle, SOL_SOCKET, SO_BROADCAST, (char *)&broadcast, sizeof broadcast) == -1)
 	{
 		Logger::LogErrorf("Could not set socket with handle %i to broadcast mode\n", handle);
