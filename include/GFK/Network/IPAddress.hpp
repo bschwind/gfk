@@ -20,7 +20,7 @@ public:
 	unsigned char GetC() const;
 	unsigned char GetD() const;
 	unsigned short GetPort() const;
-	std::string GetIPV4String();
+	std::string GetIPV4String() const;
 
 	static int FromIPV4String(std::string address, unsigned short port, IPAddress &IPAddress);
 protected:

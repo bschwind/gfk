@@ -37,7 +37,7 @@ void JetGame::Initialize()
 	primBatch.Initialize();
 
 	socket.Bind(55778);
-	serverAddress = ConnectToServer("192.168.1.255", 55777);
+	serverAddress = ConnectToServer("127.0.0.1", 55777);
 	std::cout << "Server destination is " << serverAddress.GetIPV4String() << std::endl;
 
 	Device.SetClearColor(Color::Black);
@@ -96,25 +96,35 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 	camera.Update(dt, jet.GetForward(), jet.GetUp(), jet.GetRight());
 	camera.SetPos(jet.GetPosition() - jet.GetForward() * 50 + jet.GetUp() * 8);
 
-	// Update Network
-	netBuffer.WriteUnsignedInt32(Packets::applicationID);
-	netBuffer.WriteUnsignedInt32(0); // sequence
-	netBuffer.WriteUnsignedInt32(0); // ack
-	netBuffer.WriteUnsignedInt32(0); // ack bitfield
-	netBuffer.WriteUnsignedByte(Packets::MOVEMENT); // ack bitfield
-	netBuffer.WriteFloat32(jet.GetPosition().X);
-	netBuffer.WriteFloat32(jet.GetPosition().Y);
-	netBuffer.WriteFloat32(jet.GetPosition().Z);
+	// Exit Conditions
+	if (Keyboard::IsKeyDown(Keys::Escape))
+	{
+		netBuffer.WriteUnsignedInt32(Packets::applicationID);
+		netBuffer.WriteUnsignedInt32(0); // sequence
+		netBuffer.WriteUnsignedInt32(0); // ack
+		netBuffer.WriteUnsignedInt32(32); // ack bitfield
+		netBuffer.WriteUnsignedByte(1); // num packets
+		netBuffer.WriteUnsignedByte(Packets::DISCONNECT);
+
+		gfk::Game::Exit();
+	}
+	else
+	{
+		// Update Network
+		netBuffer.WriteUnsignedInt32(Packets::applicationID);
+		netBuffer.WriteUnsignedInt32(0); // sequence
+		netBuffer.WriteUnsignedInt32(0); // ack
+		netBuffer.WriteUnsignedInt32(0); // ack bitfield
+		netBuffer.WriteUnsignedByte(1); // num packets
+		netBuffer.WriteUnsignedByte(Packets::MOVEMENT);
+		netBuffer.WriteFloat32(jet.GetPosition().X);
+		netBuffer.WriteFloat32(jet.GetPosition().Y);
+		netBuffer.WriteFloat32(jet.GetPosition().Z);
+	}
 
 	socket.Send(serverAddress, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
 
 	netBuffer.Reset();
-
-	// Exit Conditions
-	if (Keyboard::IsKeyDown(Keys::Escape))
-	{
-		gfk::Game::Exit();
-	}
 }
 
 void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
@@ -172,7 +182,9 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 	netBuffer.WriteUnsignedInt32(sequence);
 	netBuffer.WriteUnsignedInt32(ack);
 	netBuffer.WriteUnsignedInt32(ackBitfield);
-	netBuffer.WriteUnsignedByte(Packets::NEW_CLIENT);
+	netBuffer.WriteUnsignedByte(1);
+	netBuffer.WriteUnsignedByte(Packets::NEW_DESKTOP_CLIENT);
+
 	socket.Send(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
 
 	double sentTime = GameTime::GetSystemTime();
@@ -183,9 +195,18 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 
 		if (!byteReadCount)
 		{
-			if (GameTime::GetSystemTime() - sentTime > 0.3)
+			if (GameTime::GetSystemTime() - sentTime > 3.3)
 			{
-				std::cout << "Server took too long to respond" << std::endl;
+				std::cout << (GameTime::GetSystemTime() - sentTime) << std::endl;
+
+				std::cout << destination.GetIPV4String() << " took too long to respond, trying broadcast address" << std::endl;
+
+				std::string broadcastAddressToTry = "192.168.1.255" + std::to_string(port);
+				if (destination.GetIPV4String().compare(broadcastAddressToTry) == 0)
+				{
+					return ConnectToServer("192.168.1.255", port);
+				}
+
 				return destination;
 			}
 			continue;

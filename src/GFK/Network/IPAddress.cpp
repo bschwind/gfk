@@ -61,19 +61,16 @@ unsigned short IPAddress::GetPort() const
 	return port;
 }
 
-std::string IPAddress::GetIPV4String()
+std::string IPAddress::GetIPV4String() const
 {
 	std::stringstream ss;
 
-	// I don't know a better way to get the actual number
-	// from the unsigned char instead of the character, except
-	// by converting it to a larger integer type :(
-	unsigned short a = GetA();
-	unsigned short b = GetB();
-	unsigned short c = GetC();
-	unsigned short d = GetD();
+	ss << static_cast<unsigned short>(GetA())
+		<< "." << static_cast<unsigned short>(GetB())
+		<< "." << static_cast<unsigned short>(GetC())
+		<< "." << static_cast<unsigned short>(GetD())
+		<< ":" << port;
 
-	ss << a << "." << b << "." << c << "." << d << ":" << port;
 	return ss.str();
 }
 
