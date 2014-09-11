@@ -1,6 +1,7 @@
 #include "JetServer.hpp"
 #include "Packets.hpp"
 #include "network/Packet.hpp"
+#include <bitset>
 
 using namespace jetGame;
 
