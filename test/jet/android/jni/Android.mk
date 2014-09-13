@@ -21,6 +21,8 @@ LOCAL_SRC_FILES := \
 	AndroidJetGame.cpp \
 	TopDownCamera.cpp \
 	../../Packets.cpp \
+	../../network/RemoteConnection.cpp \
+	../../network/Packet.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \
 	$(GFK_SRC)/GFK/Network/IPAddress.cpp \

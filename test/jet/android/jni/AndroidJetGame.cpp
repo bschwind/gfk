@@ -2,6 +2,7 @@
 #include "Packets.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/System/Logger.hpp>
+#include <sstream>
 #include <cmath>
 
 using namespace gfk;
@@ -10,7 +11,8 @@ namespace jetGame
 {
 
 AndroidJetGame::AndroidJetGame() :
-Game()
+Game(),
+netBuffer(4096)
 {
 	Logger::Log("Jet Game Constructor!");
 	isFixedTimeStep = false;
@@ -42,33 +44,61 @@ void AndroidJetGame::LoadContent()
 void AndroidJetGame::UnloadContent()
 {
 	Logger::Log("unload content()!");
+
+	serverConnection.WritePacket(DisconnectPacket());
+	serverConnection.SendPackets(socket);
+
 	socket.Close();
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 {
+	IPAddress sender;
+
+	while (true)
+	{
+		int numBytesRead = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
+
+		if (numBytesRead > 0)
+		{
+			unsigned int applicationID = netBuffer.ReadUnsignedInt32();
+			unsigned int sequence = netBuffer.ReadUnsignedInt32();
+			unsigned int ack = netBuffer.ReadUnsignedInt32();
+			unsigned int ackBitfield = netBuffer.ReadUnsignedInt32();
+			unsigned int numPackets = netBuffer.ReadUnsignedByte();
+
+			if (applicationID == Packets::applicationID)
+			{
+				std::string ipAddress = sender.GetIPV4String();
+				// std::cout << "Received packet from " << ipAddress << std::endl;
+				unsigned char protocol = netBuffer.ReadUnsignedByte();
+			}
+		}
+		else
+		{
+			break;
+		}
+
+		netBuffer.Reset();
+	}
+
+	netBuffer.Reset();
+
 	float dt = gameTime.ElapsedGameTime;
 	double totalTime = gameTime.TotalGameTime;
-	Vector3 pos;
 
-	pos.X = (float)sin(totalTime) * 3;
-	pos.Y = 10;
-	pos.Z = (float)cos(totalTime) * 3;
-
-	cam.SetPos(pos);
+	cam.SetPos(Vector3(0, 10, 0));
 }
 
 void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
 	Device.Clear();
 
-	primBatch.Begin(PrimitiveType::LineList, cam);
-	
 	Color color = Color::Gray;
 	color.A = 0.3f;
-	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 
-	primBatch.DrawLine(Vector3(0, 0, 0), Vector3(2, 0, -2), Color::Red, Color::Red);
+	primBatch.Begin(PrimitiveType::LineList, cam);
+	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 	primBatch.End();
 
 	Device.SwapBuffers();
@@ -86,17 +116,11 @@ IPAddress AndroidJetGame::ConnectToServer(const std::string &address, unsigned s
 	IPAddress destination;
 	IPAddress::FromIPV4String(address, port, destination);
 
-	unsigned int sequence = 0;
-	unsigned int ack = 0;
-	unsigned int ackBitfield = 0;
+	serverConnection.clientType = ClientType::SERVER;
+	serverConnection.address = destination;
 
-	NetworkBuffer netBuffer;
-	netBuffer.WriteUnsignedInt32(Packets::applicationID);
-	netBuffer.WriteUnsignedInt32(sequence);
-	netBuffer.WriteUnsignedInt32(ack);
-	netBuffer.WriteUnsignedInt32(ackBitfield);
-	netBuffer.WriteUnsignedByte(Packets::NEW_ANDROID_CLIENT);
-	socket.Send(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
+	serverConnection.WritePacket(NewAndroidClientPacket(24));
+	serverConnection.SendPackets(socket);
 
 	double sentTime = GameTime::GetSystemTime();
 
@@ -106,9 +130,9 @@ IPAddress AndroidJetGame::ConnectToServer(const std::string &address, unsigned s
 
 		if (!byteReadCount)
 		{
-			if (GameTime::GetSystemTime() - sentTime > 3.3)
+			if (GameTime::GetSystemTime() - sentTime > 1.0)
 			{
-				Logger::Log("Server took too long to respond");
+				std::cout << destination.GetIPV4String() << " took too long to respond" << std::endl;
 				return destination;
 			}
 			continue;
