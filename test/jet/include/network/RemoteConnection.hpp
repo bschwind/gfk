@@ -13,6 +13,7 @@ class RemoteConnection
 {
 public:
 	RemoteConnection();
+	RemoteConnection(unsigned int bufferCapacity);
 	~RemoteConnection();
 
 	void WritePacket(const Packet &packet);

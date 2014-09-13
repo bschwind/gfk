@@ -14,7 +14,7 @@ int main()
 	UDPSocket socket;
 	socket.Bind(55777);
 
-	NetworkBuffer netBuffer;
+	NetworkBuffer netBuffer(4096);
 
 	IPAddress sender;
 	while (true)

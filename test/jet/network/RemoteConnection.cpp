@@ -5,6 +5,19 @@ namespace jetGame
 {
 
 RemoteConnection::RemoteConnection() :
+outgoingBuffer(4096),
+timeSinceLastPacket(0.0f),
+localSequenceNumber(0),
+remoteSequenceNumber(0),
+ackBitfield(0),
+roundTripTime(0.0f),
+numPacketsWritten(0)
+{
+
+}
+
+RemoteConnection::RemoteConnection(unsigned int bufferCapacity) :
+outgoingBuffer(bufferCapacity),
 timeSinceLastPacket(0.0f),
 localSequenceNumber(0),
 remoteSequenceNumber(0),

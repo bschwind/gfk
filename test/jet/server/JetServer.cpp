@@ -9,7 +9,8 @@ JetServer::JetServer() :
 ConsoleGame(true, 120),
 networkCounter(0),
 networkSendsPerSecond(40),
-updateCounter(0)
+updateCounter(0),
+netBuffer(4096)
 {
 
 }

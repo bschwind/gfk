@@ -6,9 +6,11 @@
 namespace gfk
 {
 
-NetworkBuffer::NetworkBuffer() :
+NetworkBuffer::NetworkBuffer(unsigned int capacity) :
+bufferCapacity(capacity),
 bufferCounter(0),
-readCounter(0)
+readCounter(0),
+dataBuffer(capacity)
 {
 	
 }
@@ -30,7 +32,7 @@ unsigned int NetworkBuffer::GetBufferCount()
 
 unsigned char* NetworkBuffer::GetDataBuffer()
 {
-	return dataBuffer;
+	return &dataBuffer[0];
 }
 
 void NetworkBuffer::WriteSignedByte(signed char c)

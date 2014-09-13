@@ -19,7 +19,7 @@ int main()
 	float f = 3.1415926f;
 	double d = 3.141592653589793;
 
-	NetworkBuffer netBuffer;
+	NetworkBuffer netBuffer(4096);
 	netBuffer.WriteSignedByte(sbyte);
 	netBuffer.WriteUnsignedByte(ubyte);
 	netBuffer.WriteSignedInt16(ssi);

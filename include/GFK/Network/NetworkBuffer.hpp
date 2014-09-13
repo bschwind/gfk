@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GFK/Network/UDPSocket.hpp>
+#include <vector>
 
 namespace gfk
 {
@@ -8,7 +9,7 @@ namespace gfk
 class NetworkBuffer
 {
 public:
-	NetworkBuffer();
+	NetworkBuffer(unsigned int capacity);
 	~NetworkBuffer();
 
 	unsigned int GetBufferCapacity();
@@ -42,10 +43,10 @@ public:
 	void Reset();
 protected:
 private:
-	static const unsigned int bufferCapacity = 4096;
+	unsigned int bufferCapacity;
 	int bufferCounter;
 	int readCounter;
-	unsigned char dataBuffer[bufferCapacity];
+	std::vector<unsigned char> dataBuffer;
 };
 
 }
