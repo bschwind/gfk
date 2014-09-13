@@ -22,6 +22,22 @@ public:
 	unsigned char protocol;
 };
 
+class NewDesktopClientPacket : public Packet {
+public:
+	unsigned char number;
+
+	NewDesktopClientPacket(unsigned char number);
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
+
+class NewAndroidClientPacket : public Packet {
+public:
+	unsigned char number;
+
+	NewAndroidClientPacket(unsigned char number);
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
+
 class NewDesktopClientAckPacket : public Packet {
 public:
 	unsigned char numPlayers;
@@ -46,8 +62,10 @@ public:
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-// class DisconnectPacket : public Packet {
-
-// };
+class DisconnectPacket : public Packet {
+public:
+	DisconnectPacket();
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
 
 }

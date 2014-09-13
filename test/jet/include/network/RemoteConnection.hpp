@@ -19,7 +19,7 @@ public:
 	void WritePacket(const Packet &packet);
 	void SendPackets(gfk::UDPSocket &socket);
 
-	ClientType clientType;
+	unsigned char clientType; // Look at ClientType.hpp
 	gfk::IPAddress address;
 	gfk::NetworkBuffer outgoingBuffer;
 	float timeSinceLastPacket;

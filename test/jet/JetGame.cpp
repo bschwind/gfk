@@ -1,5 +1,6 @@
 #include "include/JetGame.hpp"
 #include "include/Packets.hpp"
+#include "network/Packet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Input/Keyboard.hpp>
 #include <GFK/Input/Mouse.hpp>
@@ -15,8 +16,12 @@ namespace jetGame
 
 JetGame::JetGame(const std::string &title, int width, int height) :
 Game(title, width, height),
+networkCounter(0),
+networkSendsPerSecond(10),
+updateCounter(0),
 camera(),
 mesh("assets/Airplane F18 N120712.3DS"),
+netBuffer(4096),
 jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
 {
 	isFixedTimeStep = true;
@@ -59,6 +64,20 @@ bool firstMouseMove = true;
 
 void JetGame::Update(const gfk::GameTime &gameTime)
 {
+	UpdateNetwork(gameTime);
+	UpdateGame(gameTime);
+	SendStateToServer(gameTime);
+
+	updateCounter++;
+}
+
+void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
+{
+
+}
+
+void JetGame::UpdateGame(const gfk::GameTime &gameTime)
+{
 	float dt = gameTime.ElapsedGameTime;
 
 	// Update Input
@@ -96,35 +115,37 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 	camera.Update(dt, jet.GetForward(), jet.GetUp(), jet.GetRight());
 	camera.SetPos(jet.GetPosition() - jet.GetForward() * 50 + jet.GetUp() * 8);
 
-	// Exit Conditions
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
-		netBuffer.WriteUnsignedInt32(Packets::applicationID);
-		netBuffer.WriteUnsignedInt32(0); // sequence
-		netBuffer.WriteUnsignedInt32(0); // ack
-		netBuffer.WriteUnsignedInt32(32); // ack bitfield
-		netBuffer.WriteUnsignedByte(1); // num packets
-		netBuffer.WriteUnsignedByte(Packets::DISCONNECT);
+		// Send disconnect packet
+		serverConnection.WritePacket(DisconnectPacket());
+		serverConnection.SendPackets(socket);
 
 		gfk::Game::Exit();
 	}
+}
+
+void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
+{
+	int iterCutoff = targetUpdateFramesPerSecond / networkSendsPerSecond;
+
+	if (networkCounter >= iterCutoff)
+	{
+		std::cout << "network send! " << gameTime.TotalGameTime << std::endl;
+
+		// Send movement packet
+		float x = jet.GetPosition().X;
+		float y = jet.GetPosition().Y;
+		float z = jet.GetPosition().Z;
+		serverConnection.WritePacket(MovementPacket(x, y, z));
+		serverConnection.SendPackets(socket);
+
+		networkCounter = 1;
+	}
 	else
 	{
-		// Update Network
-		netBuffer.WriteUnsignedInt32(Packets::applicationID);
-		netBuffer.WriteUnsignedInt32(0); // sequence
-		netBuffer.WriteUnsignedInt32(0); // ack
-		netBuffer.WriteUnsignedInt32(0); // ack bitfield
-		netBuffer.WriteUnsignedByte(1); // num packets
-		netBuffer.WriteUnsignedByte(Packets::MOVEMENT);
-		netBuffer.WriteFloat32(jet.GetPosition().X);
-		netBuffer.WriteFloat32(jet.GetPosition().Y);
-		netBuffer.WriteFloat32(jet.GetPosition().Z);
+		networkCounter++;
 	}
-
-	socket.Send(serverAddress, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
-
-	netBuffer.Reset();
 }
 
 void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
@@ -173,19 +194,11 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 	IPAddress destination;
 	IPAddress::FromIPV4String(address, port, destination);
 
-	unsigned int sequence = 0;;
-	unsigned int ack = 0;
-	unsigned int ackBitfield = 0;
+	serverConnection.clientType = ClientType::SERVER;
+	serverConnection.address = destination;
 
-	NetworkBuffer netBuffer;
-	netBuffer.WriteUnsignedInt32(Packets::applicationID);
-	netBuffer.WriteUnsignedInt32(sequence);
-	netBuffer.WriteUnsignedInt32(ack);
-	netBuffer.WriteUnsignedInt32(ackBitfield);
-	netBuffer.WriteUnsignedByte(1);
-	netBuffer.WriteUnsignedByte(Packets::NEW_DESKTOP_CLIENT);
-
-	socket.Send(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
+	serverConnection.WritePacket(NewDesktopClientPacket(24));
+	serverConnection.SendPackets(socket);
 
 	double sentTime = GameTime::GetSystemTime();
 
@@ -195,14 +208,14 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 
 		if (!byteReadCount)
 		{
-			if (GameTime::GetSystemTime() - sentTime > 3.3)
+			if (GameTime::GetSystemTime() - sentTime > 1.0)
 			{
 				std::cout << (GameTime::GetSystemTime() - sentTime) << std::endl;
 
 				std::cout << destination.GetIPV4String() << " took too long to respond, trying broadcast address" << std::endl;
 
-				std::string broadcastAddressToTry = "192.168.1.255" + std::to_string(port);
-				if (destination.GetIPV4String().compare(broadcastAddressToTry) == 0)
+				std::string broadcastAddressToTry = "192.168.1.255:" + std::to_string(port);
+				if (destination.GetIPV4String().compare(broadcastAddressToTry) != 0)
 				{
 					return ConnectToServer("192.168.1.255", port);
 				}

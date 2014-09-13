@@ -3,10 +3,13 @@
 namespace jetGame
 {
 
-enum ClientType : unsigned char
+// todo - NDK compiler has issues with enums?
+class ClientType
 {
-	DESKTOP = 0,
-	ANDROID = 1
+public:
+	static const unsigned char DESKTOP = 0;
+	static const unsigned char ANDROID_CLIENT = 1;
+	static const unsigned char SERVER  = 2;
 };
 
 }

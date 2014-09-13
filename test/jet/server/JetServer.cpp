@@ -104,7 +104,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &send
 	{
 		std::cout << "Android user " << senderIP << " connected" << std::endl;
 		connections[senderIP] = RemoteConnection();
-		connections[senderIP].clientType = ClientType::ANDROID;
+		connections[senderIP].clientType = ClientType::ANDROID_CLIENT;
 		connections[senderIP].address = sender;
 
         unsigned char numPlayers = static_cast<unsigned char>(connections.size());
@@ -120,7 +120,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &send
 
 			for (auto iter = connections.begin(); iter != connections.end(); ++iter)
 			{
-				if (iter->second.clientType == ClientType::ANDROID)
+				if (iter->second.clientType == ClientType::ANDROID_CLIENT)
 				{
 					iter->second.WritePacket(MovementPacket(x, y, z));
 				}
