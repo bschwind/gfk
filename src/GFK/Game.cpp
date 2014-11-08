@@ -8,6 +8,8 @@
 	#include <GFK/Input/Mouse.hpp>
 	#include <signal.h>
 #endif
+#include <chrono>
+#include <thread>
 
 namespace gfk
 {
@@ -139,6 +141,8 @@ void Game::Tick()
 			accumulator -= dt;
 		}
 
+		// interpolationFactor is how far we are between
+		// the previous world state and the current world state
 		double interpolationFactor = accumulator / dt;
 		Draw(time, interpolationFactor);
 	}
@@ -153,6 +157,8 @@ void Game::Tick()
 		Update(time);
 		Draw(time, 1.0f);
 	}
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void Game::Run()
