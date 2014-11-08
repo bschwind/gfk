@@ -49,12 +49,12 @@ public class GFKActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		Log.i("gfk", "onStop()");
+		GFKLib.unloadContent();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.i("gfk", "onDestroy()");
-		GFKLib.unloadContent();
 	}
 }
