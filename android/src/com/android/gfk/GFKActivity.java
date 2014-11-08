@@ -12,18 +12,21 @@ public class GFKActivity extends Activity {
 
 	GFKView mView;
 
-	@Override protected void onCreate(Bundle icicle) {
+	@Override
+	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		mView = new GFKView(getApplication());
 		setContentView(mView);
 	}
 
-	@Override protected void onPause() {
+	@Override
+	protected void onPause() {
 		super.onPause();
 		mView.onPause();
 	}
 
-	@Override protected void onResume() {
+	@Override
+	protected void onResume() {
 		super.onResume();
 		mView.onResume();
 	}
