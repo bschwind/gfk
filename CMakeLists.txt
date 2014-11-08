@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(GFK)
 
-set(VERSION_MAJOR 1)
-set(VERSION_MINOR 0)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+# Use 64-bit if on OS X
 if (APPLE)
 	set(CMAKE_OSX_ARCHITECTURES x86_64)
 endif()
@@ -19,11 +20,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 	set(CMAKE_C_FLAGS "-stdlib=libc++")
 endif ()
 
+# Enable all warnings
 add_definitions(-Wall)
 
 # Set up external libraries
 find_package(GLEW REQUIRED)
-find_package(Libuv REQUIRED)
 
 # Link against libuuid for Linux
 if (NOT WIN32 AND NOT APPLE)
@@ -35,7 +36,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp)
 
 # Add header paths
 include_directories(${GLEW_INCLUDE_PATH})
-include_directories(${LIBUV_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -52,7 +52,7 @@ add_library(gfk-math STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/Transform.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/GUIDGenerator.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Math/EasingFunctions.cpp
-			)
+)
 
 add_library(gfk-input STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/Keyboard.cpp
@@ -73,19 +73,19 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Mesh.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/AssImpBridge.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GLErrorHandling.cpp
-			)
+)
 
 add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPSocket.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/IPAddress.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/BytePacker.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetworkBuffer.cpp
-			)
+)
 
 add_library(gfk-system STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/System/GameTime.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/System/Logger.cpp
-			)
+)
 
 add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Game.cpp
@@ -93,7 +93,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network ${LIBUV_LIBRARY} gfk-system)
+target_link_libraries(gfk-network gfk-system)
 
 target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
 target_link_libraries(gfk-input gfk-math gfk-system)
