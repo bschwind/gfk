@@ -13,6 +13,7 @@ namespace jetGame
 class Jet
 {
 public:
+	Jet();
 	Jet(const Vector3 &pos, const Vector3 &initialForward, const Vector3 &initialUp);
 	~Jet();
 

@@ -6,6 +6,12 @@ namespace jetGame
 
 const float Jet::IDLE_RPM(1000.0f);
 
+Jet::Jet() :
+Jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
+{
+
+}
+
 Jet::Jet(const Vector3 &pos, const Vector3 &initialForward, const Vector3 &initialUp) :
 health(100),
 position(pos),
