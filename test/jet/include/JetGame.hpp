@@ -14,7 +14,7 @@ using namespace gfk;
 namespace jetGame
 {
 
-class JetGame : public Game
+class JetGame : public Game, public PacketHandler
 {
 public:
 	JetGame(const std::string &title, int width, int height);
@@ -32,7 +32,7 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
+	virtual void HandlePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol);
 	int networkCounter;
 	int networkSendsPerSecond;
 	int updateCounter;

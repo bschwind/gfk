@@ -20,7 +20,7 @@ networkCounter(0),
 networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
-mesh("assets/Airplane F18 N120712.3DS"),
+mesh("assets/f18Hornet.3DS"),
 netBuffer(4096),
 jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
 {
@@ -73,7 +73,36 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
+	IPAddress sender;
 
+	while (true)
+	{
+		int numBytesRead = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
+
+		if (numBytesRead > 0)
+		{
+			serverConnection.HandleIncomingPackets(netBuffer, this);
+		}
+		else
+		{
+			break;
+		}
+
+		netBuffer.Reset();
+	}
+
+	netBuffer.Reset();
+}
+
+void JetGame::HandlePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol)
+{
+	std::string senderIP = sender.GetIPV4String();
+
+	if (protocol == Packets::NEW_DESKTOP_CLIENT_ACK)
+	{
+		NewDesktopClientAckPacket packet = NewDesktopClientAckPacket::ReadFromBuffer(netBuffer);
+		std::cout << "There are " << static_cast<unsigned short>(packet.numPlayers) << " players in the server" << std::endl;
+	}
 }
 
 void JetGame::UpdateGame(const gfk::GameTime &gameTime)
@@ -131,15 +160,7 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		std::cout << "network send! " << gameTime.TotalGameTime << std::endl;
-
-		// Send movement packet
-		float x = jet.GetPosition().X;
-		float y = jet.GetPosition().Y;
-		float z = jet.GetPosition().Z;
-		serverConnection.WritePacket(MovementPacket(x, y, z));
-		serverConnection.SendPackets(socket);
-
+		// Send jet input packet
 		networkCounter = 1;
 	}
 	else
@@ -197,7 +218,7 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 	serverConnection.clientType = ClientType::SERVER;
 	serverConnection.address = destination;
 
-	serverConnection.WritePacket(NewDesktopClientPacket(24));
+	serverConnection.WritePacketReliable(NewDesktopClientPacket(24));
 	serverConnection.SendPackets(socket);
 
 	double sentTime = GameTime::GetSystemTime();
@@ -210,8 +231,6 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 		{
 			if (GameTime::GetSystemTime() - sentTime > 1.0)
 			{
-				std::cout << (GameTime::GetSystemTime() - sentTime) << std::endl;
-
 				std::cout << destination.GetIPV4String() << " took too long to respond, trying broadcast address" << std::endl;
 
 				std::string broadcastAddressToTry = "192.168.1.255:" + std::to_string(port);
@@ -227,6 +246,8 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 
 		break;
 	}
+
+	serverConnection.HandleIncomingPackets(netBuffer, this);
 
 	return destination;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "network/RemoteConnection.hpp"
+#include "network/PacketHandler.hpp"
 #include <GFK/ConsoleGame.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Mesh.hpp>
@@ -13,7 +14,7 @@ using namespace gfk;
 namespace jetGame
 {
 
-class JetServer : public ConsoleGame
+class JetServer : public ConsoleGame, public PacketHandler
 {
 public:
 	JetServer();
@@ -27,7 +28,8 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToPlayers(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
+	virtual void HandlePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol);
+
 	int networkCounter;
 	int networkSendsPerSecond;
 	int updateCounter;

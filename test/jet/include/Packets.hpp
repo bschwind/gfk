@@ -16,10 +16,11 @@ public:
 
 	static const unsigned char NEW_DESKTOP_CLIENT = 0;
 	static const unsigned char NEW_ANDROID_CLIENT = 1;
-	static const unsigned char MOVEMENT = 2;
+	static const unsigned char JET_INPUT = 2;
 	static const unsigned char DISCONNECT = 3;
 	static const unsigned char NEW_DESKTOP_CLIENT_ACK = 4;
-	static const unsigned char NEW_ANDROID_CLIENT_ACK = 4;
+	static const unsigned char NEW_ANDROID_CLIENT_ACK = 5;
+	static const unsigned char HEARTBEAT = 6;
 };
 
 }

@@ -8,7 +8,7 @@ using namespace jetGame;
 JetServer::JetServer() :
 ConsoleGame(true, 120),
 networkCounter(0),
-networkSendsPerSecond(40),
+networkSendsPerSecond(20),
 updateCounter(0),
 netBuffer(4096)
 {
@@ -53,26 +53,18 @@ void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 	{
 		int numBytesRead = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
 
-		if (numBytesRead > 0 && numBytesRead >= Packets::PACKET_HEADER_SIZE)
+		if (numBytesRead > 0)
 		{
-			unsigned int applicationID = netBuffer.ReadUnsignedInt32();
-			unsigned int sequence = netBuffer.ReadUnsignedInt32();
-			unsigned int ack = netBuffer.ReadUnsignedInt32();
-			unsigned int ackBitfield = netBuffer.ReadUnsignedInt32();
-			unsigned char numPackets = netBuffer.ReadUnsignedByte();
+			std::string senderString = sender.GetIPV4String();
 
-            std::bitset<32> ackBitset = std::bitset<32>(ackBitfield);
-
-            std::cout << "Packet Header[sequence = " << sequence << ", ack = " << ack << ", ackBitfield = " << ackBitset << ", numPackets = " << static_cast<unsigned int>(numPackets) << "]" << std::endl;
-
-			if (applicationID == Packets::applicationID)
+			if (connections.find(senderString) == connections.end())
 			{
-				for (int i = 0; i < numPackets; i++)
-				{
-					unsigned char protocol = netBuffer.ReadUnsignedByte();
-					HandleGamePacket(netBuffer, sender, protocol);
-				}
+				// If the connection does not yet exist, create it
+				connections[senderString] = RemoteConnection();
+				connections[senderString].address = sender;
 			}
+
+			connections[senderString].HandleIncomingPackets(netBuffer, this);
 		}
 		else
 		{
@@ -85,44 +77,44 @@ void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 	netBuffer.Reset();
 }
 
-void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol)
+void JetServer::HandlePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol)
 {
 	std::string senderIP = sender.GetIPV4String();
-	std::cout << "Received packet from " << senderIP << std::endl;
+	std::cout << "hahahahaha" << std::endl;
 
 	if (protocol == Packets::NEW_DESKTOP_CLIENT)
 	{
+		NewDesktopClientPacket packet = NewDesktopClientPacket::ReadFromBuffer(netBuffer);
+
 		std::cout << "Desktop user " << senderIP << " connected" << std::endl;
-		connections[senderIP] = RemoteConnection();
+		std::cout << "Special client data: " << static_cast<short>(packet.number) << std::endl;
+
 		connections[senderIP].clientType = ClientType::DESKTOP;
-		connections[senderIP].address = sender;
+
+		unsigned char numPlayers = static_cast<unsigned char>(connections.size());
+		connections[senderIP].WritePacketReliable(NewDesktopClientAckPacket(numPlayers));
+	}
+	else if (protocol == Packets::NEW_ANDROID_CLIENT)
+	{
+		NewAndroidClientPacket packet = NewAndroidClientPacket::ReadFromBuffer(netBuffer);
+
+		std::cout << "Android user " << senderIP << " connected" << std::endl;
+		std::cout << "Special client data: " << packet.number << std::endl;
+
+		connections[senderIP].clientType = ClientType::ANDROID_CLIENT;
 
 		unsigned char numPlayers = static_cast<unsigned char>(connections.size());
 		connections[senderIP].WritePacket(NewDesktopClientAckPacket(numPlayers));
 	}
-	else if (protocol == Packets::NEW_ANDROID_CLIENT)
-	{
-		std::cout << "Android user " << senderIP << " connected" << std::endl;
-		connections[senderIP] = RemoteConnection();
-		connections[senderIP].clientType = ClientType::ANDROID_CLIENT;
-		connections[senderIP].address = sender;
-
-        unsigned char numPlayers = static_cast<unsigned char>(connections.size());
-        connections[senderIP].WritePacket(NewDesktopClientAckPacket(numPlayers));
-	}
-	else if (protocol == Packets::MOVEMENT)
+	else if (protocol == Packets::JET_INPUT)
 	{
 		if (connections.find(senderIP) != connections.end())
 		{
-			float x = netBuffer.ReadFloat32();
-			float y = netBuffer.ReadFloat32();
-			float z = netBuffer.ReadFloat32();
-
 			for (auto iter = connections.begin(); iter != connections.end(); ++iter)
 			{
 				if (iter->second.clientType == ClientType::ANDROID_CLIENT)
 				{
-					iter->second.WritePacket(MovementPacket(x, y, z));
+					// iter->second.WritePacket(packet);
 				}
 			}
 		}
@@ -131,6 +123,8 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &send
 	{
 		if (connections.find(senderIP) != connections.end())
 		{
+			DisconnectPacket packet = DisconnectPacket::ReadFromBuffer(netBuffer);
+
 			// sender is in the list of connections
 			std::cout << senderIP << " disconnected" << std::endl;
 			connections.erase(senderIP);
@@ -151,6 +145,7 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 	{
 		for (auto iter = connections.begin(); iter != connections.end(); ++iter)
 		{
+			iter->second.WritePacket(HeartbeatPacket());
 			iter->second.SendPackets(socket);
 		}
 
