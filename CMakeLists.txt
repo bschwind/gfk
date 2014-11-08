@@ -10,6 +10,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # Use 64-bit if on OS X
 if (APPLE)
 	set(CMAKE_OSX_ARCHITECTURES x86_64)
+	# These flags are required for GLFW to link properly
+	set(CMAKE_CXX_LINK_FLAGS "-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
 endif()
 
 # Compiler-specific C++11 activation.
@@ -25,19 +27,18 @@ add_definitions(-Wall)
 
 # Set up external libraries
 find_package(GLEW REQUIRED)
+find_package(GLFW REQUIRED)
+find_package(ASSIMP REQUIRED)
 
 # Link against libuuid for Linux
 if (NOT WIN32 AND NOT APPLE)
 	find_package(UUID)
 endif ()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp)
-
 # Add header paths
 include_directories(${GLEW_INCLUDE_PATH})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp/include)
+include_directories(${GLFW_INCLUDE_PATH})
+include_directories(${ASSIMP_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the subdirectories
@@ -95,7 +96,8 @@ add_library(gfk STATIC
 
 target_link_libraries(gfk-network gfk-system)
 
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
+# z is used for zlib on OS X
+target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${ASSIMP_LIBRARY} gfk-system gfk-math z)
 target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)
