@@ -26,7 +26,7 @@ endif ()
 add_definitions(-Wall)
 
 # Set up external libraries
-find_package(GLEW REQUIRED)
+find_package(GLEW_STATIC REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(ASSIMP REQUIRED)
 
