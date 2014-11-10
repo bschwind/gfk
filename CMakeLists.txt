@@ -96,8 +96,7 @@ add_library(gfk STATIC
 
 target_link_libraries(gfk-network gfk-system)
 
-# z is used for zlib on OS X
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${ASSIMP_LIBRARY} gfk-system gfk-math z)
+target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${ASSIMP_LIBRARY} gfk-system gfk-math)
 target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)
