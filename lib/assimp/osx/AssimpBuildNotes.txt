@@ -1,0 +1,19 @@
+Assimp Build Notes
+
+-Compiled with release settings
+-Built as a static library
+-Compiled with C++11 support
+	"if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+		set(CMAKE_CXX_FLAGS "-stdlib=libc++ -std=c++11")
+		set(CMAKE_C_FLAGS "-stdlib=libc++")
+	endif ()"
+-Excluded the export functionality
+-Excluded tests, tools
+-Excluded the IFC Importer/Exporter
+	"add_definitions( -DASSIMP_BUILD_NO_IFC_IMPORTER )"
+-Combined libassimp.a with libz.a using the "ar" tool
+	-ar -x libassimp.a
+	-ar -x libz.a
+	-ar -r output.a *.o
+	-Removed .o files with unused symbols
+	-Could also remove further symbols with "strip -x output.a"
