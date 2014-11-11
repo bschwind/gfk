@@ -20,7 +20,7 @@ networkCounter(0),
 networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
-mesh("assets/Airplane F18 N120712.3DS"),
+mesh("assets/f18Hornet.3DS"),
 netBuffer(4096),
 jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
 {
