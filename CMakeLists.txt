@@ -26,7 +26,7 @@ endif ()
 add_definitions(-Wall)
 
 # Set up external libraries
-find_package(GLEW REQUIRED)
+find_package(GLEW_STATIC REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(ASSIMP REQUIRED)
 
@@ -95,8 +95,6 @@ add_library(gfk STATIC
 )
 
 target_link_libraries(gfk-network gfk-system)
-
-# z is used for zlib on OS X
 
 if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)
