@@ -25,7 +25,7 @@ PackedColor::PackedColor(float r, float g, float b, float a)
 	packedValue |= ((unsigned char)(r * 255));
 	packedValue |= ((unsigned char)(g * 255) << 8);
 	packedValue |= ((unsigned char)(b * 255) << 16);
-	packedValue |= ((unsigned char)(b * 255) << 24);
+	packedValue |= ((unsigned char)(a * 255) << 24);
 }
 
 PackedColor::PackedColor(unsigned int color)

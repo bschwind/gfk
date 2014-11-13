@@ -246,7 +246,7 @@ std::vector<GLFWwindow*> GraphicsDevice::GetWindows()
 
 void GraphicsDevice::error_callback(int error, const char* description)
 {
-	std::cerr << description << std::endl;
+	std::cerr << "Error number: " << error << " " << description << std::endl;
 }
 
 }
