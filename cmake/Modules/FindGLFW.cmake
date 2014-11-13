@@ -13,8 +13,10 @@ FIND_PATH(GLFW_INCLUDE_PATH GLFW/glfw3.h
 FIND_LIBRARY(GLFW_LIBRARY
 	NAMES
 		libglfw3.a # OS X
+		glfw3.lib  # Windows
 	PATHS
 		${PROJECT_SOURCE_DIR}/lib/glfw/osx/
+		${PROJECT_SOURCE_DIR}/lib/glfw/windows/
 )
 
 SET(GLFW_FOUND "NO")

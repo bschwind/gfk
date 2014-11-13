@@ -13,8 +13,10 @@ FIND_PATH(ASSIMP_INCLUDE_PATH assimp/
 FIND_LIBRARY(ASSIMP_LIBRARY
 	NAMES
 		libassimp.a # OS X
+		assimp      # Windows
 	PATHS
 		${PROJECT_SOURCE_DIR}/lib/assimp/osx/
+		${PROJECT_SOURCE_DIR}/lib/assimp/windows/
 )
 
 SET(ASSIMP_FOUND "NO")
