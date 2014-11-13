@@ -96,6 +96,10 @@ add_library(gfk STATIC
 
 target_link_libraries(gfk-network gfk-system)
 
+if (WIN32)
+	target_link_libraries(gfk-graphics OpenGL32)
+endif ()
+
 target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${ASSIMP_LIBRARY} gfk-system gfk-math)
 target_link_libraries(gfk-input gfk-math gfk-system)
 
