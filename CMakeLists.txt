@@ -23,12 +23,13 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif ()
 
 # Enable all warnings
-add_definitions(-Wall)
+add_definitions(-Wall -Wextra)
 
 # Set up external libraries
 find_package(GLEW_STATIC REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(ASSIMP REQUIRED)
+find_package(OVR REQUIRED)
 
 # Link against libuuid for Linux
 if (NOT WIN32 AND NOT APPLE)
@@ -39,6 +40,7 @@ endif ()
 include_directories(${GLEW_INCLUDE_PATH})
 include_directories(${GLFW_INCLUDE_PATH})
 include_directories(${ASSIMP_INCLUDE_PATH})
+include_directories(${OVR_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Add the subdirectories
