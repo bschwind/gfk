@@ -13,7 +13,7 @@ namespace gfk
 {
 
 double GameTime::clockResolution(0.0);
-long GameTime::clockBase(0);
+unsigned long long int GameTime::clockBase(0);
 
 #if defined(PLATFORM_WINDOWS)
 	bool GameTime::hasPerformanceCounter(false);
@@ -92,18 +92,18 @@ void GameTime::SetSystemTime(double time)
 		if (hasPerformanceCounter)
 		{
 			QueryPerformanceCounter((LARGE_INTEGER*) &t_64);
-			time64 = t_64 - (long) (time / clockResolution);
+			time64 = t_64 - (unsigned long long int) (time / clockResolution);
 		}
 		else
 		{
 			//time32 = timeGetTime() - (int)(time * 1000.0);
 		}
 	#else
-		clockBase = GetRawTime() - (long) (time / clockResolution);
+		clockBase = GetRawTime() - (unsigned long long int) (time / clockResolution);
 	#endif
 }
 
-long GameTime::GetRawTime()
+unsigned long long int GameTime::GetRawTime()
 {
 	#if defined(PLATFORM_WINDOWS)
 		// This function is not used in the Windows time code, so return 0
@@ -113,7 +113,7 @@ long GameTime::GetRawTime()
 	#elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
-		return (long) tv.tv_sec * (long) 1000000 + (long) tv.tv_usec;
+		return (unsigned long long int) tv.tv_sec * (unsigned long long int) 1000000 + (unsigned long long int) tv.tv_usec;
 	#endif
 }
 

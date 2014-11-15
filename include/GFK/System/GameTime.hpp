@@ -15,9 +15,9 @@ public:
 	double ElapsedGameTime;
 	double TotalGameTime;
 private:
-	static long GetRawTime();
+	static unsigned long long int GetRawTime();
 	static double clockResolution;
-	static long clockBase;
+	static unsigned long long int clockBase;
 
 	// Stupid Windows-specific timer variables
 	#if defined(PLATFORM_WINDOWS)
