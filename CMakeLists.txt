@@ -6,12 +6,60 @@ set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_DEBUG_POSTFIX d)
 
-# Use 64-bit if on OS X
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	set(LINUX TRUE)
+else()
+	set(LINUX FALSE)
+endif()
+
+# Options
+
+option(64-BIT "Build 64-bit binary" ON)
+
 if (APPLE)
-	set(CMAKE_OSX_ARCHITECTURES x86_64)
-	# These flags are required for GLFW to link properly
-	set(CMAKE_CXX_LINK_FLAGS "-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
+	option(BUILD_FAT_BINARY "Build a universal (fat) binary" ON)
+	set(OS_X_MIN_VERSION "10.7" CACHE STRING "The minimum version of OS X to support")
+endif()
+
+option(BUILD_SHARED_LIBRARY "Build a shared library" OFF)
+option(BUILD_STATIC_LIBRARY "Build a static library" ON)
+
+# Actually use the options here
+if (${64-BIT})
+	if (APPLE)
+		set(CMAKE_OSX_ARCHITECTURES x86_64)
+	endif()
+
+	if(${LINUX})
+		set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m64)
+		set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m64)
+	endif()
+else()
+	if (APPLE)
+		set(CMAKE_OSX_ARCHITECTURES i386)
+	endif()
+
+	if(${LINUX})
+		set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m32)
+		set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m32)
+	endif()
+endif()
+
+if (APPLE)
+	# I'm not sure exactly which of these variables are necessary
+	# but I don't have OS X 10.7 to test it
+	add_definitions( -mmacosx-version-min=${OS_X_MIN_VERSION} )
+	list(APPEND CMAKE_C_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
+	list(APPEND CMAKE_CXX_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
+	set(CMAKE_EXE_LINKER_FLAGS "-mmacosx-version-min=${OS_X_MIN_VERSION}")
+	set(CMAKE_MODULE_LINKER_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
+	set(CMAKE_SHARED_LINKER_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
+endif()
+
+if (${BUILD_FAT_BINARY})
+	set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
 endif()
 
 # Compiler-specific C++11 activation.
@@ -26,9 +74,9 @@ endif ()
 add_definitions(-Wall -Wextra)
 
 # Set up external libraries
-find_package(GLEW_STATIC REQUIRED)
-find_package(GLFW REQUIRED)
-find_package(ASSIMP REQUIRED)
+add_subdirectory(lib/glew)
+add_subdirectory(lib/glfw)
+add_subdirectory(lib/assimp)
 find_package(OVR REQUIRED)
 
 # Link against libuuid for Linux
@@ -37,9 +85,9 @@ if (NOT WIN32 AND NOT APPLE)
 endif ()
 
 # Add header paths
-include_directories(${GLEW_INCLUDE_PATH})
-include_directories(${GLFW_INCLUDE_PATH})
-include_directories(${ASSIMP_INCLUDE_PATH})
+include_directories(lib/glew/include)
+include_directories(lib/glfw/include)
+include_directories(lib/assimp/include)
 include_directories(${OVR_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -102,7 +150,7 @@ if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)
 endif ()
 
-target_link_libraries(gfk-graphics ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${ASSIMP_LIBRARY} gfk-system gfk-math)
+target_link_libraries(gfk-graphics GLEW_STATIC glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
 target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)

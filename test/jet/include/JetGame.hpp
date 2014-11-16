@@ -33,9 +33,9 @@ private:
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
 	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
-	int networkCounter;
+	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
-	int updateCounter;
+	unsigned long long int updateCounter;
 	PrimitiveBatch3D primBatch;
 	JetCamera camera;
 	Mesh mesh;
