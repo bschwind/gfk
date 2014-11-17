@@ -50,12 +50,12 @@ endif()
 if (APPLE)
 	# I'm not sure exactly which of these variables are necessary
 	# but I don't have OS X 10.7 to test it
-	add_definitions( -mmacosx-version-min=${OS_X_MIN_VERSION} )
-	list(APPEND CMAKE_C_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
-	list(APPEND CMAKE_CXX_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
-	set(CMAKE_EXE_LINKER_FLAGS "-mmacosx-version-min=${OS_X_MIN_VERSION}")
-	set(CMAKE_MODULE_LINKER_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
-	set(CMAKE_SHARED_LINKER_FLAGS -mmacosx-version-min=${OS_X_MIN_VERSION})
+	add_definitions( " -mmacosx-version-min=${OS_X_MIN_VERSION} ")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
+	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
 endif()
 
 if (${BUILD_FAT_BINARY})
@@ -64,10 +64,9 @@ endif()
 
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++0x)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -stdlib=libc++ -std=c++11)
-	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -stdlib=libc++)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ ")
 endif ()
 
 # Enable all warnings
