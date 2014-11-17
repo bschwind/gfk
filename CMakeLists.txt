@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(GFK)
+project(GFK C CXX)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
@@ -33,8 +33,8 @@ if (${64-BIT})
 	endif()
 
 	if(${LINUX})
-		set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m64)
-		set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m64)
+		#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m64)
+		#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m64)
 	endif()
 else()
 	if (APPLE)
@@ -42,8 +42,8 @@ else()
 	endif()
 
 	if(${LINUX})
-		set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m32)
-		set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m32)
+		#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -m32)
+		#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -m32)
 	endif()
 endif()
 
@@ -64,10 +64,10 @@ endif()
 
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-	set(CMAKE_CXX_FLAGS "-std=c++0x")
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++0x)
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-	set(CMAKE_CXX_FLAGS "-stdlib=libc++ -std=c++11")
-	set(CMAKE_C_FLAGS "-stdlib=libc++")
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -stdlib=libc++ -std=c++11)
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -stdlib=libc++)
 endif ()
 
 # Enable all warnings
