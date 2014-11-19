@@ -1,4 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING "The minimum version of OS X to support")
+if (APPLE)
+	if (CMAKE_OSX_DEPLOYMENT_TARGET)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET} " CACHE STRING "Set the min OS X version in the linker flags")
+	endif()
+endif()
 project(GFK C CXX)
 
 set(VERSION_MAJOR 0)
@@ -20,7 +26,6 @@ option(64-BIT "Build 64-bit binary" ON)
 
 if (APPLE)
 	option(BUILD_FAT_BINARY "Build a universal (fat) binary" ON)
-	set(OS_X_MIN_VERSION "10.7" CACHE STRING "The minimum version of OS X to support")
 endif()
 
 option(BUILD_SHARED_LIBRARY "Build a shared library" OFF)
@@ -47,24 +52,13 @@ else()
 	endif()
 endif()
 
-if (APPLE)
-	# I'm not sure exactly which of these variables are necessary
-	# but I don't have OS X 10.7 to test it
-	add_definitions( " -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -mmacosx-version-min=${OS_X_MIN_VERSION} ")
-endif()
-
 if (${BUILD_FAT_BINARY})
 	set(CMAKE_OSX_ARCHITECTURES i386;x86_64)
 endif()
 
 # Compiler-specific C++11 activation.
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ ")
 endif ()
