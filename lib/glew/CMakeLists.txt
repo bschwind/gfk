@@ -68,7 +68,7 @@ else()
 endif()
 
 # Enable all warnings
-add_definitions(-Wall -Wextra)
+add_definitions(-Wall)
 
 # Add header paths
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -79,13 +79,21 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(GLEW_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/glew.c)
 
 if (${BUILD_SHARED_LIBRARY})
-	add_library(GLEW_SHARED SHARED ${GLEW_SRC_FILES})
-	SET_PROPERTY( TARGET GLEW_SHARED PROPERTY DEBUG_POSTFIX d )
-	TARGET_LINK_LIBRARIES( GLEW_SHARED ${GL_LIBRARY} ${PLATFORM_SPECIFIC_LIBRARIES} )
+	if(WIN32)
+		add_definitions(-DGLEW_BUILD)
+	endif()
+
+	add_library(glew_shared SHARED ${GLEW_SRC_FILES})
+	SET_PROPERTY( TARGET glew_shared PROPERTY DEBUG_POSTFIX d )
+	TARGET_LINK_LIBRARIES( glew_shared ${GL_LIBRARY} ${PLATFORM_SPECIFIC_LIBRARIES} )
 endif()
 
 if(${BUILD_STATIC_LIBRARY})
-	add_library(GLEW_STATIC STATIC ${GLEW_SRC_FILES})
-	SET_PROPERTY( TARGET GLEW_STATIC PROPERTY DEBUG_POSTFIX d )
-	TARGET_LINK_LIBRARIES( GLEW_STATIC ${GL_LIBRARY} ${PLATFORM_SPECIFIC_LIBRARIES} )
+	if(WIN32)
+		add_definitions(-DGLEW_STATIC)
+	endif()
+
+	add_library(glew_static STATIC ${GLEW_SRC_FILES})
+	SET_PROPERTY( TARGET glew_static PROPERTY DEBUG_POSTFIX d )
+	TARGET_LINK_LIBRARIES( glew_static ${GL_LIBRARY} ${PLATFORM_SPECIFIC_LIBRARIES} )
 endif()

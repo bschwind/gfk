@@ -34,7 +34,9 @@ Game::Game(const std::string &gameTitle,
 isFixedTimeStep(false),
 title(gameTitle),
 width(screenWidth),
-height(screenHeight)
+height(screenHeight),
+accumulator(0.0),
+currentTime(0.0)
 {
 
 }

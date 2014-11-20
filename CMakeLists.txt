@@ -64,13 +64,13 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif ()
 
 # Enable all warnings
-add_definitions(-Wall -Wextra)
+add_definitions(-Wall -DGLEW_STATIC)
 
 # Set up external libraries
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw)
 add_subdirectory(lib/assimp)
-find_package(OVR REQUIRED)
+find_package(OVR)
 
 # Link against libuuid for Linux
 if (NOT WIN32 AND NOT APPLE)
@@ -143,7 +143,7 @@ if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)
 endif ()
 
-target_link_libraries(gfk-graphics GLEW_STATIC glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
+target_link_libraries(gfk-graphics glew_static glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
 target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)
