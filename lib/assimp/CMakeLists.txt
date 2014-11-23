@@ -153,9 +153,14 @@ set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/contrib/zlib ${CMAKE_CURRENT_BI
 INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
 
 # Search for unzip
-if (PKG_CONFIG_FOUND)
-	PKG_CHECK_MODULES(UNZIP minizip)
-endif (PKG_CONFIG_FOUND)
+# We're not going to use pkg-config for this.
+# First of all it doesn't seem to work with the
+# modifications I've made to assimp. Secondly,
+# we might as well build from source so we have
+# the ability to make universal binaries.
+#if (PKG_CONFIG_FOUND)
+#	PKG_CHECK_MODULES(UNZIP minizip)
+#endif (PKG_CONFIG_FOUND)
 
 IF ( ASSIMP_NO_EXPORT )
 	ADD_DEFINITIONS( -DASSIMP_BUILD_NO_EXPORT)
