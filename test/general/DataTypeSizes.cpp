@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <thread>
 #include <GFK/System/Logger.hpp>
 
 using namespace gfk;
@@ -18,6 +19,7 @@ int main()
 	static_assert(sizeof(float) >= 4, "float is not four bytes");
 	static_assert(sizeof(double) >= 8, "double is not eight bytes");
 
+	std::cout << "number of cores         = " << std::thread::hardware_concurrency() << std::endl;
 	std::cout << "bool                    = " << sizeof(bool) << " bytes" << std::endl;
 	std::cout << "char                    = " << sizeof(char) << " bytes" << std::endl;
 	std::cout << "char16_t                = " << sizeof(char16_t) << " bytes" << std::endl;
