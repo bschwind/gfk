@@ -64,7 +64,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif ()
 
 # Enable all warnings
-add_definitions(-Wall -DGLEW_STATIC)
+add_definitions(-Wall -Wno-deprecated-register -DGLEW_STATIC)
 
 # Set up external libraries
 add_subdirectory(lib/glew)
