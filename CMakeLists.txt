@@ -119,6 +119,10 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GLErrorHandling.cpp
 )
 
+add_library(gfk-vr STATIC
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/VR/VRCamera.cpp
+)
+
 add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/UDPSocket.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/IPAddress.cpp
@@ -144,12 +148,13 @@ if (WIN32)
 endif ()
 
 target_link_libraries(gfk-graphics glew_static glfw ${GLFW_LIBRARIES} assimp gfk-system gfk-math)
+target_link_libraries(gfk-vr gfk-graphics ${OVR_LIBRARY})
 target_link_libraries(gfk-input gfk-math gfk-system)
 
 if (NOT WIN32 AND NOT APPLE)
 	target_link_libraries(gfk-math ${UUID_LIBRARY} gfk-system)
 endif ()
 
-target_link_libraries(gfk gfk-math gfk-input gfk-graphics gfk-network gfk-system)
+target_link_libraries(gfk gfk-math gfk-input gfk-graphics gfk-network gfk-system gfk-vr)
 
 add_subdirectory(test)
