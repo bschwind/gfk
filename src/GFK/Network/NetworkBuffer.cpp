@@ -85,7 +85,7 @@ void NetworkBuffer::WriteUnsignedInt32(unsigned int i)
 
 void NetworkBuffer::WriteSignedInt64(signed long long int i)
 {
-	i = BytePacker::htonll(i);
+	i = BytePacker::gfk_htonll(i);
 	dataBuffer[bufferCounter]     = (i & 0xff00000000000000) >> 56;
 	dataBuffer[bufferCounter + 1] = (i & 0x00ff000000000000) >> 48;
 	dataBuffer[bufferCounter + 2] = (i & 0x0000ff0000000000) >> 40;
@@ -100,7 +100,7 @@ void NetworkBuffer::WriteSignedInt64(signed long long int i)
 
 void NetworkBuffer::WriteUnsignedInt64(unsigned long long int i)
 {
-	i = BytePacker::htonll(i);
+	i = BytePacker::gfk_htonll(i);
 	dataBuffer[bufferCounter]     = (i & 0xff00000000000000) >> 56;
 	dataBuffer[bufferCounter + 1] = (i & 0x00ff000000000000) >> 48;
 	dataBuffer[bufferCounter + 2] = (i & 0x0000ff0000000000) >> 40;
@@ -197,7 +197,7 @@ signed long long int NetworkBuffer::ReadSignedInt64()
 		| (unsigned long long int)dataBuffer[readCounter + 7];
 
 	readCounter += 8;
-	value = static_cast<signed long long int>(BytePacker::ntohll(value));
+	value = static_cast<signed long long int>(BytePacker::gfk_ntohll(value));
 	return value;
 }
 
@@ -214,7 +214,7 @@ unsigned long long int NetworkBuffer::ReadUnsignedInt64()
 		| (unsigned long long int)dataBuffer[readCounter + 7];
 
 	readCounter += 8;
-	value = BytePacker::ntohll(value);
+	value = BytePacker::gfk_ntohll(value);
 	return value;
 }
 

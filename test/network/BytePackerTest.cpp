@@ -56,8 +56,8 @@ int main()
 	std::cout << "64 bit int (1) in binary host order: " << doubleBitset << std::endl;
 
 	std::cout << "Packed 64 bit double host:           " << packedDouble << std::endl;
-	std::cout << "Packed 64 bit double network:        " << BytePacker::htonll(packedDouble) << std::endl;
-	std::cout << "Packed 64 bit double host again:     " << BytePacker::ntohll(BytePacker::htonll(packedDouble)) << std::endl;
+	std::cout << "Packed 64 bit double network:        " << BytePacker::gfk_htonll(packedDouble) << std::endl;
+	std::cout << "Packed 64 bit double host again:     " << BytePacker::gfk_ntohll(BytePacker::gfk_htonll(packedDouble)) << std::endl;
 
 	std::cout << std::endl;
 

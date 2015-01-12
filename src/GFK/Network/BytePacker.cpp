@@ -117,7 +117,7 @@ double BytePacker::UnpackFloat64(unsigned long long int packedDouble)
 }
 
 // From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
-unsigned long long int BytePacker::htonll(unsigned long long int value)
+unsigned long long int BytePacker::gfk_htonll(unsigned long long int value)
 {
 	static const int num = 42;
 
@@ -136,7 +136,7 @@ unsigned long long int BytePacker::htonll(unsigned long long int value)
 }
 
 // From http://stackoverflow.com/questions/3022552/is-there-any-standard-htonl-like-function-for-64-bits-integers-in-c
-unsigned long long int BytePacker::ntohll(unsigned long long int value)
+unsigned long long int BytePacker::gfk_ntohll(unsigned long long int value)
 {
 	static const int num = 42;
 
