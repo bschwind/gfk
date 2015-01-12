@@ -5,6 +5,9 @@ namespace gfk
 
 class MathHelper
 {
+private:
+	static const float toDegreesFactor;
+	static const float toRadiansFactor;
 public:
 	static const float Pi;
 	static const float TwoPi;
@@ -42,9 +45,21 @@ public:
 	static float SmoothStep(float v1, float v2, float amount);
 
 	template <typename T>
-	static int Sign(T val)
+	static inline int Sign(T val)
 	{
 		return (T(0) < val) - (val < T(0));
+	}
+
+	template <typename T>
+	static inline T ToDegrees(T radians)
+	{
+		return radians * toDegreesFactor;
+	}
+
+	template <typename T>
+	static inline T ToRadians(T degrees)
+	{
+		return degrees * toRadiansFactor;
 	}
 };
 
