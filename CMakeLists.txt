@@ -70,6 +70,7 @@ add_definitions(-Wall -Wno-deprecated-register -DGLEW_STATIC)
 add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw)
 add_subdirectory(lib/assimp)
+add_subdirectory(lib/enet)
 find_package(OVR)
 
 # Link against libuuid for Linux
@@ -81,6 +82,7 @@ endif ()
 include_directories(lib/glew/include)
 include_directories(lib/glfw/include)
 include_directories(lib/assimp/include)
+include_directories(lib/enet/include)
 include_directories(${OVR_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -142,7 +144,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network gfk-system)
+target_link_libraries(gfk-network gfk-system enet)
 
 if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)
