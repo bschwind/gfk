@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cmath>
 
-#include <GFK/Math/MathHelper.hpp>
+#include <GFK/Math/Quaternion.hpp>
 
 namespace jetGame
 {
@@ -20,9 +20,10 @@ networkCounter(0),
 networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
+vrCam(),
 mesh("assets/f18Hornet.3DS"),
 netBuffer(4096),
-jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
+jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
 {
 	isFixedTimeStep = true;
 	targetUpdateFramesPerSecond = 60;
@@ -40,6 +41,12 @@ void JetGame::Initialize()
 {
 	gfk::Game::Initialize();
 	primBatch.Initialize();
+
+	auto renderFunction = [this](gfk::GameTime gameTime, float interpolationFactor)
+	{
+		EyeRenderFunction(gameTime, interpolationFactor);
+	};
+	vrCam.Initialize(renderFunction);
 
 	socket.Bind(55778);
 	serverAddress = ConnectToServer("127.0.0.1", 55777);
@@ -85,7 +92,8 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 
 	// This is a dirty hack for the way the GLFW cursor "jumps" when
 	// you first move it. Will likely be fixed in a later release
-	if (firstMouseMove && (fabs(diff.X) > 0 || fabs(diff.Y) > 0)) {
+	if (firstMouseMove && (fabs(diff.X) > 0 || fabs(diff.Y) > 0))
+	{
 		diff.X = 0;
 		diff.Y = 0;
 
@@ -111,9 +119,18 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 		thrusterEnabled = true;
 	}
 
+	Quaternion cameraRotation = vrCam.GetRotation();// * Quaternion::CreateFromAxisAngle(Vector3(0, 1, 0), MathHelper::ToRadians(90.0f));
+
 	jet.Update(throttle, diff.X, diff.Y, 0.0f, thrusterEnabled, gameTime);
-	camera.Update(dt, jet.GetForward(), jet.GetUp(), jet.GetRight());
-	camera.SetPos(jet.GetPosition() - jet.GetForward() * 50 + jet.GetUp() * 8);
+
+	camera.Update(dt, Vector3::Transform(Vector3(0, 0, -1), cameraRotation),
+		Vector3::Transform(Vector3(0, 1, 0), cameraRotation),
+		Vector3::Transform(Vector3(1, 0, 0), cameraRotation));
+
+	Vector3 offset = Vector3(0, 5, 10);
+	offset = Vector3::Zero;
+
+	camera.SetPos(offset + vrCam.GetPosition());
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
@@ -122,6 +139,11 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 		serverConnection.SendPackets(socket);
 
 		gfk::Game::Exit();
+	}
+
+	if (Keyboard::IsKeyDown(Keys::Space))
+	{
+		vrCam.Recenter();
 	}
 }
 
@@ -154,6 +176,7 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 	// Draw world grid and axis references
 	primBatch.Begin(PrimitiveType::LineList, camera);
+
 	Color color = Color::Gray;
 	color.A = 0.3f;
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
@@ -161,24 +184,26 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 	primBatch.DrawLine(Vector3::Zero, Vector3::UnitY, Color::Green, Color::Green);
 	primBatch.DrawLine(Vector3::Zero, Vector3::UnitZ, Color::Blue, Color::Blue);
 
-	primBatch.DrawLine(jet.GetPosition(), jet.GetPosition() + jet.GetForward() * 15, Color::Red, Color::Red);
-	primBatch.DrawLine(jet.GetPosition(), jet.GetPosition() + jet.GetUp() * 15, Color::Green, Color::Green);
-	primBatch.DrawLine(jet.GetPosition(), jet.GetPosition() + jet.GetRight() * 15, Color::Blue, Color::Blue);
-
 	primBatch.End();
 
 	primBatch.Begin(PrimitiveType::TriangleList, camera);
-	primBatch.FillSphere(jet.GetPosition() + jet.GetForward() * 15, 2, 10, 10, Color::Red);
-	primBatch.FillSphere(jet.GetPosition() + jet.GetUp() * 15, 2, 10, 10, Color::Green);
-	primBatch.FillSphere(jet.GetPosition() + jet.GetRight() * 15, 2, 10, 10, Color::Blue);
+	primBatch.FillSphere(vrCam.GetTrackingCameraPosition(), 0.1f, 10, 10, Color::Red);
+
 	primBatch.End();
 
-	Matrix world = jet.GetTransform();
+	Matrix world = jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f));
 	primBatch.Begin(PrimitiveType::TriangleList, camera, world);
 	primBatch.DrawMesh(mesh);
 	primBatch.End();
 
 	Device.SwapBuffers();
+
+	vrCam.Render(gameTime, interpolationFactor);
+}
+
+void JetGame::EyeRenderFunction(const gfk::GameTime &gameTime, float interpolationFactor)
+{
+
 }
 
 void JetGame::ResizeWindow(int width, int height)
@@ -197,6 +222,8 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 	serverConnection.clientType = ClientType::SERVER;
 	serverConnection.address = destination;
 
+	return destination;
+
 	serverConnection.WritePacket(NewDesktopClientPacket(24));
 	serverConnection.SendPackets(socket);
 
@@ -208,7 +235,7 @@ IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short po
 
 		if (!byteReadCount)
 		{
-			if (GameTime::GetSystemTime() - sentTime > 1.0)
+			if (GameTime::GetSystemTime() - sentTime > 0.0)
 			{
 				std::cout << (GameTime::GetSystemTime() - sentTime) << std::endl;
 

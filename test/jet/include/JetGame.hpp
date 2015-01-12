@@ -6,6 +6,7 @@
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Mesh.hpp>
+#include <GFK/VR/VRCamera.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 
@@ -25,6 +26,7 @@ public:
 	void UnloadContent();
 	void Update(const gfk::GameTime &gameTime);
 	void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
+	void EyeRenderFunction(const gfk::GameTime &gameTime, float interpolationFactor);
 	void ResizeWindow(int width, int height);
 
 	IPAddress ConnectToServer(const std::string &address, unsigned short port);
@@ -38,13 +40,12 @@ private:
 	unsigned long long int updateCounter;
 	PrimitiveBatch3D primBatch;
 	JetCamera camera;
+	VRCamera vrCam;
 	Mesh mesh;
 	UDPSocket socket;
 	NetworkBuffer netBuffer;
 	RemoteConnection serverConnection;
 	IPAddress serverAddress;
-
-	Vector3 jetPos;
 
 	Jet jet;
 };
