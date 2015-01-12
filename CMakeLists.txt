@@ -117,6 +117,7 @@ add_library(gfk-graphics STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/Mesh.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/AssImpBridge.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/GLErrorHandling.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Graphics/RenderTarget2D.cpp
 )
 
 add_library(gfk-vr STATIC
