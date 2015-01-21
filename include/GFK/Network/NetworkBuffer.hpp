@@ -38,7 +38,7 @@ public:
 	float ReadFloat32();
 	double ReadFloat64();
 
-	IPAddress ReadAllPackets(const UDPSocket &socket);
+	void PopulateData(unsigned char *data, size_t length);
 
 	void Reset();
 protected:

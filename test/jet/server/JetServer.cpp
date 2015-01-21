@@ -1,6 +1,7 @@
 #include "JetServer.hpp"
 #include "Packets.hpp"
 #include "network/Packet.hpp"
+#include <GFK/System/Logger.hpp>
 #include <bitset>
 
 using namespace jetGame;
@@ -24,17 +25,30 @@ void JetServer::Initialize()
 {
 	gfk::ConsoleGame::Initialize();
 
-	socket.Bind(55777);
-}
+	ENetAddress address;
+	address.host = ENET_HOST_ANY;
+	address.port = 55777;
+	server = enet_host_create(&address, 32, 2, 0, 0);
 
-void JetServer::UnloadContent()
-{
-	gfk::ConsoleGame::UnloadContent();
+	if (server == NULL)
+	{
+		Logger::LogError("Unable to create a host on port 55777");
+	}
+	else
+	{
+		Logger::Log("Server started\n");
+	}
 }
 
 void JetServer::LoadContent()
 {
 	gfk::ConsoleGame::LoadContent();
+}
+
+void JetServer::UnloadContent()
+{
+	gfk::ConsoleGame::UnloadContent();
+	enet_host_destroy(server);
 }
 
 void JetServer::Update(const gfk::GameTime &gameTime)
@@ -47,94 +61,62 @@ void JetServer::Update(const gfk::GameTime &gameTime)
 
 void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	IPAddress sender;
+	ENetEvent event;
+	unsigned char protocol;
+	int serviceReturn = enet_host_service(server, &event, 0);
 
-	while (true)
+	while (serviceReturn > 0)
 	{
-		int numBytesRead = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
-
-		if (numBytesRead > 0 && numBytesRead >= Packets::PACKET_HEADER_SIZE)
+		switch (event.type)
 		{
-			unsigned int applicationID = netBuffer.ReadUnsignedInt32();
-			unsigned int sequence = netBuffer.ReadUnsignedInt32();
-			unsigned int ack = netBuffer.ReadUnsignedInt32();
-			unsigned int ackBitfield = netBuffer.ReadUnsignedInt32();
-			unsigned char numPackets = netBuffer.ReadUnsignedByte();
+			case ENET_EVENT_TYPE_CONNECT:
+				Logger::Log("Someone connected\n");
+				break;
+			case ENET_EVENT_TYPE_RECEIVE:
+				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
 
-            std::bitset<32> ackBitset = std::bitset<32>(ackBitfield);
-
-            std::cout << "Packet Header[sequence = " << sequence << ", ack = " << ack << ", ackBitfield = " << ackBitset << ", numPackets = " << static_cast<unsigned int>(numPackets) << "]" << std::endl;
-
-			if (applicationID == Packets::applicationID)
-			{
-				for (int i = 0; i < numPackets; i++)
-				{
-					unsigned char protocol = netBuffer.ReadUnsignedByte();
-					HandleGamePacket(netBuffer, sender, protocol);
-				}
-			}
-		}
-		else
-		{
-			break;
+				protocol = netBuffer.ReadUnsignedByte();
+				HandleGamePacket(netBuffer, protocol);
+				// todo - loop over all packets, not just the first one
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Logger::Log("Someone disconnected\n");
+				break;
+			case ENET_EVENT_TYPE_NONE:
+				Logger::Log("Nothing happened...");
+				break;
+			default:
+				break;
 		}
 
-		netBuffer.Reset();
+		serviceReturn = enet_host_service(server, &event, 0);
 	}
 
 	netBuffer.Reset();
 }
 
-void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &sender, unsigned char protocol)
+void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
 {
-	std::string senderIP = sender.GetIPV4String();
-	std::cout << "Received packet from " << senderIP << std::endl;
-
 	if (protocol == Packets::NEW_DESKTOP_CLIENT)
 	{
-		std::cout << "Desktop user " << senderIP << " connected" << std::endl;
-		connections[senderIP] = RemoteConnection();
-		connections[senderIP].clientType = ClientType::DESKTOP;
-		connections[senderIP].address = sender;
-
-		unsigned char numPlayers = static_cast<unsigned char>(connections.size());
-		connections[senderIP].WritePacket(NewDesktopClientAckPacket(numPlayers));
+		Logger::Log("Desktop user connected\n");
 	}
 	else if (protocol == Packets::NEW_ANDROID_CLIENT)
 	{
-		std::cout << "Android user " << senderIP << " connected" << std::endl;
-		connections[senderIP] = RemoteConnection();
-		connections[senderIP].clientType = ClientType::ANDROID_CLIENT;
-		connections[senderIP].address = sender;
-
-        unsigned char numPlayers = static_cast<unsigned char>(connections.size());
-        connections[senderIP].WritePacket(NewDesktopClientAckPacket(numPlayers));
+		Logger::Log("Android user connected\n");
 	}
 	else if (protocol == Packets::MOVEMENT)
 	{
-		if (connections.find(senderIP) != connections.end())
-		{
-			float x = netBuffer.ReadFloat32();
-			float y = netBuffer.ReadFloat32();
-			float z = netBuffer.ReadFloat32();
+		float x = netBuffer.ReadFloat32();
+		float y = netBuffer.ReadFloat32();
+		float z = netBuffer.ReadFloat32();
 
-			for (auto iter = connections.begin(); iter != connections.end(); ++iter)
-			{
-				if (iter->second.clientType == ClientType::ANDROID_CLIENT)
-				{
-					iter->second.WritePacket(MovementPacket(x, y, z));
-				}
-			}
-		}
+		Logger::Logf("Movement Packet: (%f, %f, %f)\n", x, y, z);
 	}
 	else if (protocol == Packets::DISCONNECT)
 	{
-		if (connections.find(senderIP) != connections.end())
-		{
-			// sender is in the list of connections
-			std::cout << senderIP << " disconnected" << std::endl;
-			connections.erase(senderIP);
-		}
+		// sender is in the list of connections
+		Logger::Log("Someone wants to disconnect\n");
 	}
 }
 
@@ -149,11 +131,7 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		for (auto iter = connections.begin(); iter != connections.end(); ++iter)
-		{
-			iter->second.SendPackets(socket);
-		}
-
+		// todo - broadcast state to all players
 		networkCounter = 1;
 	}
 	else

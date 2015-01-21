@@ -9,6 +9,7 @@
 #include <GFK/VR/VRCamera.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
+#include <enet/enet.h>
 
 using namespace gfk;
 
@@ -29,12 +30,13 @@ public:
 	void EyeRenderFunction(const gfk::GameTime &gameTime, float interpolationFactor);
 	void ResizeWindow(int width, int height);
 
-	IPAddress ConnectToServer(const std::string &address, unsigned short port);
+	void ConnectToServer(const std::string &address, unsigned short port);
 private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
 	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
+	void DisconnectFromServer();
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	unsigned long long int updateCounter;
@@ -42,10 +44,9 @@ private:
 	JetCamera camera;
 	VRCamera vrCam;
 	Mesh mesh;
-	UDPSocket socket;
+	ENetHost *client;
+	ENetPeer *serverConnection;
 	NetworkBuffer netBuffer;
-	RemoteConnection serverConnection;
-	IPAddress serverAddress;
 
 	Jet jet;
 };

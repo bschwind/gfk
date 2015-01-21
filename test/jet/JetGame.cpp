@@ -6,6 +6,7 @@
 #include <GFK/Input/Mouse.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <GFK/Network/UDPSocket.hpp>
+#include <GFK/System/Logger.hpp>
 #include <iostream>
 #include <cmath>
 
@@ -48,9 +49,14 @@ void JetGame::Initialize()
 	};
 	vrCam.Initialize(renderFunction);
 
-	socket.Bind(55778);
-	serverAddress = ConnectToServer("127.0.0.1", 55777);
-	std::cout << "Server destination is " << serverAddress.GetIPV4String() << std::endl;
+	client = enet_host_create(NULL, 1, 2, 0, 0);
+
+	if (client == NULL)
+	{
+		Logger::LogError("Unable to create an ENet host");
+	}
+
+	ConnectToServer("127.0.0.1", 55777);
 
 	Device.SetClearColor(Color::Black);
 
@@ -59,12 +65,33 @@ void JetGame::Initialize()
 
 void JetGame::LoadContent()
 {
-
+	gfk::Game::UnloadContent();
 }
 
 void JetGame::UnloadContent()
 {
+	gfk::Game::LoadContent();
+	DisconnectFromServer();
+	enet_host_destroy(client);
+}
 
+void JetGame::DisconnectFromServer()
+{
+	ENetEvent event;
+	enet_peer_disconnect(serverConnection, 0);
+
+	while (enet_host_service(client, &event, 3000) > 0)
+	{
+		switch (event.type)
+		{
+			case ENET_EVENT_TYPE_RECEIVE:
+				enet_packet_destroy(event.packet);
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Logger::Log("Disconected from server\n");
+				return;
+		}
+	}
 }
 
 bool firstMouseMove = true;
@@ -80,7 +107,31 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
+	ENetEvent event;
+	int serviceReturn = enet_host_service(client, &event, 0);
 
+	while (serviceReturn > 0)
+	{
+		switch (event.type)
+		{
+			case ENET_EVENT_TYPE_CONNECT:
+				Logger::Log("Someone connected\n");
+				break;
+			case ENET_EVENT_TYPE_RECEIVE:
+				Logger::Log("Got some data\n");
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Logger::Log("Someone disconnected\n");
+				break;
+			case ENET_EVENT_TYPE_NONE:
+				Logger::Log("Nothing happened...");
+				break;
+			default:
+				break;
+		}
+
+		serviceReturn = enet_host_service(client, &event, 0);
+	}
 }
 
 void JetGame::UpdateGame(const gfk::GameTime &gameTime)
@@ -134,10 +185,6 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
-		// Send disconnect packet
-		serverConnection.WritePacket(DisconnectPacket());
-		serverConnection.SendPackets(socket);
-
 		gfk::Game::Exit();
 	}
 
@@ -159,10 +206,15 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 		float x = jet.GetPosition().X;
 		float y = jet.GetPosition().Y;
 		float z = jet.GetPosition().Z;
-		serverConnection.WritePacket(MovementPacket(x, y, z));
-		serverConnection.SendPackets(socket);
+		MovementPacket(x, y, z).WriteToBuffer(netBuffer);
+
+		ENetPacket *packet = enet_packet_create(netBuffer.GetDataBuffer(), netBuffer.GetBufferCount(), 0);
+
+		enet_peer_send(serverConnection, 0, packet);
+		enet_host_flush(client);
 
 		networkCounter = 1;
+		netBuffer.Reset();
 	}
 	else
 	{
@@ -214,48 +266,29 @@ void JetGame::ResizeWindow(int width, int height)
 	camera.SetScreenHeight(height);
 }
 
-IPAddress JetGame::ConnectToServer(const std::string &address, unsigned short port)
+void JetGame::ConnectToServer(const std::string &hostName, unsigned short port)
 {
-	IPAddress destination;
-	IPAddress::FromIPV4String(address, port, destination);
+	ENetAddress address;
+	ENetEvent event;
+	enet_address_set_host(&address, hostName.c_str());
+	address.port = port;
 
-	serverConnection.clientType = ClientType::SERVER;
-	serverConnection.address = destination;
+	serverConnection = enet_host_connect(client, &address, 2, 0); // 0 is for initial data
 
-	return destination;
-
-	serverConnection.WritePacket(NewDesktopClientPacket(24));
-	serverConnection.SendPackets(socket);
-
-	double sentTime = GameTime::GetSystemTime();
-
-	while (true)
+	if (serverConnection == NULL)
 	{
-		int byteReadCount = socket.Receive(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
-
-		if (!byteReadCount)
-		{
-			if (GameTime::GetSystemTime() - sentTime > 0.0)
-			{
-				std::cout << (GameTime::GetSystemTime() - sentTime) << std::endl;
-
-				std::cout << destination.GetIPV4String() << " took too long to respond, trying broadcast address" << std::endl;
-
-				std::string broadcastAddressToTry = "192.168.1.255:" + std::to_string(port);
-				if (destination.GetIPV4String().compare(broadcastAddressToTry) != 0)
-				{
-					return ConnectToServer("192.168.1.255", port);
-				}
-
-				return destination;
-			}
-			continue;
-		}
-
-		break;
+		Logger::LogError("No network peers available\n");
 	}
 
-	return destination;
+	if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+	{
+		Logger::Log("Connected to server successfully!\n");
+	}
+	else
+	{
+		enet_peer_reset(serverConnection);
+		Logger::LogError("Unable to connect to server");
+	}
 }
 
 }

@@ -22,12 +22,6 @@ public:
 	unsigned char clientType; // Look at ClientType.hpp
 	gfk::IPAddress address;
 	gfk::NetworkBuffer outgoingBuffer;
-	float timeSinceLastPacket;
-	int localSequenceNumber;
-	int remoteSequenceNumber;
-	int ackBitfield;
-	float roundTripTime;
-	std::map<int, float> timeSentMap;
 protected:
 private:
 	unsigned char numPacketsWritten;

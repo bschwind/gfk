@@ -2,6 +2,7 @@
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/System/Logger.hpp>
+#include <enet/enet.h>
 #include <iostream>
 
 namespace gfk
@@ -159,6 +160,14 @@ bool UDPSocket::InitializeSocketLayer()
 	#else
 		return true;
 	#endif
+
+	if (enet_initialize() != 0)
+	{
+		Logger::LogErrorf("An error occurred while initializing Enet");
+	}
+
+	// todo - how does atexit work?
+	atexit(enet_deinitialize);
 }
 
 void UDPSocket::ShutdownSocketLayer()

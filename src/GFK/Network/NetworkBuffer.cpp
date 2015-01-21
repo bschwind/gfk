@@ -228,29 +228,18 @@ double NetworkBuffer::ReadFloat64()
 	return BytePacker::UnpackFloat64(ReadUnsignedInt64());
 }
 
-IPAddress NetworkBuffer::ReadAllPackets(const UDPSocket &socket)
+void NetworkBuffer::PopulateData(unsigned char *data, size_t length)
 {
-	IPAddress sender;
-
-	bufferCounter = 0;
-
-	unsigned char *dataAddress = GetDataBuffer();
-	unsigned int remainingSpace = GetBufferCapacity();
-
-	while (true)
+	size_t amountToCopy = length;
+	if (amountToCopy > bufferCapacity)
 	{
-		int byteReadCount = socket.Receive(sender, dataAddress, remainingSpace);
-		bufferCounter += byteReadCount;
-		dataAddress += byteReadCount;
-		remainingSpace -= byteReadCount;
-
-		if (!byteReadCount || remainingSpace <= 0)
-		{
-			break;
-		}
+		amountToCopy = bufferCapacity;
 	}
 
-	return sender;
+	memcpy(&dataBuffer[0], data, amountToCopy);
+
+	Reset();
+	bufferCounter = amountToCopy;
 }
 
 void NetworkBuffer::Reset()

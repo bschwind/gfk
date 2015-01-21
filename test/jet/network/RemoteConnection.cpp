@@ -6,11 +6,6 @@ namespace jetGame
 
 RemoteConnection::RemoteConnection() :
 outgoingBuffer(4096),
-timeSinceLastPacket(0.0f),
-localSequenceNumber(0),
-remoteSequenceNumber(0),
-ackBitfield(0),
-roundTripTime(0.0f),
 numPacketsWritten(0)
 {
 
@@ -18,11 +13,6 @@ numPacketsWritten(0)
 
 RemoteConnection::RemoteConnection(unsigned int bufferCapacity) :
 outgoingBuffer(bufferCapacity),
-timeSinceLastPacket(0.0f),
-localSequenceNumber(0),
-remoteSequenceNumber(0),
-ackBitfield(0),
-roundTripTime(0.0f),
 numPacketsWritten(0)
 {
 
@@ -39,10 +29,8 @@ void RemoteConnection::WritePacket(const Packet &packet)
 	{
 		// insert placeholder header info
 		outgoingBuffer.WriteUnsignedInt32(Packets::applicationID);
-		outgoingBuffer.WriteUnsignedInt32(localSequenceNumber); // sequence
-		outgoingBuffer.WriteUnsignedInt32(remoteSequenceNumber); // ack
-		outgoingBuffer.WriteUnsignedInt32(ackBitfield); // ack bitfield
-		outgoingBuffer.WriteUnsignedByte(1);  // num packets
+		outgoingBuffer.WriteUnsignedInt16(1); // Version
+		outgoingBuffer.WriteUnsignedByte(1); // num packets
 	}
 
 	packet.WriteToBuffer(outgoingBuffer);
@@ -59,10 +47,7 @@ void RemoteConnection::SendPackets(gfk::UDPSocket &socket)
 
 		// Socket Send
 		socket.Send(address, outgoingBuffer.GetDataBuffer(), outgoingBuffer.GetBufferCount());
-
-		localSequenceNumber++;
 		numPacketsWritten = 0;
-
 		outgoingBuffer.Reset();
 	}
 }

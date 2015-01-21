@@ -6,7 +6,7 @@
 #include <GFK/Graphics/Mesh.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
-#include <map>
+#include <enet/enet.h>
 
 using namespace gfk;
 
@@ -27,13 +27,12 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToPlayers(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol);
 	int networkCounter;
 	int networkSendsPerSecond;
 	int updateCounter;
-	UDPSocket socket;
+	ENetHost *server;
 	NetworkBuffer netBuffer;
-	std::map<std::string, RemoteConnection> connections;
 };
 
 }
