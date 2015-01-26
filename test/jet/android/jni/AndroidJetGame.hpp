@@ -5,7 +5,7 @@
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
-#include "network/RemoteConnection.hpp"
+#include <enet/enet.h>
 
 using namespace gfk;
 
@@ -29,10 +29,11 @@ private:
 	PrimitiveBatch3D primBatch;
 	UDPSocket socket;
 	NetworkBuffer netBuffer;
-	RemoteConnection serverConnection;
-	IPAddress serverAddress;
+	ENetHost *client;
+	ENetPeer *serverConnection;
 
-	IPAddress ConnectToServer(const std::string &address, unsigned short port);
+	void ConnectToServer(const std::string &address, unsigned short port);
+	void DisconnectFromServer();
 };
 
 }

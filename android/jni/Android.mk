@@ -1,16 +1,35 @@
 LOCAL_PATH := $(call my-dir)
 GFK_PATH := $(LOCAL_PATH)/../..
+ENET_PATH := $(LOCAL_PATH)/../../lib/enet
 
 #LOCAL_SRC_FILES is relative to the jni directory
 GFK_SRC := ../../src
+ENET_SRC := ../../lib/enet
+
+# ENET
+
+LOCAL_MODULE := libenet
+LOCAL_C_INCLUDES := ${ENET_PATH}/include/
+LOCAL_SRC_FILES := \
+	${ENET_SRC}/callbacks.c \
+	${ENET_SRC}/compress.c \
+	${ENET_SRC}/host.c \
+	${ENET_SRC}/list.c \
+	${ENET_SRC}/packet.c \
+	${ENET_SRC}/peer.c \
+	${ENET_SRC}/protocol.c \
+	${ENET_SRC}/unix.c \
+
+include $(BUILD_STATIC_LIBRARY)
 
 # GFK
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := libgfk
-LOCAL_CFLAGS    := -fexceptions
+LOCAL_MODULE := libgfk
+LOCAL_CFLAGS := -fexceptions
 
-LOCAL_C_INCLUDES := $(GFK_PATH)/include/
+LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
+					${ENET_PATH}/include/
 
 LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
@@ -38,7 +57,8 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/System/GameTime.cpp \
 	$(GFK_SRC)/GFK/System/Logger.cpp \
 
-LOCAL_LDLIBS    := -llog -lGLESv2
+LOCAL_LDLIBS := -llog -lGLESv2
 LOCAL_SHARED_LIBRARIES += libandroid
+LOCAL_STATIC_LIBRARIES += libenet
 
 include $(BUILD_SHARED_LIBRARY)

@@ -65,12 +65,12 @@ void JetGame::Initialize()
 
 void JetGame::LoadContent()
 {
-	gfk::Game::UnloadContent();
+	gfk::Game::LoadContent();
 }
 
 void JetGame::UnloadContent()
 {
-	gfk::Game::LoadContent();
+	gfk::Game::UnloadContent();
 	DisconnectFromServer();
 	enet_host_destroy(client);
 }

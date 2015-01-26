@@ -15,7 +15,8 @@ Game(),
 netBuffer(4096)
 {
 	Logger::Log("Jet Game Constructor!");
-	isFixedTimeStep = false;
+	isFixedTimeStep = true;
+	targetUpdateFramesPerSecond = 60;
 }
 
 AndroidJetGame::~AndroidJetGame()
@@ -29,26 +30,50 @@ void AndroidJetGame::Initialize()
 	gfk::Game::Initialize();
 	primBatch.Initialize();
 
-	socket.Bind(55778);
-	serverAddress = ConnectToServer("192.168.1.255", 55777);
-	Logger::Logf("Server destination is %s\n", serverAddress.GetIPV4String().c_str());
+	client = enet_host_create(NULL, 1, 2, 0, 0);
+
+	if (client == NULL)
+	{
+		Logger::LogError("Unable to create an ENet host");
+	}
+
+	ConnectToServer("127.0.0.1", 55777);
 
 	Device.SetClearColor(Color::Black);
 }
 
 void AndroidJetGame::LoadContent()
 {
+	gfk::Game::LoadContent();
 	Logger::Logf("load content()!");
 }
 
 void AndroidJetGame::UnloadContent()
 {
+	gfk::Game::UnloadContent();
 	Logger::Log("unload content()!");
 
-	serverConnection.WritePacket(DisconnectPacket());
-	serverConnection.SendPackets(socket);
+	DisconnectFromServer();
+	enet_host_destroy(client);
+}
 
-	socket.Close();
+void AndroidJetGame::DisconnectFromServer()
+{
+	ENetEvent event;
+	enet_peer_disconnect(serverConnection, 0);
+
+	while (enet_host_service(client, &event, 3000) > 0)
+	{
+		switch (event.type)
+		{
+			case ENET_EVENT_TYPE_RECEIVE:
+				enet_packet_destroy(event.packet);
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Logger::Log("Disconected from server\n");
+				return;
+		}
+	}
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
@@ -111,37 +136,29 @@ void AndroidJetGame::ResizeWindow(int width, int height)
 	cam.SetScreenHeight(height);
 }
 
-IPAddress AndroidJetGame::ConnectToServer(const std::string &address, unsigned short port)
+void AndroidJetGame::ConnectToServer(const std::string &hostName, unsigned short port)
 {
-	IPAddress destination;
-	IPAddress::FromIPV4String(address, port, destination);
+	ENetAddress address;
+	ENetEvent event;
+	enet_address_set_host(&address, hostName.c_str());
+	address.port = port;
 
-	serverConnection.clientType = ClientType::SERVER;
-	serverConnection.address = destination;
+	serverConnection = enet_host_connect(client, &address, 2, 0); // 0 is for initial data
 
-	serverConnection.WritePacket(NewAndroidClientPacket(24));
-	serverConnection.SendPackets(socket);
-
-	double sentTime = GameTime::GetSystemTime();
-
-	while (true)
+	if (serverConnection == NULL)
 	{
-		int byteReadCount = socket.Receive(destination, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
-
-		if (!byteReadCount)
-		{
-			if (GameTime::GetSystemTime() - sentTime > 1.0)
-			{
-				std::cout << destination.GetIPV4String() << " took too long to respond" << std::endl;
-				return destination;
-			}
-			continue;
-		}
-
-		break;
+		Logger::LogError("No network peers available\n");
 	}
 
-	return destination;
+	if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+	{
+		Logger::Log("Connected to server successfully!\n");
+	}
+	else
+	{
+		enet_peer_reset(serverConnection);
+		Logger::LogError("Unable to connect to server");
+	}
 }
 
 }
