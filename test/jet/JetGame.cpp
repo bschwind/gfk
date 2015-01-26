@@ -108,6 +108,7 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
 	ENetEvent event;
+	unsigned char protocol;
 	int serviceReturn = enet_host_service(client, &event, 0);
 
 	while (serviceReturn > 0)
@@ -118,7 +119,10 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 				Logger::Log("Someone connected\n");
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
-				Logger::Log("Got some data\n");
+				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
+				protocol = netBuffer.ReadUnsignedByte();
+				HandleGamePacket(netBuffer, protocol);
+				// todo - loop over all packets, not just the first one
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
 				Logger::Log("Someone disconnected\n");
@@ -132,6 +136,13 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 
 		serviceReturn = enet_host_service(client, &event, 0);
 	}
+
+	netBuffer.Reset();
+}
+
+void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
+{
+
 }
 
 void JetGame::UpdateGame(const gfk::GameTime &gameTime)
@@ -181,7 +192,7 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 	Vector3 offset = Vector3(0, 5, 10);
 	offset = Vector3::Zero;
 
-	camera.SetPos(offset + vrCam.GetPosition());
+	camera.SetPos(offset + vrCam.GetPosition() + Vector3(0, 5, 0));
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
@@ -200,8 +211,6 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		std::cout << "network send! " << gameTime.TotalGameTime << std::endl;
-
 		// Send movement packet
 		float x = jet.GetPosition().X;
 		float y = jet.GetPosition().Y;

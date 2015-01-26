@@ -10,9 +10,13 @@ using namespace gfk;
 namespace jetGame
 {
 
+float jetX, jetY, jetZ;
+
 AndroidJetGame::AndroidJetGame() :
 Game(),
-netBuffer(4096)
+netBuffer(4096),
+networkCounter(0),
+networkSendsPerSecond(10)
 {
 	Logger::Log("Jet Game Constructor!");
 	isFixedTimeStep = true;
@@ -37,7 +41,7 @@ void AndroidJetGame::Initialize()
 		Logger::LogError("Unable to create an ENet host");
 	}
 
-	ConnectToServer("127.0.0.1", 55777);
+	ConnectToServer("192.168.24.53", 55777);
 
 	Device.SetClearColor(Color::Black);
 }
@@ -78,41 +82,76 @@ void AndroidJetGame::DisconnectFromServer()
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 {
-	IPAddress sender;
+	UpdateNetwork(gameTime);
+	UpdateGame(gameTime);
+	SendStateToServer(gameTime);
+}
 
-	while (true)
+void AndroidJetGame::UpdateNetwork(const gfk::GameTime &gameTime)
+{
+	ENetEvent event;
+	unsigned char protocol;
+	int serviceReturn = enet_host_service(client, &event, 0);
+
+	while (serviceReturn > 0)
 	{
-		int numBytesRead = socket.Receive(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
-
-		if (numBytesRead > 0)
+		switch (event.type)
 		{
-			unsigned int applicationID = netBuffer.ReadUnsignedInt32();
-			unsigned int sequence = netBuffer.ReadUnsignedInt32();
-			unsigned int ack = netBuffer.ReadUnsignedInt32();
-			unsigned int ackBitfield = netBuffer.ReadUnsignedInt32();
-			unsigned int numPackets = netBuffer.ReadUnsignedByte();
-
-			if (applicationID == Packets::applicationID)
-			{
-				std::string ipAddress = sender.GetIPV4String();
-				// std::cout << "Received packet from " << ipAddress << std::endl;
-				unsigned char protocol = netBuffer.ReadUnsignedByte();
-			}
+			case ENET_EVENT_TYPE_CONNECT:
+				Logger::Log("Someone connected\n");
+				break;
+			case ENET_EVENT_TYPE_RECEIVE:
+				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
+				protocol = netBuffer.ReadUnsignedByte();
+				HandleGamePacket(netBuffer, protocol);
+				// todo - loop over all packets, not just the first one
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				Logger::Log("Someone disconnected\n");
+				break;
+			case ENET_EVENT_TYPE_NONE:
+				Logger::Log("Nothing happened...");
+				break;
+			default:
+				break;
 		}
-		else
-		{
-			break;
-		}
 
-		netBuffer.Reset();
+		serviceReturn = enet_host_service(client, &event, 0);
 	}
 
 	netBuffer.Reset();
+}
 
+void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
+{
+	if (protocol == Packets::MOVEMENT)
+	{
+		jetX = netBuffer.ReadFloat32();
+		jetY = netBuffer.ReadFloat32();
+		jetZ = netBuffer.ReadFloat32();
+	}
+}
+
+void AndroidJetGame::UpdateGame(const gfk::GameTime &gameTime)
+{
 	float dt = gameTime.ElapsedGameTime;
 	double totalTime = gameTime.TotalGameTime;
 
-	cam.SetPos(Vector3(0, 10, 0));
+	cam.SetPos(Vector3(0, 1, 0));
+}
+
+void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
+{
+	int iterCutoff = targetUpdateFramesPerSecond / networkSendsPerSecond;
+
+	if (networkCounter >= iterCutoff)
+	{
+
+	}
+	else
+	{
+		networkCounter++;
+	}
 }
 
 void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
@@ -123,7 +162,12 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	color.A = 0.3f;
 
 	primBatch.Begin(PrimitiveType::LineList, cam);
-	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
+	primBatch.DrawXZGrid(-20, -20, 20, 20, color);
+	primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
+	primBatch.End();
+
+	primBatch.Begin(PrimitiveType::TriangleList, cam);
+	primBatch.FillSphere(Vector3(jetX, jetY, jetZ), 1, 10, 10, Color::Red);
 	primBatch.End();
 
 	Device.SwapBuffers();

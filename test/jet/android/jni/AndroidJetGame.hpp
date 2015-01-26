@@ -31,8 +31,14 @@ private:
 	NetworkBuffer netBuffer;
 	ENetHost *client;
 	ENetPeer *serverConnection;
+	unsigned long long int networkCounter;
+	int networkSendsPerSecond;
 
 	void ConnectToServer(const std::string &address, unsigned short port);
+	void UpdateNetwork(const gfk::GameTime &gameTime);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol);
+	void UpdateGame(const gfk::GameTime &gameTime);
+	void SendStateToServer(const gfk::GameTime &gameTime);
 	void DisconnectFromServer();
 };
 

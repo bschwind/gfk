@@ -74,7 +74,6 @@ void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
-
 				protocol = netBuffer.ReadUnsignedByte();
 				HandleGamePacket(netBuffer, protocol);
 				// todo - loop over all packets, not just the first one
@@ -95,6 +94,8 @@ void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 	netBuffer.Reset();
 }
 
+float jetX, jetY, jetZ = 0;
+
 void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
 {
 	if (protocol == Packets::NEW_DESKTOP_CLIENT)
@@ -107,11 +108,11 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protoco
 	}
 	else if (protocol == Packets::MOVEMENT)
 	{
-		float x = netBuffer.ReadFloat32();
-		float y = netBuffer.ReadFloat32();
-		float z = netBuffer.ReadFloat32();
+		jetX = netBuffer.ReadFloat32();
+		jetY = netBuffer.ReadFloat32();
+		jetZ = netBuffer.ReadFloat32();
 
-		Logger::Logf("Movement Packet: (%f, %f, %f)\n", x, y, z);
+		Logger::Logf("Movement: (%f, %f, %f)\n", jetX, jetY, jetZ);
 	}
 	else if (protocol == Packets::DISCONNECT)
 	{
@@ -132,7 +133,14 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 	if (networkCounter >= iterCutoff)
 	{
 		// todo - broadcast state to all players
+		MovementPacket(jetX, jetY, jetZ).WriteToBuffer(netBuffer);
+		ENetPacket *packet = enet_packet_create(netBuffer.GetDataBuffer(), netBuffer.GetBufferCount(), 0);
+
+		enet_host_broadcast(server, 0, packet);
+		enet_host_flush(server);
+
 		networkCounter = 1;
+		netBuffer.Reset();
 	}
 	else
 	{

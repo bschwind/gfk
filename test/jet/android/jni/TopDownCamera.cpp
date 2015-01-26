@@ -18,13 +18,13 @@ TopDownCamera::~TopDownCamera()
 
 Matrix TopDownCamera::GetView()
 {
-	Matrix::CreateLookAt(pos, pos + Vector3(0, -1.0f, 0), Vector3(0, 0, -1.0f), view);
+	Matrix::CreateLookAt(Vector3(0.5f, 0.5f, 0.5f), Vector3(0, 0, 0), Vector3(0, 1.0f, 0), view);
 	return view;
 }
 
 Matrix TopDownCamera::GetProjection()
 {
-	Matrix::CreateOrthographic(screenWidth * 0.01f, screenHeight * 0.01f, 0.0f, 100.0f, projection);
+	Matrix::CreateOrthographic(screenWidth * 0.08f, screenHeight * 0.08f, 0.0f, 100.0f, projection);
 	return projection;
 }
 

@@ -35,7 +35,7 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, const IPAddress &senderIP, unsigned char protocol);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol);
 	void DisconnectFromServer();
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
