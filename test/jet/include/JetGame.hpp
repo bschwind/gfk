@@ -2,7 +2,8 @@
 
 #include "objects/Jet.hpp"
 #include "JetCamera.hpp"
-#include "network/RemoteConnection.hpp"
+#include "network/NetworkHelper.hpp"
+#include "network/Packet.hpp"
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Mesh.hpp>
@@ -29,14 +30,11 @@ public:
 	void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 	void EyeRenderFunction(const gfk::GameTime &gameTime, float interpolationFactor);
 	void ResizeWindow(int width, int height);
-
-	void ConnectToServer(const std::string &address, unsigned short port);
 private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol);
-	void DisconnectFromServer();
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime);
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	unsigned long long int updateCounter;
@@ -44,9 +42,8 @@ private:
 	JetCamera camera;
 	VRCamera vrCam;
 	Mesh mesh;
-	ENetHost *client;
-	ENetPeer *serverConnection;
-	NetworkBuffer netBuffer;
+	JetInputPacketReq jetInputPacket;
+	NetworkHelper netHelper;
 
 	Jet jet;
 };

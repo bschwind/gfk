@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TopDownCamera.hpp"
+#include "network/NetworkHelper.hpp"
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Network/UDPSocket.hpp>
@@ -27,19 +28,14 @@ public:
 private:
 	TopDownCamera cam;
 	PrimitiveBatch3D primBatch;
-	UDPSocket socket;
-	NetworkBuffer netBuffer;
-	ENetHost *client;
-	ENetPeer *serverConnection;
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
+	NetworkHelper netHelper;
 
-	void ConnectToServer(const std::string &address, unsigned short port);
 	void UpdateNetwork(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void DisconnectFromServer();
 };
 
 }

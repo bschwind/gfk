@@ -1,5 +1,4 @@
 #include "include/JetGame.hpp"
-#include "include/Packets.hpp"
 #include "network/Packet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Input/Keyboard.hpp>
@@ -23,7 +22,7 @@ updateCounter(0),
 camera(),
 vrCam(),
 mesh("assets/f18Hornet.3DS"),
-netBuffer(4096),
+netHelper(NetworkHelper::ConnectionType::Client),
 jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
 {
 	isFixedTimeStep = true;
@@ -49,14 +48,12 @@ void JetGame::Initialize()
 	};
 	vrCam.Initialize(renderFunction);
 
-	client = enet_host_create(NULL, 1, 2, 0, 0);
-
-	if (client == NULL)
-	{
-		Logger::LogError("Unable to create an ENet host");
-	}
-
-	ConnectToServer("127.0.0.1", 55777);
+	netHelper.ConnectToServer("127.0.0.1", 55777);
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+		{
+			HandleGamePacket(networkBuffer, protocol, gameTime);
+		}
+	);
 
 	Device.SetClearColor(Color::Black);
 
@@ -71,27 +68,7 @@ void JetGame::LoadContent()
 void JetGame::UnloadContent()
 {
 	gfk::Game::UnloadContent();
-	DisconnectFromServer();
-	enet_host_destroy(client);
-}
-
-void JetGame::DisconnectFromServer()
-{
-	ENetEvent event;
-	enet_peer_disconnect(serverConnection, 0);
-
-	while (enet_host_service(client, &event, 3000) > 0)
-	{
-		switch (event.type)
-		{
-			case ENET_EVENT_TYPE_RECEIVE:
-				enet_packet_destroy(event.packet);
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Disconected from server\n");
-				return;
-		}
-	}
+	netHelper.DisconnectFromServer();
 }
 
 bool firstMouseMove = true;
@@ -107,40 +84,10 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	ENetEvent event;
-	unsigned char protocol;
-	int serviceReturn = enet_host_service(client, &event, 0);
-
-	while (serviceReturn > 0)
-	{
-		switch (event.type)
-		{
-			case ENET_EVENT_TYPE_CONNECT:
-				Logger::Log("Someone connected\n");
-				break;
-			case ENET_EVENT_TYPE_RECEIVE:
-				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
-				protocol = netBuffer.ReadUnsignedByte();
-				HandleGamePacket(netBuffer, protocol);
-				// todo - loop over all packets, not just the first one
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Someone disconnected\n");
-				break;
-			case ENET_EVENT_TYPE_NONE:
-				Logger::Log("Nothing happened...");
-				break;
-			default:
-				break;
-		}
-
-		serviceReturn = enet_host_service(client, &event, 0);
-	}
-
-	netBuffer.Reset();
+	netHelper.Receive(gameTime);
 }
 
-void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
+void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
 {
 
 }
@@ -185,6 +132,12 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 
 	jet.Update(throttle, diff.X, diff.Y, 0.0f, thrusterEnabled, gameTime);
 
+	jetInputPacket.throttleAmt = throttle;
+	jetInputPacket.rollInput = diff.X;
+	jetInputPacket.pitchInput = diff.Y;
+	jetInputPacket.yawInput = 0.0f;
+	jetInputPacket.thrusterEnabled = thrusterEnabled ? 1 : 0;
+
 	camera.Update(dt, Vector3::Transform(Vector3(0, 0, -1), cameraRotation),
 		Vector3::Transform(Vector3(0, 1, 0), cameraRotation),
 		Vector3::Transform(Vector3(1, 0, 0), cameraRotation));
@@ -211,19 +164,10 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		// Send movement packet
-		float x = jet.GetPosition().X;
-		float y = jet.GetPosition().Y;
-		float z = jet.GetPosition().Z;
-		MovementPacket(x, y, z).WriteToBuffer(netBuffer);
-
-		ENetPacket *packet = enet_packet_create(netBuffer.GetDataBuffer(), netBuffer.GetBufferCount(), 0);
-
-		enet_peer_send(serverConnection, 0, packet);
-		enet_host_flush(client);
+		netHelper.WritePacket(jetInputPacket);
+		netHelper.Send();
 
 		networkCounter = 1;
-		netBuffer.Reset();
 	}
 	else
 	{
@@ -273,31 +217,6 @@ void JetGame::ResizeWindow(int width, int height)
 
 	camera.SetScreenWidth(width);
 	camera.SetScreenHeight(height);
-}
-
-void JetGame::ConnectToServer(const std::string &hostName, unsigned short port)
-{
-	ENetAddress address;
-	ENetEvent event;
-	enet_address_set_host(&address, hostName.c_str());
-	address.port = port;
-
-	serverConnection = enet_host_connect(client, &address, 2, 0); // 0 is for initial data
-
-	if (serverConnection == NULL)
-	{
-		Logger::LogError("No network peers available\n");
-	}
-
-	if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
-	{
-		Logger::Log("Connected to server successfully!\n");
-	}
-	else
-	{
-		enet_peer_reset(serverConnection);
-		Logger::LogError("Unable to connect to server");
-	}
 }
 
 }

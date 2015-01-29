@@ -1,5 +1,4 @@
 #include "JetServer.hpp"
-#include "Packets.hpp"
 #include "network/Packet.hpp"
 #include <GFK/System/Logger.hpp>
 #include <bitset>
@@ -9,9 +8,10 @@ using namespace jetGame;
 JetServer::JetServer() :
 ConsoleGame(true, 120),
 networkCounter(0),
-networkSendsPerSecond(40),
+networkSendsPerSecond(20),
 updateCounter(0),
-netBuffer(4096)
+netHelper(NetworkHelper::ConnectionType::Server),
+jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
 {
 
 }
@@ -25,19 +25,12 @@ void JetServer::Initialize()
 {
 	gfk::ConsoleGame::Initialize();
 
-	ENetAddress address;
-	address.host = ENET_HOST_ANY;
-	address.port = 55777;
-	server = enet_host_create(&address, 32, 2, 0, 0);
-
-	if (server == NULL)
-	{
-		Logger::LogError("Unable to create a host on port 55777");
-	}
-	else
-	{
-		Logger::Log("Server started\n");
-	}
+	netHelper.StartServer(55777);
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+		{
+			HandleGamePacket(networkBuffer, protocol, gameTime);
+		}
+	);
 }
 
 void JetServer::LoadContent()
@@ -48,7 +41,6 @@ void JetServer::LoadContent()
 void JetServer::UnloadContent()
 {
 	gfk::ConsoleGame::UnloadContent();
-	enet_host_destroy(server);
 }
 
 void JetServer::Update(const gfk::GameTime &gameTime)
@@ -61,60 +53,36 @@ void JetServer::Update(const gfk::GameTime &gameTime)
 
 void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	ENetEvent event;
-	unsigned char protocol;
-	int serviceReturn = enet_host_service(server, &event, 0);
-
-	while (serviceReturn > 0)
-	{
-		switch (event.type)
-		{
-			case ENET_EVENT_TYPE_CONNECT:
-				Logger::Log("Someone connected\n");
-				break;
-			case ENET_EVENT_TYPE_RECEIVE:
-				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
-				protocol = netBuffer.ReadUnsignedByte();
-				HandleGamePacket(netBuffer, protocol);
-				// todo - loop over all packets, not just the first one
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Someone disconnected\n");
-				break;
-			case ENET_EVENT_TYPE_NONE:
-				Logger::Log("Nothing happened...");
-				break;
-			default:
-				break;
-		}
-
-		serviceReturn = enet_host_service(server, &event, 0);
-	}
-
-	netBuffer.Reset();
+	netHelper.Receive(gameTime);
 }
 
-float jetX, jetY, jetZ = 0;
-
-void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
+void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
 {
-	if (protocol == Packets::NEW_DESKTOP_CLIENT)
+	if (protocol == Packet::NEW_DESKTOP_CLIENT_REQ)
 	{
 		Logger::Log("Desktop user connected\n");
 	}
-	else if (protocol == Packets::NEW_ANDROID_CLIENT)
+	else if (protocol == Packet::NEW_ANDROID_CLIENT_REQ)
 	{
 		Logger::Log("Android user connected\n");
 	}
-	else if (protocol == Packets::MOVEMENT)
+	else if (protocol == Packet::JET_INPUT_REQ)
 	{
-		jetX = netBuffer.ReadFloat32();
-		jetY = netBuffer.ReadFloat32();
-		jetZ = netBuffer.ReadFloat32();
+		float throttleAmt = netBuffer.ReadFloat32();
+		float rollInput = netBuffer.ReadFloat32();
+		float pitchInput = netBuffer.ReadFloat32();
+		float yawInput = netBuffer.ReadFloat32();
+		float thrusterEnabled = netBuffer.ReadUnsignedByte();
 
-		Logger::Logf("Movement: (%f, %f, %f)\n", jetX, jetY, jetZ);
+		jet.Update(throttleAmt, rollInput, pitchInput, yawInput, thrusterEnabled == 1, gameTime);
+
+		// buffer.WriteFloat32(throttleAmt);
+		// buffer.WriteFloat32(rollInput);
+		// buffer.WriteFloat32(pitchInput);
+		// buffer.WriteFloat32(yawInput);
+		// buffer.WriteUnsignedByte(thrusterEnabled);
 	}
-	else if (protocol == Packets::DISCONNECT)
+	else if (protocol == Packet::DISCONNECT_REQ)
 	{
 		// sender is in the list of connections
 		Logger::Log("Someone wants to disconnect\n");
@@ -123,7 +91,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protoco
 
 void JetServer::UpdateGame(const gfk::GameTime &gameTime)
 {
-
+	jet.Update(0, 0, 0, 0, false, gameTime);
 }
 
 void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
@@ -132,15 +100,9 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		// todo - broadcast state to all players
-		MovementPacket(jetX, jetY, jetZ).WriteToBuffer(netBuffer);
-		ENetPacket *packet = enet_packet_create(netBuffer.GetDataBuffer(), netBuffer.GetBufferCount(), 0);
-
-		enet_host_broadcast(server, 0, packet);
-		enet_host_flush(server);
-
+		netHelper.WritePacket(JetInputPacketRes(jet.GetPosition().X, jet.GetPosition().Y, jet.GetPosition().Z));
+		netHelper.Send();
 		networkCounter = 1;
-		netBuffer.Reset();
 	}
 	else
 	{

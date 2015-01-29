@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GFK/Network/NetworkBuffer.hpp>
-#include "Packets.hpp"
 
 namespace jetGame
 {
@@ -9,17 +8,22 @@ namespace jetGame
 class Packet
 {
 public:
-	Packet(unsigned char protocol);
+	Packet(unsigned short protocol);
 	~Packet();
 
-	unsigned char GetPacketType();
+	static const unsigned short NEW_DESKTOP_CLIENT_REQ = 0;
+	static const unsigned short NEW_DESKTOP_CLIENT_RES = 1;
+	static const unsigned short NEW_ANDROID_CLIENT_REQ = 2;
+	static const unsigned short NEW_ANDROID_CLIENT_RES = 3;
+	static const unsigned short DISCONNECT_REQ = 4;
+	static const unsigned short DISCONNECT_RES = 5;
+	static const unsigned short JET_INPUT_REQ = 6;
+	static const unsigned short JET_INPUT_RES = 7;
+
+	unsigned short GetPacketType();
 	virtual void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 
-	unsigned int applicationID;
-	unsigned int sequence;
-	unsigned int ack;
-	unsigned int ackBitfield;
-	unsigned char protocol;
+	unsigned short protocol;
 };
 
 class NewDesktopClientPacket : public Packet {
@@ -54,11 +58,24 @@ public:
     void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class MovementPacket : public Packet {
+class JetInputPacketReq : public Packet {
+public:
+	float throttleAmt;
+	float rollInput;
+	float pitchInput;
+	float yawInput;
+	unsigned char thrusterEnabled; // 0 - false, 1 - true
+	
+	JetInputPacketReq();
+	JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled);
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
+
+class JetInputPacketRes : public Packet {
 public:
 	float x, y, z;
-	
-	MovementPacket(float x, float y, float z);
+
+	JetInputPacketRes(float x, float y, float z);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 

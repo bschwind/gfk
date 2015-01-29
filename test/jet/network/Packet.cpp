@@ -4,7 +4,7 @@ namespace jetGame
 {
 
 // Base Packet Class
-Packet::Packet(unsigned char protocol) :
+Packet::Packet(unsigned short protocol) :
 protocol(protocol)
 {
 
@@ -17,10 +17,10 @@ Packet::~Packet()
 
 void Packet::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
-	buffer.WriteUnsignedByte(protocol);
+	buffer.WriteUnsignedInt16(protocol);
 }
 
-unsigned char Packet::GetPacketType()
+unsigned short Packet::GetPacketType()
 {
 	return protocol;
 }
@@ -28,7 +28,7 @@ unsigned char Packet::GetPacketType()
 
 // NewDesktopClientPacket
 NewDesktopClientPacket::NewDesktopClientPacket(unsigned char number) :
-Packet(Packets::NEW_DESKTOP_CLIENT),
+Packet(Packet::NEW_DESKTOP_CLIENT_REQ),
 number(number)
 {
 
@@ -43,7 +43,7 @@ void NewDesktopClientPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 
 // NewAndroidClientPacket
 NewAndroidClientPacket::NewAndroidClientPacket(unsigned char number) :
-Packet(Packets::NEW_ANDROID_CLIENT),
+Packet(Packet::NEW_ANDROID_CLIENT_REQ),
 number(number)
 {
 
@@ -58,7 +58,7 @@ void NewAndroidClientPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 
 // NewDesktopClientAckPacket
 NewDesktopClientAckPacket::NewDesktopClientAckPacket(unsigned char numPlayers) :
-Packet(Packets::NEW_DESKTOP_CLIENT_ACK),
+Packet(Packet::NEW_DESKTOP_CLIENT_RES),
 numPlayers(numPlayers)
 {
 
@@ -73,7 +73,7 @@ void NewDesktopClientAckPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 
 // NewAndroidClientAckPacket
 NewAndroidClientAckPacket::NewAndroidClientAckPacket(unsigned char numPlayers) :
-Packet(Packets::NEW_ANDROID_CLIENT_ACK),
+Packet(Packet::NEW_ANDROID_CLIENT_RES),
 numPlayers(numPlayers)
 {
 
@@ -86,15 +86,51 @@ void NewAndroidClientAckPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 }
 
 
-// MovementPacket
-MovementPacket::MovementPacket(float x, float y, float z) :
-Packet(Packets::MOVEMENT),
-x(x), y(y), z(z)
+// JetInputPacketReq
+JetInputPacketReq::JetInputPacketReq() :
+Packet(Packet::JET_INPUT_REQ),
+throttleAmt(0.0f),
+rollInput(0.0f),
+pitchInput(0.0f),
+yawInput(0.0f),
+thrusterEnabled(0)
 {
 
 }
 
-void MovementPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+JetInputPacketReq::JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled) :
+Packet(Packet::JET_INPUT_REQ),
+throttleAmt(throttleAmt),
+rollInput(rollInput),
+pitchInput(pitchInput),
+yawInput(yawInput),
+thrusterEnabled(thrusterEnabled)
+{
+
+}
+
+void JetInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	Packet::WriteToBuffer(buffer);
+	buffer.WriteFloat32(throttleAmt);
+	buffer.WriteFloat32(rollInput);
+	buffer.WriteFloat32(pitchInput);
+	buffer.WriteFloat32(yawInput);
+	buffer.WriteUnsignedByte(thrusterEnabled);
+}
+
+
+// Jet Input Response Packet
+JetInputPacketRes::JetInputPacketRes(float x, float y, float z) :
+Packet(Packet::JET_INPUT_RES),
+x(x),
+y(y),
+z(z)
+{
+
+}
+
+void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteFloat32(x);
@@ -102,10 +138,9 @@ void MovementPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteFloat32(z);
 }
 
-
 // Disconnect Packet
 DisconnectPacket::DisconnectPacket() :
-Packet(Packets::DISCONNECT)
+Packet(Packet::DISCONNECT_REQ)
 {
 
 }

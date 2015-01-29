@@ -39,8 +39,7 @@ LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
 	AndroidJetGame.cpp \
 	TopDownCamera.cpp \
-	../../Packets.cpp \
-	../../network/RemoteConnection.cpp \
+	../../network/NetworkHelper.cpp \
 	../../network/Packet.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \

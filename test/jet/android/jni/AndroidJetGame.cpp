@@ -1,5 +1,5 @@
 #include "AndroidJetGame.hpp"
-#include "Packets.hpp"
+#include "network/Packet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/System/Logger.hpp>
 #include <sstream>
@@ -14,9 +14,9 @@ float jetX, jetY, jetZ;
 
 AndroidJetGame::AndroidJetGame() :
 Game(),
-netBuffer(4096),
 networkCounter(0),
-networkSendsPerSecond(10)
+networkSendsPerSecond(10),
+netHelper(NetworkHelper::ConnectionType::Client)
 {
 	Logger::Log("Jet Game Constructor!");
 	isFixedTimeStep = true;
@@ -34,14 +34,12 @@ void AndroidJetGame::Initialize()
 	gfk::Game::Initialize();
 	primBatch.Initialize();
 
-	client = enet_host_create(NULL, 1, 2, 0, 0);
-
-	if (client == NULL)
-	{
-		Logger::LogError("Unable to create an ENet host");
-	}
-
-	ConnectToServer("192.168.24.53", 55777);
+	netHelper.ConnectToServer("192.168.24.53", 55777);
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+		{
+			HandleGamePacket(networkBuffer, protocol, gameTime);
+		}
+	);
 
 	Device.SetClearColor(Color::Black);
 }
@@ -57,27 +55,7 @@ void AndroidJetGame::UnloadContent()
 	gfk::Game::UnloadContent();
 	Logger::Log("unload content()!");
 
-	DisconnectFromServer();
-	enet_host_destroy(client);
-}
-
-void AndroidJetGame::DisconnectFromServer()
-{
-	ENetEvent event;
-	enet_peer_disconnect(serverConnection, 0);
-
-	while (enet_host_service(client, &event, 3000) > 0)
-	{
-		switch (event.type)
-		{
-			case ENET_EVENT_TYPE_RECEIVE:
-				enet_packet_destroy(event.packet);
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Disconected from server\n");
-				return;
-		}
-	}
+	netHelper.DisconnectFromServer();
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
@@ -89,42 +67,12 @@ void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 
 void AndroidJetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	ENetEvent event;
-	unsigned char protocol;
-	int serviceReturn = enet_host_service(client, &event, 0);
-
-	while (serviceReturn > 0)
-	{
-		switch (event.type)
-		{
-			case ENET_EVENT_TYPE_CONNECT:
-				Logger::Log("Someone connected\n");
-				break;
-			case ENET_EVENT_TYPE_RECEIVE:
-				netBuffer.PopulateData(event.packet->data, event.packet->dataLength);
-				protocol = netBuffer.ReadUnsignedByte();
-				HandleGamePacket(netBuffer, protocol);
-				// todo - loop over all packets, not just the first one
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Someone disconnected\n");
-				break;
-			case ENET_EVENT_TYPE_NONE:
-				Logger::Log("Nothing happened...");
-				break;
-			default:
-				break;
-		}
-
-		serviceReturn = enet_host_service(client, &event, 0);
-	}
-
-	netBuffer.Reset();
+	netHelper.Receive(gameTime);
 }
 
-void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned char protocol)
+void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
 {
-	if (protocol == Packets::MOVEMENT)
+	if (protocol == Packet::JET_INPUT_RES)
 	{
 		jetX = netBuffer.ReadFloat32();
 		jetY = netBuffer.ReadFloat32();
@@ -146,7 +94,8 @@ void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-
+		netHelper.Send();
+		networkCounter = 1;
 	}
 	else
 	{
@@ -178,31 +127,6 @@ void AndroidJetGame::ResizeWindow(int width, int height)
 	gfk::Game::ResizeWindow(width, height);
 	cam.SetScreenWidth(width);
 	cam.SetScreenHeight(height);
-}
-
-void AndroidJetGame::ConnectToServer(const std::string &hostName, unsigned short port)
-{
-	ENetAddress address;
-	ENetEvent event;
-	enet_address_set_host(&address, hostName.c_str());
-	address.port = port;
-
-	serverConnection = enet_host_connect(client, &address, 2, 0); // 0 is for initial data
-
-	if (serverConnection == NULL)
-	{
-		Logger::LogError("No network peers available\n");
-	}
-
-	if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
-	{
-		Logger::Log("Connected to server successfully!\n");
-	}
-	else
-	{
-		enet_peer_reset(serverConnection);
-		Logger::LogError("Unable to connect to server");
-	}
 }
 
 }
