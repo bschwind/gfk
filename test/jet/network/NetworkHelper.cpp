@@ -1,5 +1,7 @@
 #include "network/NetworkHelper.hpp"
+#include "objects/ClientData.hpp"
 #include <GFK/System/Logger.hpp>
+#include <iostream>
 
 using namespace gfk;
 
@@ -10,6 +12,7 @@ NetworkHelper::NetworkHelper(ConnectionType connectionType) :
 connectionType(connectionType),
 incomingBuffer(4096),
 outgoingBuffer(4096),
+headerBuffer(4),
 packetCount(0)
 {
 
@@ -105,7 +108,7 @@ void NetworkHelper::DisconnectFromServer()
 	}
 }
 
-void NetworkHelper::RegisterReceiveHandler(std::function<void (gfk::NetworkBuffer&, unsigned short, const gfk::GameTime&)> handler)
+void NetworkHelper::RegisterReceiveHandler(std::function<void (gfk::NetworkBuffer&, unsigned short, ClientData&, const gfk::GameTime&)> handler)
 {
 	handlePacketFunction = handler;
 }
@@ -113,6 +116,7 @@ void NetworkHelper::RegisterReceiveHandler(std::function<void (gfk::NetworkBuffe
 void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 {
 	ENetEvent event;
+	ClientData *clientData;
 	unsigned short protocol;
 	unsigned short version;
 	unsigned short numPackets;
@@ -123,11 +127,14 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 		switch (event.type)
 		{
 			case ENET_EVENT_TYPE_CONNECT:
-				Logger::Log("Someone connected\n");
+				Logger::Log("Someone connected, creating new ClientData object\n");
+				clientData = new ClientData();
+				event.peer->data = clientData;
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				incomingBuffer.Reset();
 				incomingBuffer.PopulateData(event.packet->data, event.packet->dataLength);
+				clientData = static_cast<ClientData*>(event.peer->data);
 
 				version = incomingBuffer.ReadUnsignedInt16();
 				numPackets = incomingBuffer.ReadUnsignedInt16();
@@ -136,12 +143,18 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 					protocol = incomingBuffer.ReadUnsignedInt16();
 					if (handlePacketFunction)
 					{
-						handlePacketFunction(incomingBuffer, protocol, gameTime);
+						handlePacketFunction(incomingBuffer, protocol, *clientData, gameTime);
 					}
 				}
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
-				Logger::Log("Someone disconnected\n");
+				clientData = static_cast<ClientData*>(event.peer->data);
+				if (clientData)
+				{
+					Logger::Logf("User %d disconnected\n", clientData->id);
+					delete clientData;
+					Logger::Log("Successfully deleted client data\n");
+				}
 				break;
 			case ENET_EVENT_TYPE_NONE:
 				Logger::Log("Nothing happened...");
@@ -160,21 +173,36 @@ void NetworkHelper::WritePacket(const Packet &packet)
 	{
 		// Write packet header
 		outgoingBuffer.Reset();
-		outgoingBuffer.WriteUnsignedInt16(1); // Version
-		outgoingBuffer.WriteUnsignedInt16(1); // Num packets
+		WriteHeader(1);
+
+		outgoingBuffer.WriteHeader(headerBuffer);
 	}
 
 	packet.WriteToBuffer(outgoingBuffer);
 	packetCount++;
 }
 
-void NetworkHelper::Send()
+void NetworkHelper::ForEachPeer(std::function<void (const ENetPeer *peer)> handler)
+{
+	ENetPeer * currentPeer;
+
+	for (currentPeer = host->peers; currentPeer < &host->peers[host->peerCount]; ++currentPeer)
+	{
+		if (currentPeer -> state != ENET_PEER_STATE_CONNECTED)
+		{
+			continue;
+		}
+
+		handler(currentPeer);
+	}
+}
+
+void NetworkHelper::Broadcast()
 {
 	if (packetCount > 0)
 	{
-		// Write the number of packets into the header
-		// THIS CURRENTLY DOES NOT WORK
-		// outgoingBuffer.GetDataBuffer()[2] = packetCount;
+		WriteHeader(packetCount);
+		outgoingBuffer.WriteHeaderNoCountIncrement(headerBuffer);
 		ENetPacket *packet = enet_packet_create(outgoingBuffer.GetDataBuffer(), outgoingBuffer.GetBufferCount(), 0);
 
 		if (connectionType == ConnectionType::Server)
@@ -191,6 +219,13 @@ void NetworkHelper::Send()
 		outgoingBuffer.Reset();
 		packetCount = 0;
 	}
+}
+
+void NetworkHelper::WriteHeader(unsigned short numPackets)
+{
+	headerBuffer.Reset();
+	headerBuffer.WriteUnsignedInt16(1); // Version
+	headerBuffer.WriteUnsignedInt16(numPackets); // Number of packets
 }
 
 }

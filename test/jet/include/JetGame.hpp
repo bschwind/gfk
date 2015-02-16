@@ -1,6 +1,7 @@
 #pragma once
 
 #include "objects/Jet.hpp"
+#include "objects/ClientData.hpp"
 #include "JetCamera.hpp"
 #include "network/NetworkHelper.hpp"
 #include "network/Packet.hpp"
@@ -34,7 +35,7 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	unsigned long long int updateCounter;
@@ -44,8 +45,7 @@ private:
 	Mesh mesh;
 	JetInputPacketReq jetInputPacket;
 	NetworkHelper netHelper;
-
-	Jet jet;
+	std::map<unsigned short, ClientData> players;
 };
 
 }

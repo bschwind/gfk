@@ -22,8 +22,7 @@ updateCounter(0),
 camera(),
 vrCam(),
 mesh("assets/f18Hornet.3DS"),
-netHelper(NetworkHelper::ConnectionType::Client),
-jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
+netHelper(NetworkHelper::ConnectionType::Client)
 {
 	isFixedTimeStep = true;
 	targetUpdateFramesPerSecond = 60;
@@ -49,11 +48,14 @@ void JetGame::Initialize()
 	vrCam.Initialize(renderFunction);
 
 	netHelper.ConnectToServer("127.0.0.1", 55777);
-	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 		{
-			HandleGamePacket(networkBuffer, protocol, gameTime);
+			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
 		}
 	);
+
+	netHelper.WritePacket(NewDesktopClientPacketReq());
+	netHelper.Broadcast();
 
 	Device.SetClearColor(Color::Black);
 
@@ -87,10 +89,43 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 	netHelper.Receive(gameTime);
 }
 
-void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 {
+	if (protocol == Packet::JET_INPUT_RES)
+	{
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		float jetX = netBuffer.ReadFloat32();
+		float jetY = netBuffer.ReadFloat32();
+		float jetZ = netBuffer.ReadFloat32();
 
+		float jetRX = netBuffer.ReadFloat32();
+		float jetRY = netBuffer.ReadFloat32();
+		float jetRZ = netBuffer.ReadFloat32();
+		float jetRW = netBuffer.ReadFloat32();
+
+		if (players.find(playerID) != players.end())
+		{
+			ClientData &player = players[playerID];
+
+			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
+			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
+		}
+	}
+	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
+	{
+		Logger::Logf("Desktop user joined\n");
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		players[playerID] = ClientData();
+	}
+	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
+	{
+		Logger::Logf("Android user joined\n");
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		players[playerID] = ClientData();
+	}
 }
+
+unsigned int updateCount = 0;
 
 void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 {
@@ -130,22 +165,19 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 
 	Quaternion cameraRotation = vrCam.GetRotation();// * Quaternion::CreateFromAxisAngle(Vector3(0, 1, 0), MathHelper::ToRadians(90.0f));
 
-	jet.Update(throttle, diff.X, diff.Y, 0.0f, thrusterEnabled, gameTime);
-
 	jetInputPacket.throttleAmt = throttle;
 	jetInputPacket.rollInput = diff.X;
 	jetInputPacket.pitchInput = diff.Y;
 	jetInputPacket.yawInput = 0.0f;
 	jetInputPacket.thrusterEnabled = thrusterEnabled ? 1 : 0;
+	jetInputPacket.updateCount = updateCount;
+	netHelper.WritePacket(jetInputPacket);
 
 	camera.Update(dt, Vector3::Transform(Vector3(0, 0, -1), cameraRotation),
 		Vector3::Transform(Vector3(0, 1, 0), cameraRotation),
 		Vector3::Transform(Vector3(1, 0, 0), cameraRotation));
 
-	Vector3 offset = Vector3(0, 5, 10);
-	offset = Vector3::Zero;
-
-	camera.SetPos(offset + vrCam.GetPosition() + Vector3(0, 5, 0));
+	camera.SetPos(Vector3(0, 10, 10));
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
@@ -156,6 +188,8 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 	{
 		vrCam.Recenter();
 	}
+
+	updateCount++;
 }
 
 void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
@@ -164,9 +198,7 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.WritePacket(jetInputPacket);
-		netHelper.Send();
-
+		netHelper.Broadcast();
 		networkCounter = 1;
 	}
 	else
@@ -196,10 +228,13 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 	primBatch.End();
 
-	Matrix world = jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f));
-	primBatch.Begin(PrimitiveType::TriangleList, camera, world);
-	primBatch.DrawMesh(mesh);
-	primBatch.End();
+	for (auto player : players)
+	{
+		Matrix world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f));
+		primBatch.Begin(PrimitiveType::TriangleList, camera, world);
+		primBatch.DrawMesh(mesh);
+		primBatch.End();
+	}
 
 	Device.SwapBuffers();
 

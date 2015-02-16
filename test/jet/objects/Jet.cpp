@@ -7,7 +7,7 @@ namespace jetGame
 const float Jet::IDLE_RPM(1000.0f);
 
 Jet::Jet() :
-Jet(Vector3(0, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0))
+Jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
 {
 
 }
@@ -30,6 +30,15 @@ rotQuat(Quaternion::CreateFromBasisVectors(initialRight, initialUp))
 Jet::~Jet()
 {
 
+}
+
+void Jet::Reset()
+{
+	health = 100;
+	position = Vector3::Zero;
+	throttle = 0.0f;
+	engineRPM = 0.0f;
+	rotQuat = Quaternion::CreateFromBasisVectors(initialRight, initialUp);
 }
 
 void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime)
@@ -73,9 +82,24 @@ void Jet::ReOrient()
 	Vector3::Cross(up, right, forward);
 }
 
-Vector3 Jet::GetPosition()
+Vector3 Jet::GetPosition() const
 {
 	return position;
+}
+
+void Jet::SetPosition(const Vector3 &pos)
+{
+	position = pos;
+}
+
+Quaternion Jet::GetRotation() const
+{
+	return rotQuat;
+}
+
+void Jet::SetRotation(const Quaternion &rot)
+{
+	rotQuat = rot;
 }
 
 Vector3 Jet::GetUp()

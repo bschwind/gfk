@@ -1,17 +1,18 @@
 #include "JetServer.hpp"
 #include "network/Packet.hpp"
+#include "network/ClientType.hpp"
 #include <GFK/System/Logger.hpp>
 #include <bitset>
 
 using namespace jetGame;
 
 JetServer::JetServer() :
-ConsoleGame(true, 120),
+ConsoleGame(true, 60),
 networkCounter(0),
 networkSendsPerSecond(20),
 updateCounter(0),
-netHelper(NetworkHelper::ConnectionType::Server),
-jet(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
+playerIdCounter(0),
+netHelper(NetworkHelper::ConnectionType::Server)
 {
 
 }
@@ -26,9 +27,9 @@ void JetServer::Initialize()
 	gfk::ConsoleGame::Initialize();
 
 	netHelper.StartServer(55777);
-	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 		{
-			HandleGamePacket(networkBuffer, protocol, gameTime);
+			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
 		}
 	);
 }
@@ -56,15 +57,27 @@ void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 	netHelper.Receive(gameTime);
 }
 
-void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 {
 	if (protocol == Packet::NEW_DESKTOP_CLIENT_REQ)
 	{
-		Logger::Log("Desktop user connected\n");
+		clientData.id = playerIdCounter;
+		clientData.clientType = ClientType::DESKTOP;
+		Logger::Logf("New desktop user connected. ID is: %d\n", clientData.id);
+		playerIdCounter++;
+		clientData.jet.Reset();
+
+		netHelper.WritePacket(NewDesktopClientPacketRes(clientData.id));
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_REQ)
 	{
-		Logger::Log("Android user connected\n");
+		clientData.id = playerIdCounter;
+		clientData.clientType = ClientType::ANDROID;
+		Logger::Logf("New Android user connected. ID is: %d\n", clientData.id);
+		playerIdCounter++;
+		clientData.jet.Reset();
+
+		netHelper.WritePacket(NewAndroidClientPacketRes(clientData.id));
 	}
 	else if (protocol == Packet::JET_INPUT_REQ)
 	{
@@ -73,25 +86,19 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		float pitchInput = netBuffer.ReadFloat32();
 		float yawInput = netBuffer.ReadFloat32();
 		float thrusterEnabled = netBuffer.ReadUnsignedByte();
+		unsigned int updateCount = netBuffer.ReadUnsignedInt32();
 
-		jet.Update(throttleAmt, rollInput, pitchInput, yawInput, thrusterEnabled == 1, gameTime);
-
-		// buffer.WriteFloat32(throttleAmt);
-		// buffer.WriteFloat32(rollInput);
-		// buffer.WriteFloat32(pitchInput);
-		// buffer.WriteFloat32(yawInput);
-		// buffer.WriteUnsignedByte(thrusterEnabled);
+		clientData.jet.Update(throttleAmt, rollInput, pitchInput, yawInput, thrusterEnabled == 1, gameTime);
 	}
 	else if (protocol == Packet::DISCONNECT_REQ)
 	{
-		// sender is in the list of connections
 		Logger::Log("Someone wants to disconnect\n");
 	}
 }
 
 void JetServer::UpdateGame(const gfk::GameTime &gameTime)
 {
-	jet.Update(0, 0, 0, 0, false, gameTime);
+
 }
 
 void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
@@ -100,8 +107,15 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.WritePacket(JetInputPacketRes(jet.GetPosition().X, jet.GetPosition().Y, jet.GetPosition().Z));
-		netHelper.Send();
+		netHelper.ForEachPeer([this](const ENetPeer *peer)
+			{
+				ClientData clientData = *static_cast<ClientData*>(peer->data);
+				netHelper.WritePacket(JetInputPacketRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation()));
+			}
+		);
+
+		netHelper.Broadcast();
+
 		networkCounter = 1;
 	}
 	else

@@ -26,63 +26,59 @@ unsigned short Packet::GetPacketType()
 }
 
 
-// NewDesktopClientPacket
-NewDesktopClientPacket::NewDesktopClientPacket(unsigned char number) :
-Packet(Packet::NEW_DESKTOP_CLIENT_REQ),
-number(number)
+// NewDesktopClientPacketReq
+NewDesktopClientPacketReq::NewDesktopClientPacketReq() :
+Packet(Packet::NEW_DESKTOP_CLIENT_REQ)
 {
 
 }
 
-void NewDesktopClientPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
-{
-	Packet::WriteToBuffer(buffer);
-	buffer.WriteUnsignedByte(number);
-}
-
-
-// NewAndroidClientPacket
-NewAndroidClientPacket::NewAndroidClientPacket(unsigned char number) :
-Packet(Packet::NEW_ANDROID_CLIENT_REQ),
-number(number)
-{
-
-}
-
-void NewAndroidClientPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewDesktopClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteUnsignedByte(number);
 }
 
 
-// NewDesktopClientAckPacket
-NewDesktopClientAckPacket::NewDesktopClientAckPacket(unsigned char numPlayers) :
+// NewAndroidClientPacketReq
+NewAndroidClientPacketReq::NewAndroidClientPacketReq() :
+Packet(Packet::NEW_ANDROID_CLIENT_REQ)
+{
+
+}
+
+void NewAndroidClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	Packet::WriteToBuffer(buffer);
+}
+
+
+// NewDesktopClientPacketRes
+NewDesktopClientPacketRes::NewDesktopClientPacketRes(unsigned short id) :
 Packet(Packet::NEW_DESKTOP_CLIENT_RES),
-numPlayers(numPlayers)
+id(id)
 {
 
 }
 
-void NewDesktopClientAckPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewDesktopClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteUnsignedByte(numPlayers);
+	buffer.WriteUnsignedInt16(id);
 }
 
 
-// NewAndroidClientAckPacket
-NewAndroidClientAckPacket::NewAndroidClientAckPacket(unsigned char numPlayers) :
+// NewAndroidClientPacketRes
+NewAndroidClientPacketRes::NewAndroidClientPacketRes(unsigned short id) :
 Packet(Packet::NEW_ANDROID_CLIENT_RES),
-numPlayers(numPlayers)
+id(id)
 {
 
 }
 
-void NewAndroidClientAckPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewAndroidClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
-    Packet::WriteToBuffer(buffer);
-    buffer.WriteUnsignedByte(numPlayers);
+	Packet::WriteToBuffer(buffer);
+	buffer.WriteUnsignedInt16(id);
 }
 
 
@@ -98,13 +94,14 @@ thrusterEnabled(0)
 
 }
 
-JetInputPacketReq::JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled) :
+JetInputPacketReq::JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled, unsigned int updateCount) :
 Packet(Packet::JET_INPUT_REQ),
 throttleAmt(throttleAmt),
 rollInput(rollInput),
 pitchInput(pitchInput),
 yawInput(yawInput),
-thrusterEnabled(thrusterEnabled)
+thrusterEnabled(thrusterEnabled),
+updateCount()
 {
 
 }
@@ -117,15 +114,16 @@ void JetInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteFloat32(pitchInput);
 	buffer.WriteFloat32(yawInput);
 	buffer.WriteUnsignedByte(thrusterEnabled);
+	buffer.WriteUnsignedInt32(updateCount);
 }
 
 
 // Jet Input Response Packet
-JetInputPacketRes::JetInputPacketRes(float x, float y, float z) :
+JetInputPacketRes::JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot) :
 Packet(Packet::JET_INPUT_RES),
-x(x),
-y(y),
-z(z)
+id(id),
+position(pos),
+rotation(rot)
 {
 
 }
@@ -133,9 +131,16 @@ z(z)
 void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteFloat32(x);
-	buffer.WriteFloat32(y);
-	buffer.WriteFloat32(z);
+	buffer.WriteUnsignedInt16(id);
+
+	buffer.WriteFloat32(position.X);
+	buffer.WriteFloat32(position.Y);
+	buffer.WriteFloat32(position.Z);
+
+	buffer.WriteFloat32(rotation.X);
+	buffer.WriteFloat32(rotation.Y);
+	buffer.WriteFloat32(rotation.Z);
+	buffer.WriteFloat32(rotation.W);
 }
 
 // Disconnect Packet

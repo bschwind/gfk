@@ -2,6 +2,7 @@
 
 #include "TopDownCamera.hpp"
 #include "network/NetworkHelper.hpp"
+#include "objects/ClientData.hpp"
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Network/UDPSocket.hpp>
@@ -26,16 +27,17 @@ public:
 	void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 	void ResizeWindow(int width, int height);
 private:
+	void UpdateNetwork(const gfk::GameTime &gameTime);
+	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
+	void UpdateGame(const gfk::GameTime &gameTime);
+	void SendStateToServer(const gfk::GameTime &gameTime);
+
 	TopDownCamera cam;
 	PrimitiveBatch3D primBatch;
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	NetworkHelper netHelper;
-
-	void UpdateNetwork(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime);
-	void UpdateGame(const gfk::GameTime &gameTime);
-	void SendStateToServer(const gfk::GameTime &gameTime);
+	std::map<unsigned short, ClientData> players;
 };
 
 }

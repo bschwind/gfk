@@ -17,8 +17,12 @@ public:
 	Jet(const Vector3 &pos, const Vector3 &initialForward, const Vector3 &initialUp);
 	~Jet();
 
+	void Reset();
 	void Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime);
-	Vector3 GetPosition();
+	Vector3 GetPosition() const;
+	void SetPosition(const Vector3 &pos);
+	Quaternion GetRotation() const;
+	void SetRotation(const Quaternion &rot);
 	Vector3 GetUp();
 	Vector3 GetForward();
 	Vector3 GetRight();

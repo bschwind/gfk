@@ -1,6 +1,10 @@
 #pragma once
 
 #include <GFK/Network/NetworkBuffer.hpp>
+#include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Quaternion.hpp>
+
+using namespace gfk;
 
 namespace jetGame
 {
@@ -26,35 +30,31 @@ public:
 	unsigned short protocol;
 };
 
-class NewDesktopClientPacket : public Packet {
+class NewDesktopClientPacketReq : public Packet {
 public:
-	unsigned char number;
-
-	NewDesktopClientPacket(unsigned char number);
+	NewDesktopClientPacketReq();
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class NewAndroidClientPacket : public Packet {
+class NewAndroidClientPacketReq : public Packet {
 public:
-	unsigned char number;
-
-	NewAndroidClientPacket(unsigned char number);
+	NewAndroidClientPacketReq();
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class NewDesktopClientAckPacket : public Packet {
+class NewDesktopClientPacketRes : public Packet {
 public:
-	unsigned char numPlayers;
+	unsigned short id;
 
-	NewDesktopClientAckPacket(unsigned char numPlayers);
+	NewDesktopClientPacketRes(unsigned short id);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class NewAndroidClientAckPacket : public Packet {
+class NewAndroidClientPacketRes : public Packet {
 public:
-    unsigned char numPlayers;
+    unsigned short id;
 
-    NewAndroidClientAckPacket(unsigned char numPlayers);
+    NewAndroidClientPacketRes(unsigned short id);
     void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
@@ -65,17 +65,20 @@ public:
 	float pitchInput;
 	float yawInput;
 	unsigned char thrusterEnabled; // 0 - false, 1 - true
+	unsigned int updateCount;
 	
 	JetInputPacketReq();
-	JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled);
+	JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled, unsigned int updateCount);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
 class JetInputPacketRes : public Packet {
 public:
-	float x, y, z;
+	unsigned short id;
+	Vector3 position;
+	Quaternion rotation;
 
-	JetInputPacketRes(float x, float y, float z);
+	JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 

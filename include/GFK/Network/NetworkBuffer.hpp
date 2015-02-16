@@ -26,6 +26,8 @@ public:
 	void WriteUnsignedInt64(unsigned long long int i);
 	void WriteFloat32(float f);
 	void WriteFloat64(double d);
+	void WriteHeader(NetworkBuffer &headerBuffer);
+	void WriteHeaderNoCountIncrement(NetworkBuffer &headerBuffer);
 
 	unsigned char ReadUnsignedByte();
 	signed char ReadSignedByte();

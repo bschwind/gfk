@@ -4,6 +4,7 @@ add_executable(jet
 				Main.cpp
 				JetGame.cpp
 				objects/Jet.cpp
+				objects/ClientData.cpp
 				network/NetworkHelper.cpp
 				network/Packet.cpp
 				JetCamera.cpp)

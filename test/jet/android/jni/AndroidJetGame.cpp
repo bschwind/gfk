@@ -1,5 +1,6 @@
 #include "AndroidJetGame.hpp"
 #include "network/Packet.hpp"
+#include "objects/Jet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/System/Logger.hpp>
 #include <sstream>
@@ -9,8 +10,6 @@ using namespace gfk;
 
 namespace jetGame
 {
-
-float jetX, jetY, jetZ;
 
 AndroidJetGame::AndroidJetGame() :
 Game(),
@@ -35,11 +34,14 @@ void AndroidJetGame::Initialize()
 	primBatch.Initialize();
 
 	netHelper.ConnectToServer("192.168.24.53", 55777);
-	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 		{
-			HandleGamePacket(networkBuffer, protocol, gameTime);
+			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
 		}
 	);
+
+	netHelper.WritePacket(NewAndroidClientPacketReq());
+	netHelper.Broadcast();
 
 	Device.SetClearColor(Color::Black);
 }
@@ -70,13 +72,39 @@ void AndroidJetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 	netHelper.Receive(gameTime);
 }
 
-void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, const gfk::GameTime &gameTime)
+void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 {
 	if (protocol == Packet::JET_INPUT_RES)
 	{
-		jetX = netBuffer.ReadFloat32();
-		jetY = netBuffer.ReadFloat32();
-		jetZ = netBuffer.ReadFloat32();
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		float jetX = netBuffer.ReadFloat32();
+		float jetY = netBuffer.ReadFloat32();
+		float jetZ = netBuffer.ReadFloat32();
+
+		float jetRX = netBuffer.ReadFloat32();
+		float jetRY = netBuffer.ReadFloat32();
+		float jetRZ = netBuffer.ReadFloat32();
+		float jetRW = netBuffer.ReadFloat32();
+
+		if (players.find(playerID) != players.end())
+		{
+			ClientData &player = players[playerID];
+
+			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
+			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
+		}
+	}
+	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
+	{
+		Logger::Logf("Desktop user joined\n");
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		players[playerID] = ClientData();
+	}
+	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
+	{
+		Logger::Logf("Android user joined\n");
+		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		players[playerID] = ClientData();
 	}
 }
 
@@ -84,8 +112,6 @@ void AndroidJetGame::UpdateGame(const gfk::GameTime &gameTime)
 {
 	float dt = gameTime.ElapsedGameTime;
 	double totalTime = gameTime.TotalGameTime;
-
-	cam.SetPos(Vector3(0, 1, 0));
 }
 
 void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
@@ -94,7 +120,7 @@ void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.Send();
+		netHelper.Broadcast();
 		networkCounter = 1;
 	}
 	else
@@ -111,13 +137,25 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	color.A = 0.3f;
 
 	primBatch.Begin(PrimitiveType::LineList, cam);
-	primBatch.DrawXZGrid(-20, -20, 20, 20, color);
-	primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
+	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 	primBatch.End();
 
-	primBatch.Begin(PrimitiveType::TriangleList, cam);
-	primBatch.FillSphere(Vector3(jetX, jetY, jetZ), 1, 10, 10, Color::Red);
-	primBatch.End();
+	for (auto player : players)
+	{
+		Matrix world = player.second.jet.GetTransform();
+		float jetX = player.second.jet.GetPosition().X;
+		float jetY = player.second.jet.GetPosition().Y;
+		float jetZ = player.second.jet.GetPosition().Z;
+
+		primBatch.Begin(PrimitiveType::LineList, cam);
+		primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
+		primBatch.End();
+
+		primBatch.Begin(PrimitiveType::TriangleList, cam, world);
+		primBatch.FillTriangle(Vector3(-0.5f, 0, 0), Vector3(0, 0, -1), Vector3(0.5f, 0, 0), Color::Red, Color::Red, Color::Red);
+		primBatch.FillTriangle(Vector3(0, 0, 0), Vector3(0, 0.5f, 0), Vector3(0, 0, -1), Color::Blue, Color::Blue, Color::Blue);
+		primBatch.End();
+	}
 
 	Device.SwapBuffers();
 }

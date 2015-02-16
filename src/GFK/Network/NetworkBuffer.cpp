@@ -122,6 +122,20 @@ void NetworkBuffer::WriteFloat64(double d)
 	WriteUnsignedInt64(BytePacker::PackFloat64(d));
 }
 
+void NetworkBuffer::WriteHeader(NetworkBuffer &headerBuffer)
+{
+	WriteHeaderNoCountIncrement(headerBuffer);
+	bufferCounter += headerBuffer.GetBufferCount();
+}
+
+void NetworkBuffer::WriteHeaderNoCountIncrement(NetworkBuffer &headerBuffer)
+{
+	// Copy the header buffer into this network buffer
+	// This is to support the case where the client doesn't know ahead of time
+	// how many packets it will write
+	memcpy(&dataBuffer[0], headerBuffer.GetDataBuffer(), headerBuffer.GetBufferCount());
+}
+
 unsigned char NetworkBuffer::ReadUnsignedByte()
 {
 	unsigned char value = dataBuffer[readCounter];
