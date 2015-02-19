@@ -109,12 +109,13 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 	{
 		netHelper.ForEachPeer([this](const ENetPeer *peer)
 			{
-				ClientData clientData = *static_cast<ClientData*>(peer->data);
+				ClientData &clientData = *static_cast<ClientData*>(peer->data);
+				// Write jet data for all clients
 				netHelper.WritePacket(JetInputPacketRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation()));
 			}
 		);
 
-		netHelper.Broadcast();
+		netHelper.Send();
 
 		networkCounter = 1;
 	}

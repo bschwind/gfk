@@ -41,7 +41,7 @@ void AndroidJetGame::Initialize()
 	);
 
 	netHelper.WritePacket(NewAndroidClientPacketReq());
-	netHelper.Broadcast();
+	netHelper.Send();
 
 	Device.SetClearColor(Color::Black);
 }
@@ -96,14 +96,14 @@ void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short p
 	}
 	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
 	{
-		Logger::Logf("Desktop user joined\n");
 		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		Logger::Logf("Desktop user joined with id %hu\n", playerID);
 		players[playerID] = ClientData();
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
 	{
-		Logger::Logf("Android user joined\n");
 		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		Logger::Logf("Android user joined with id %d\n", playerID);
 		players[playerID] = ClientData();
 	}
 }
@@ -120,7 +120,7 @@ void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.Broadcast();
+		netHelper.Send();
 		networkCounter = 1;
 	}
 	else

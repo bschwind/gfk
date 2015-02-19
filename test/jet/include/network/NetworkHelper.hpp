@@ -1,6 +1,7 @@
 #pragma once
 
 #include "network/Packet.hpp"
+#include "network/Outbox.hpp"
 #include "objects/ClientData.hpp"
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/System/GameTime.hpp>
@@ -31,20 +32,17 @@ public:
 	void Receive(const gfk::GameTime &gameTime);
 	void WritePacket(const Packet &packet);
 	void ForEachPeer(std::function<void (const ENetPeer *peer)> handler);
-	void Broadcast();
-	void WriteHeader(unsigned short numPackets);
+	void Send();
 protected:
 private:
 	ConnectionType connectionType;
-	// We will call this function for each eye
+	// We will call this function for each incoming packet
 	std::function<void (gfk::NetworkBuffer&, unsigned short, ClientData&, const gfk::GameTime&)> handlePacketFunction;
 
 	ENetHost *host;
 	ENetPeer *serverConnection; // Only for Client types
+	Outbox serverOutbox;
 	gfk::NetworkBuffer incomingBuffer;
-	gfk::NetworkBuffer outgoingBuffer;
-	gfk::NetworkBuffer headerBuffer; // For storing the variable packet header
-	unsigned short packetCount;
 };
 
 }

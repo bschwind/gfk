@@ -10,10 +10,8 @@ namespace jetGame
 
 NetworkHelper::NetworkHelper(ConnectionType connectionType) :
 connectionType(connectionType),
-incomingBuffer(4096),
-outgoingBuffer(4096),
-headerBuffer(4),
-packetCount(0)
+serverOutbox(connectionType == ConnectionType::Server ? 0 : 4096),
+incomingBuffer(4096)
 {
 
 }
@@ -128,8 +126,10 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 		{
 			case ENET_EVENT_TYPE_CONNECT:
 				Logger::Log("Someone connected, creating new ClientData object\n");
-				clientData = new ClientData();
-				event.peer->data = clientData;
+				if (connectionType == ConnectionType::Server)
+				{
+					event.peer->data = new ClientData(4096);
+				}
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				incomingBuffer.Reset();
@@ -169,26 +169,32 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 
 void NetworkHelper::WritePacket(const Packet &packet)
 {
-	if (packetCount == 0)
+	if (connectionType == ConnectionType::Client)
 	{
-		// Write packet header
-		outgoingBuffer.Reset();
-		WriteHeader(1);
-
-		outgoingBuffer.WriteHeader(headerBuffer);
+		serverOutbox.WritePacket(packet);
 	}
+	else
+	{
+		for (int i = 0; i < host->peerCount; i++)
+		{
+			ENetPeer *currentPeer = &host->peers[i];
+			if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
+			{
+				continue;
+			}
 
-	packet.WriteToBuffer(outgoingBuffer);
-	packetCount++;
+			ClientData &clientData = *static_cast<ClientData*>(currentPeer->data);
+			clientData.outbox.WritePacket(packet);
+		}
+	}
 }
 
 void NetworkHelper::ForEachPeer(std::function<void (const ENetPeer *peer)> handler)
 {
-	ENetPeer * currentPeer;
-
-	for (currentPeer = host->peers; currentPeer < &host->peers[host->peerCount]; ++currentPeer)
+	for (int i = 0; i < host->peerCount; i++)
 	{
-		if (currentPeer -> state != ENET_PEER_STATE_CONNECTED)
+		ENetPeer *currentPeer = &host->peers[i];
+		if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
 		{
 			continue;
 		}
@@ -197,35 +203,28 @@ void NetworkHelper::ForEachPeer(std::function<void (const ENetPeer *peer)> handl
 	}
 }
 
-void NetworkHelper::Broadcast()
+void NetworkHelper::Send()
 {
-	if (packetCount > 0)
+	if (connectionType == ConnectionType::Client)
 	{
-		WriteHeader(packetCount);
-		outgoingBuffer.WriteHeaderNoCountIncrement(headerBuffer);
-		ENetPacket *packet = enet_packet_create(outgoingBuffer.GetDataBuffer(), outgoingBuffer.GetBufferCount(), 0);
-
-		if (connectionType == ConnectionType::Server)
-		{
-			enet_host_broadcast(host, 0, packet);
-		}
-		else if (connectionType == ConnectionType::Client)
-		{
-			enet_peer_send(serverConnection, 0, packet);
-		}
-
-		enet_host_flush(host);
-
-		outgoingBuffer.Reset();
-		packetCount = 0;
+		serverOutbox.Send(serverConnection);
 	}
-}
+	else
+	{
+		for (int i = 0; i < host->peerCount; i++)
+		{
+			ENetPeer *currentPeer = &host->peers[i];
+			if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
+			{
+				continue;
+			}
 
-void NetworkHelper::WriteHeader(unsigned short numPackets)
-{
-	headerBuffer.Reset();
-	headerBuffer.WriteUnsignedInt16(1); // Version
-	headerBuffer.WriteUnsignedInt16(numPackets); // Number of packets
+			ClientData &clientData = *static_cast<ClientData*>(currentPeer->data);
+			clientData.outbox.Send(currentPeer);
+		}
+	}
+
+	enet_host_flush(host);
 }
 
 }

@@ -7,6 +7,7 @@ add_executable(jet
 				objects/ClientData.cpp
 				network/NetworkHelper.cpp
 				network/Packet.cpp
+				network/Outbox.cpp
 				JetCamera.cpp)
 target_link_libraries(jet gfk)
 file(COPY assets DESTINATION .)

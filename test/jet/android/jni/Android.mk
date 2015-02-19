@@ -41,6 +41,7 @@ LOCAL_SRC_FILES := \
 	TopDownCamera.cpp \
 	../../network/NetworkHelper.cpp \
 	../../network/Packet.cpp \
+	../../network/Outbox.cpp \
 	../../objects/ClientData.cpp \
 	../../objects/Jet.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
