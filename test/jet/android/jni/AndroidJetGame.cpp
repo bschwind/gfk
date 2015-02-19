@@ -5,6 +5,8 @@
 #include <GFK/System/Logger.hpp>
 #include <sstream>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 using namespace gfk;
 
@@ -57,6 +59,13 @@ void AndroidJetGame::UnloadContent()
 	gfk::Game::UnloadContent();
 	Logger::Log("unload content()!");
 
+	netHelper.WritePacket(DisconnectPacketReq());
+	netHelper.Send();
+
+	// Give the disconnect packet time to reach the server
+	// before cutting off the connection
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 	netHelper.DisconnectFromServer();
 }
 
@@ -76,7 +85,7 @@ void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short p
 {
 	if (protocol == Packet::JET_INPUT_RES)
 	{
-		unsigned short playerID = netBuffer.ReadUnsignedInt16();
+		unsigned short playerId = netBuffer.ReadUnsignedInt16();
 		float jetX = netBuffer.ReadFloat32();
 		float jetY = netBuffer.ReadFloat32();
 		float jetZ = netBuffer.ReadFloat32();
@@ -86,9 +95,9 @@ void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short p
 		float jetRZ = netBuffer.ReadFloat32();
 		float jetRW = netBuffer.ReadFloat32();
 
-		if (players.find(playerID) != players.end())
+		if (players.find(playerId) != players.end())
 		{
-			ClientData &player = players[playerID];
+			ClientData &player = players[playerId];
 
 			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
 			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
@@ -96,15 +105,26 @@ void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short p
 	}
 	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
 	{
-		unsigned short playerID = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Desktop user joined with id %hu\n", playerID);
-		players[playerID] = ClientData();
+		unsigned short playerId = netBuffer.ReadUnsignedInt16();
+		Logger::Logf("Desktop user joined with id %hu\n", playerId);
+		players[playerId] = ClientData();
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
 	{
 		unsigned short playerID = netBuffer.ReadUnsignedInt16();
 		Logger::Logf("Android user joined with id %d\n", playerID);
 		players[playerID] = ClientData();
+	}
+	else if (protocol == Packet::CLIENT_ID_RES)
+	{
+		localPlayerId = netBuffer.ReadUnsignedInt16();
+		Logger::Logf("Got ID from server: %hu\n", localPlayerId);
+	}
+	else if (protocol == Packet::DISCONNECT_RES)
+	{
+		unsigned short playerId = netBuffer.ReadUnsignedInt16();
+		Logger::Logf("Player %d disconnected\n", playerId);
+		players.erase(playerId);
 	}
 }
 

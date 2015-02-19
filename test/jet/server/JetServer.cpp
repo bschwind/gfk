@@ -67,7 +67,30 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		playerIdCounter++;
 		clientData.jet.Reset();
 
+		// Inform all users of the new client
 		netHelper.WritePacket(NewDesktopClientPacketRes(clientData.id));
+
+		// Inform the new users of the existing clients
+		netHelper.ForEachClient([this, &clientData](const ClientData &data)
+			{
+				if (data.id == clientData.id)
+				{
+					return;
+				}
+
+				if (data.clientType == ClientType::DESKTOP)
+				{
+					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
+				}
+				else if (data.clientType == ClientType::ANDROID)
+				{
+					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
+				}
+
+			}
+		);
+
+		clientData.outbox.WritePacket(ClientIdPacketRes(clientData.id));
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_REQ)
 	{
@@ -77,7 +100,28 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		playerIdCounter++;
 		clientData.jet.Reset();
 
+		// Inform all users of the new client
 		netHelper.WritePacket(NewAndroidClientPacketRes(clientData.id));
+
+		// Inform the new users of the existing clients
+		netHelper.ForEachClient([this, &clientData](const ClientData &data)
+			{
+				if (data.id == clientData.id)
+				{
+					return;
+				}
+
+				if (data.clientType == ClientType::DESKTOP)
+				{
+					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
+				}
+				else if (data.clientType == ClientType::ANDROID)
+				{
+					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
+				}
+
+			}
+		);
 	}
 	else if (protocol == Packet::JET_INPUT_REQ)
 	{
@@ -92,7 +136,8 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	}
 	else if (protocol == Packet::DISCONNECT_REQ)
 	{
-		Logger::Log("Someone wants to disconnect\n");
+		Logger::Logf("User %hu wants to disconnect\n", clientData.id);
+		netHelper.WritePacket(DisconnectPacketRes(clientData.id));
 	}
 }
 
@@ -107,9 +152,8 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.ForEachPeer([this](const ENetPeer *peer)
+		netHelper.ForEachClient([this](const ClientData &clientData)
 			{
-				ClientData &clientData = *static_cast<ClientData*>(peer->data);
 				// Write jet data for all clients
 				netHelper.WritePacket(JetInputPacketRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation()));
 			}

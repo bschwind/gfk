@@ -46,6 +46,7 @@ private:
 	JetInputPacketReq jetInputPacket;
 	NetworkHelper netHelper;
 	std::map<unsigned short, ClientData> players;
+	unsigned short localPlayerId;
 };
 
 }

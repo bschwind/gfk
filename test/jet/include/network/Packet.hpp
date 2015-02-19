@@ -23,6 +23,7 @@ public:
 	static const unsigned short DISCONNECT_RES = 5;
 	static const unsigned short JET_INPUT_REQ = 6;
 	static const unsigned short JET_INPUT_RES = 7;
+	static const unsigned short CLIENT_ID_RES = 8;
 
 	unsigned short GetPacketType();
 	virtual void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
@@ -82,9 +83,23 @@ public:
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class DisconnectPacket : public Packet {
+class DisconnectPacketReq : public Packet {
 public:
-	DisconnectPacket();
+	DisconnectPacketReq();
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
+
+class DisconnectPacketRes : public Packet {
+public:
+	unsigned short id;
+	DisconnectPacketRes(unsigned short id);
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+};
+
+class ClientIdPacketRes : public Packet {
+public:
+	unsigned short id;
+	ClientIdPacketRes(unsigned short id);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 

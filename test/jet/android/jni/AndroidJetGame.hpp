@@ -38,6 +38,7 @@ private:
 	int networkSendsPerSecond;
 	NetworkHelper netHelper;
 	std::map<unsigned short, ClientData> players;
+	unsigned short localPlayerId;
 };
 
 }

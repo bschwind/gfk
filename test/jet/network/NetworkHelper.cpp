@@ -153,7 +153,6 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 				{
 					Logger::Logf("User %d disconnected\n", clientData->id);
 					delete clientData;
-					Logger::Log("Successfully deleted client data\n");
 				}
 				break;
 			case ENET_EVENT_TYPE_NONE:
@@ -200,6 +199,21 @@ void NetworkHelper::ForEachPeer(std::function<void (const ENetPeer *peer)> handl
 		}
 
 		handler(currentPeer);
+	}
+}
+
+void NetworkHelper::ForEachClient(std::function<void (const ClientData &clientData)> handler)
+{
+	for (int i = 0; i < host->peerCount; i++)
+	{
+		ENetPeer *currentPeer = &host->peers[i];
+		if (currentPeer->state != ENET_PEER_STATE_CONNECTED)
+		{
+			continue;
+		}
+
+		ClientData &clientData = *static_cast<ClientData*>(currentPeer->data);
+		handler(clientData);
 	}
 }
 

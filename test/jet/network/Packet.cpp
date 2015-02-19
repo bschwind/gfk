@@ -143,16 +143,44 @@ void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteFloat32(rotation.W);
 }
 
-// Disconnect Packet
-DisconnectPacket::DisconnectPacket() :
+// DisconnectPacketReq
+DisconnectPacketReq::DisconnectPacketReq() :
 Packet(Packet::DISCONNECT_REQ)
 {
 
 }
 
-void DisconnectPacket::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void DisconnectPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
+}
+
+// DisconnectPacketRes
+DisconnectPacketRes::DisconnectPacketRes(unsigned short id) :
+Packet(Packet::DISCONNECT_RES),
+id(id)
+{
+
+}
+
+void DisconnectPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	Packet::WriteToBuffer(buffer);
+	buffer.WriteUnsignedInt16(id);
+}
+
+// ClientIdPacketRes
+ClientIdPacketRes::ClientIdPacketRes(unsigned short id) :
+Packet(Packet::CLIENT_ID_RES),
+id(id)
+{
+
+}
+
+void ClientIdPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	Packet::WriteToBuffer(buffer);
+	buffer.WriteUnsignedInt16(id);
 }
 
 }

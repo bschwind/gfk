@@ -17,11 +17,11 @@ public:
 	void WritePacket(const Packet &packet);
 	void Send(ENetPeer *peer);
 	void Reset();
-	unsigned short packetCount;
 protected:
 private:
 	gfk::NetworkBuffer outgoingBuffer;
 	gfk::NetworkBuffer headerBuffer; // For storing the variable packet header
+	unsigned short packetCount;
 
 	void WriteHeader(unsigned short numPackets);
 };

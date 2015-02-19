@@ -32,6 +32,7 @@ public:
 	void Receive(const gfk::GameTime &gameTime);
 	void WritePacket(const Packet &packet);
 	void ForEachPeer(std::function<void (const ENetPeer *peer)> handler);
+	void ForEachClient(std::function<void (const ClientData &clientData)> handler);
 	void Send();
 protected:
 private:
