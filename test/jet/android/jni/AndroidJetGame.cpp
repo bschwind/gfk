@@ -5,8 +5,6 @@
 #include <GFK/System/Logger.hpp>
 #include <sstream>
 #include <cmath>
-#include <chrono>
-#include <thread>
 
 using namespace gfk;
 
@@ -16,8 +14,7 @@ namespace jetGame
 AndroidJetGame::AndroidJetGame() :
 Game(),
 networkCounter(0),
-networkSendsPerSecond(10),
-netHelper(NetworkHelper::ConnectionType::Client)
+networkSendsPerSecond(10)
 {
 	Logger::Log("Jet Game Constructor!");
 	isFixedTimeStep = true;
@@ -35,15 +32,7 @@ void AndroidJetGame::Initialize()
 	gfk::Game::Initialize();
 	primBatch.Initialize();
 
-	netHelper.ConnectToServer("192.168.24.53", 55777);
-	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
-		{
-			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
-		}
-	);
-
-	netHelper.WritePacket(NewAndroidClientPacketReq());
-	netHelper.Send();
+	jetClient.ConnectToServer("192.168.24.53", 55777, ClientType::GFK_ANDROID);
 
 	Device.SetClearColor(Color::Black);
 }
@@ -58,15 +47,7 @@ void AndroidJetGame::UnloadContent()
 {
 	gfk::Game::UnloadContent();
 	Logger::Log("unload content()!");
-
-	netHelper.WritePacket(DisconnectPacketReq());
-	netHelper.Send();
-
-	// Give the disconnect packet time to reach the server
-	// before cutting off the connection
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-	netHelper.DisconnectFromServer();
+	jetClient.DisconnectFromServer();
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
@@ -78,54 +59,7 @@ void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 
 void AndroidJetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	netHelper.Receive(gameTime);
-}
-
-void AndroidJetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
-{
-	if (protocol == Packet::JET_INPUT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		float jetX = netBuffer.ReadFloat32();
-		float jetY = netBuffer.ReadFloat32();
-		float jetZ = netBuffer.ReadFloat32();
-
-		float jetRX = netBuffer.ReadFloat32();
-		float jetRY = netBuffer.ReadFloat32();
-		float jetRZ = netBuffer.ReadFloat32();
-		float jetRW = netBuffer.ReadFloat32();
-
-		if (players.find(playerId) != players.end())
-		{
-			ClientData &player = players[playerId];
-
-			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
-			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
-		}
-	}
-	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Desktop user joined with id %hu\n", playerId);
-		players[playerId] = ClientData();
-	}
-	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
-	{
-		unsigned short playerID = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Android user joined with id %d\n", playerID);
-		players[playerID] = ClientData();
-	}
-	else if (protocol == Packet::CLIENT_ID_RES)
-	{
-		localPlayerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Got ID from server: %hu\n", localPlayerId);
-	}
-	else if (protocol == Packet::DISCONNECT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Player %d disconnected\n", playerId);
-		players.erase(playerId);
-	}
+	jetClient.ProcessIncomingPackets(gameTime);
 }
 
 void AndroidJetGame::UpdateGame(const gfk::GameTime &gameTime)
@@ -140,7 +74,7 @@ void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.Send();
+		jetClient.SendOutgoingPackets();
 		networkCounter = 1;
 	}
 	else
@@ -160,7 +94,7 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 	primBatch.End();
 
-	for (auto player : players)
+	for (auto player : jetClient.players)
 	{
 		Matrix world = player.second.jet.GetTransform();
 		float jetX = player.second.jet.GetPosition().X;

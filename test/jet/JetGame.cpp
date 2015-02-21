@@ -8,8 +8,6 @@
 #include <GFK/System/Logger.hpp>
 #include <iostream>
 #include <cmath>
-#include <chrono>
-#include <thread>
 
 #include <GFK/Math/Quaternion.hpp>
 
@@ -23,8 +21,7 @@ networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
 vrCam(),
-mesh("assets/f18Hornet.3DS"),
-netHelper(NetworkHelper::ConnectionType::Client)
+mesh("assets/f18Hornet.3DS")
 {
 	isFixedTimeStep = true;
 	targetUpdateFramesPerSecond = 60;
@@ -49,15 +46,7 @@ void JetGame::Initialize()
 	};
 	vrCam.Initialize(renderFunction);
 
-	netHelper.ConnectToServer("127.0.0.1", 55777);
-	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
-		{
-			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
-		}
-	);
-
-	netHelper.WritePacket(NewDesktopClientPacketReq());
-	netHelper.Send();
+	jetClient.ConnectToServer("127.0.0.1", 55777, ClientType::DESKTOP);
 
 	Device.SetClearColor(Color::Black);
 
@@ -72,15 +61,7 @@ void JetGame::LoadContent()
 void JetGame::UnloadContent()
 {
 	gfk::Game::UnloadContent();
-
-	netHelper.WritePacket(DisconnectPacketReq());
-	netHelper.Send();
-
-	// HACK: Give the disconnect packet time to reach the server
-	// before cutting off the connection. Get a more graceful solution later.
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-	netHelper.DisconnectFromServer();
+	jetClient.DisconnectFromServer();
 }
 
 bool firstMouseMove = true;
@@ -96,54 +77,7 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
-	netHelper.Receive(gameTime);
-}
-
-void JetGame::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
-{
-	if (protocol == Packet::JET_INPUT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		float jetX = netBuffer.ReadFloat32();
-		float jetY = netBuffer.ReadFloat32();
-		float jetZ = netBuffer.ReadFloat32();
-
-		float jetRX = netBuffer.ReadFloat32();
-		float jetRY = netBuffer.ReadFloat32();
-		float jetRZ = netBuffer.ReadFloat32();
-		float jetRW = netBuffer.ReadFloat32();
-
-		if (players.find(playerId) != players.end())
-		{
-			ClientData &player = players[playerId];
-
-			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
-			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
-		}
-	}
-	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Desktop user joined with id %hu\n", playerId);
-		players[playerId] = ClientData();
-	}
-	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Android user joined with id %hu\n", playerId);
-		players[playerId] = ClientData();
-	}
-	else if (protocol == Packet::CLIENT_ID_RES)
-	{
-		localPlayerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Got ID from server: %hu\n", localPlayerId);
-	}
-	else if (protocol == Packet::DISCONNECT_RES)
-	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Player %hu disconnected\n", playerId);
-		players.erase(playerId);
-	}
+	jetClient.ProcessIncomingPackets(gameTime);
 }
 
 unsigned int updateCount = 0;
@@ -192,7 +126,7 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 	jetInputPacket.yawInput = 0.0f;
 	jetInputPacket.thrusterEnabled = thrusterEnabled ? 1 : 0;
 	jetInputPacket.updateCount = updateCount;
-	netHelper.WritePacket(jetInputPacket);
+	jetClient.WritePacket(jetInputPacket);
 
 	camera.Update(dt, Vector3::Transform(Vector3(0, 0, -1), cameraRotation),
 		Vector3::Transform(Vector3(0, 1, 0), cameraRotation),
@@ -219,7 +153,7 @@ void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
 
 	if (networkCounter >= iterCutoff)
 	{
-		netHelper.Send();
+		jetClient.SendOutgoingPackets();
 		networkCounter = 1;
 	}
 	else
@@ -249,7 +183,7 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 	primBatch.End();
 
-	for (auto player : players)
+	for (auto player : jetClient.players)
 	{
 		Matrix world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f));
 		primBatch.Begin(PrimitiveType::TriangleList, camera, world);

@@ -39,6 +39,7 @@ LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
 	AndroidJetGame.cpp \
 	TopDownCamera.cpp \
+	../../network/JetClient.cpp \
 	../../network/NetworkHelper.cpp \
 	../../network/Packet.cpp \
 	../../network/Outbox.cpp \

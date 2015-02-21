@@ -8,7 +8,7 @@ class ClientType
 {
 public:
 	static const unsigned char DESKTOP = 0;
-	static const unsigned char ANDROID = 1;
+	static const unsigned char GFK_ANDROID = 1; // ANDROID is apparently a C macro in the NDK
 	static const unsigned char SERVER  = 2;
 };
 

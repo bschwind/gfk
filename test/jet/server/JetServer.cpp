@@ -82,7 +82,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 				{
 					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
 				}
-				else if (data.clientType == ClientType::ANDROID)
+				else if (data.clientType == ClientType::GFK_ANDROID)
 				{
 					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
 				}
@@ -95,7 +95,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_REQ)
 	{
 		clientData.id = playerIdCounter;
-		clientData.clientType = ClientType::ANDROID;
+		clientData.clientType = ClientType::GFK_ANDROID;
 		Logger::Logf("New Android user connected. ID is: %d\n", clientData.id);
 		playerIdCounter++;
 		clientData.jet.Reset();
@@ -115,7 +115,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 				{
 					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
 				}
-				else if (data.clientType == ClientType::ANDROID)
+				else if (data.clientType == ClientType::GFK_ANDROID)
 				{
 					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
 				}

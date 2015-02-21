@@ -2,6 +2,7 @@
 
 #include "TopDownCamera.hpp"
 #include "network/NetworkHelper.hpp"
+#include "network/JetClient.hpp"
 #include "objects/ClientData.hpp"
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
@@ -28,7 +29,6 @@ public:
 	void ResizeWindow(int width, int height);
 private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
 
@@ -36,9 +36,7 @@ private:
 	PrimitiveBatch3D primBatch;
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
-	NetworkHelper netHelper;
-	std::map<unsigned short, ClientData> players;
-	unsigned short localPlayerId;
+	JetClient jetClient;
 };
 
 }

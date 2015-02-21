@@ -5,6 +5,7 @@
 #include "JetCamera.hpp"
 #include "network/NetworkHelper.hpp"
 #include "network/Packet.hpp"
+#include "network/JetClient.hpp"
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Mesh.hpp>
@@ -35,7 +36,6 @@ private:
 	void UpdateNetwork(const gfk::GameTime &gameTime);
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToServer(const gfk::GameTime &gameTime);
-	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	unsigned long long int updateCounter;
@@ -44,9 +44,7 @@ private:
 	VRCamera vrCam;
 	Mesh mesh;
 	JetInputPacketReq jetInputPacket;
-	NetworkHelper netHelper;
-	std::map<unsigned short, ClientData> players;
-	unsigned short localPlayerId;
+	JetClient jetClient;
 };
 
 }
