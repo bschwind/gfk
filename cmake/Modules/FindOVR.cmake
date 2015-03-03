@@ -6,6 +6,34 @@
 # OVR_INCLUDE_PATH
 # OVR_LIBRARY
 
+if (WIN32)
+	if (${64-BIT})
+		set(WINDOWS_OVR_LIB_NAME "libovr64.lib")
+
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 10 2010")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2010/)
+		endif()
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 11 2012")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2012/)
+		endif()
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 12 2013")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2013/)
+		endif()
+	else()
+		set(WINDOWS_OVR_LIB_NAME "libovr.lib")
+
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 10 2010")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2010/)
+		endif()
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 11 2012")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2012/)
+		endif()
+		if (${CMAKE_GENERATOR} MATCHES "Visual Studio 12 2013")
+			set(WINDOWS_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2013/)
+		endif()
+	endif()
+endif()
+
 FIND_PATH(OVR_INCLUDE_PATH
 	NAMES OVR.h OVR_Kernel.h OVR_Version.h
 	PATHS ${PROJECT_SOURCE_DIR}/lib/ovr/include/
@@ -14,20 +42,10 @@ FIND_PATH(OVR_INCLUDE_PATH
 FIND_LIBRARY(OVR_LIBRARY
 	NAMES
 		libovr.a # OS X
-		libovr.lib # Windows 32-bit
-		libovr64.lib # Windows 64-bit
+		${WINDOWS_OVR_LIB_NAME} # Windows
 	PATHS
 		${PROJECT_SOURCE_DIR}/lib/ovr/osx/
-
-		# Yay Windows permutations
-		# TODO - Auto-detect the correct one here. Currently you have
-		#        to move the desired version to the top of this list
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2010/
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2012/
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/Win32/VS2013/
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2010/
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2012/
-		${PROJECT_SOURCE_DIR}/lib/ovr/windows/lib/x64/VS2013/
+		${WINDOWS_OVR_PATH}
 )
 
 SET(OVR_FOUND "NO")
