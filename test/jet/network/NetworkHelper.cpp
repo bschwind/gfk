@@ -125,7 +125,6 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 		switch (event.type)
 		{
 			case ENET_EVENT_TYPE_CONNECT:
-				Logger::Log("Someone connected, creating new ClientData object\n");
 				if (connectionType == ConnectionType::Server)
 				{
 					event.peer->data = new ClientData(4096);

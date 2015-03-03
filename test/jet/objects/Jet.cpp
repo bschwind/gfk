@@ -72,7 +72,7 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 
 	ReOrient();
 		
-	position += forward * engineRPM * dt * 0.1f;
+	position += forward * engineRPM * dt * 0.01f;
 }
 
 void Jet::ReOrient()

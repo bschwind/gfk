@@ -128,11 +128,14 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 	jetInputPacket.updateCount = updateCount;
 	jetClient.WritePacket(jetInputPacket);
 
-	camera.Update(dt, Vector3::Transform(Vector3(0, 0, -1), cameraRotation),
-		Vector3::Transform(Vector3(0, 1, 0), cameraRotation),
-		Vector3::Transform(Vector3(1, 0, 0), cameraRotation));
-
-	camera.SetPos(Vector3(0, 10, 10));
+	if (jetClient.players.find(jetClient.localPlayerId) != jetClient.players.end())
+	{
+		Jet &jet = jetClient.players[jetClient.localPlayerId].jet;
+		camera.Update(dt, Vector3::Transform(jet.GetForward(), jet.GetRotation()),
+			Vector3::Transform(jet.GetUp(), jet.GetRotation()),
+			Vector3::Transform(jet.GetRight(), jet.GetRotation()));
+		camera.SetPos(jet.GetPosition() + Vector3::Transform(Vector3(0, 0.25f, 1.1f), jet.GetRotation()) * 1.5f);
+	}
 
 	if (Keyboard::IsKeyDown(Keys::Escape))
 	{
@@ -185,7 +188,7 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 	for (auto player : jetClient.players)
 	{
-		Matrix world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f));
+		Matrix world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
 		primBatch.Begin(PrimitiveType::TriangleList, camera, world);
 		primBatch.DrawMesh(mesh);
 		primBatch.End();
