@@ -1,5 +1,6 @@
 #include <GFK/Network/SocketHeader.hpp>
 #include <GFK/Network/IPAddress.hpp>
+#include <NetAdapter.h>
 #include <sstream>
 
 namespace gfk
@@ -92,6 +93,21 @@ int IPAddress::FromIPV4String(std::string address, unsigned short port, IPAddres
 	}
 
 	return result;
+}
+
+std::string IPAddress::GetBroadcastAddress()
+{
+	std::string broadcastAddress;
+	pNetAdapterInfo *adapters = new_pNetAdapterInfo();
+	const NetAdapterInfo* primaryAdapter = get_primary_pNetAdapterInfo(adapters);
+
+	if (primaryAdapter)
+	{
+		broadcastAddress = std::string(primaryAdapter->Broadcast);
+		delete_pNetAdapterInfo(adapters);
+	}
+
+	return broadcastAddress;
 }
 
 }

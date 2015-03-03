@@ -23,6 +23,7 @@ public:
 	std::string GetIPV4String() const;
 
 	static int FromIPV4String(std::string address, unsigned short port, IPAddress &IPAddress);
+	static std::string GetBroadcastAddress();
 protected:
 private:
 	unsigned int address;
