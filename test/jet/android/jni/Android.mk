@@ -1,6 +1,8 @@
 LOCAL_PATH := $(call my-dir)
 GFK_PATH := $(LOCAL_PATH)/../../../..
 ENET_PATH := $(LOCAL_PATH)/../../../../lib/enet
+IF_ADDRS_PATH := $(LOCAL_PATH)/../../../../lib/android_ifaddrs
+NET_ADAPTER_PATH := $(LOCAL_PATH)/../../../../lib/net_adapter
 JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 
 # TODO - When the GFK library is stable enough, just include
@@ -8,8 +10,25 @@ JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 #LOCAL_SRC_FILES is relative to the jni directory
 GFK_SRC := ../../../../src
 ENET_SRC := ../../../../lib/enet
+IF_ADDRS_SRC := ../../../../lib/android_ifaddrs/src
+NET_ADAPTER_SRC := ../../../../lib/net_adapter/src
+
+
+
+# ANDROID-IFADDRS
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libandroidifaddrs
+LOCAL_C_INCLUDES := ${IF_ADDRS_PATH}/include/
+LOCAL_SRC_FILES := \
+	${IF_ADDRS_SRC}/ifaddrs.c \
+
+include $(BUILD_STATIC_LIBRARY)
+
+
 
 # ENET
+include $(CLEAR_VARS)
 
 LOCAL_MODULE := libenet
 LOCAL_C_INCLUDES := ${ENET_PATH}/include/
@@ -21,9 +40,26 @@ LOCAL_SRC_FILES := \
 	${ENET_SRC}/packet.c \
 	${ENET_SRC}/peer.c \
 	${ENET_SRC}/protocol.c \
-	${ENET_SRC}/unix.c \
+	${ENET_SRC}/unix.c
 
 include $(BUILD_STATIC_LIBRARY)
+
+
+
+# NET_ADAPTER
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libnetadapter
+LOCAL_C_INCLUDES := ${NET_ADAPTER_PATH}/include/ \
+					${IF_ADDRS_PATH}/include/
+LOCAL_STATIC_LIBRARIES += libandroidifaddrs
+LOCAL_SRC_FILES := \
+	${NET_ADAPTER_SRC}/NetAdapter_Shared.cpp \
+	${NET_ADAPTER_SRC}/NetAdapter_Unix.cpp \
+
+include $(BUILD_STATIC_LIBRARY)
+
+
 
 # GFK
 include $(CLEAR_VARS)
@@ -33,7 +69,8 @@ LOCAL_CFLAGS := -fexceptions
 
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
                     $(JET_INCLUDE_PATH) \
-                    $(ENET_PATH)/include/
+                    $(ENET_PATH)/include/ \
+                    $(NET_ADAPTER_PATH)/include/
 
 LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
@@ -71,5 +108,6 @@ LOCAL_SRC_FILES := \
 LOCAL_LDLIBS := -llog -lGLESv2
 LOCAL_SHARED_LIBRARIES += libandroid
 LOCAL_STATIC_LIBRARIES += libenet
+LOCAL_STATIC_LIBRARIES += libnetadapter
 
 include $(BUILD_SHARED_LIBRARY)
