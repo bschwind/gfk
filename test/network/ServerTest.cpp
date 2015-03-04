@@ -26,7 +26,7 @@ int main()
 		}
 
 		// Echo the contents back to the client immediately
-		socket.Send(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCapacity());
+		socket.Send(sender, netBuffer.GetDataBuffer(), netBuffer.GetBufferCount());
 
 		std::cout << "--------Received Packet (from " << sender.GetIPV4String() << ")" << std::endl;
 		std::cout << "Read signed byte: " << (int)netBuffer.ReadSignedByte() << std::endl;

@@ -9,3 +9,6 @@ target_link_libraries(bytePackerTest gfk-network)
 
 add_executable(networkBufferTest NetworkBufferTest.cpp)
 target_link_libraries(networkBufferTest gfk-network)
+
+add_executable(netDiscoveryClient NetDiscoveryClientTest.cpp)
+target_link_libraries(netDiscoveryClient gfk-network)

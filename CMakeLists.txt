@@ -133,6 +133,8 @@ add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/IPAddress.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/BytePacker.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetworkBuffer.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryServer.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryClient.cpp
 )
 
 add_library(gfk-system STATIC

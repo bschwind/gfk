@@ -9,28 +9,21 @@ using namespace gfk;
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
-	{
-		Logger::Log("Please provide a port to bind the client to\n");
-		return 1;
-	}
-
 	GameTime::InitClock();
 	GameTime gameTime;
 
 	std::cout.precision(16);
 
-	int portInt = atoi(argv[1]);
-	unsigned short port = (unsigned short)portInt;
-
 	UDPSocket::InitializeSocketLayer();
 
 	UDPSocket socket;
-	socket.Bind(port);
+
+	// Bind to 0 to get an OS-assigned port
+	socket.Bind(0);
 
 	// The destination will be the broadcast address at first to find the server
 	IPAddress destination;
-	int validAddress = IPAddress::FromIPV4String("192.168.1.255", 55777, destination);
+	int validAddress = IPAddress::FromIPV4String("127.0.0.1", 55777, destination);
 
 	Logger::Logf("Destination is %s\n", destination.GetIPV4String().c_str());
 

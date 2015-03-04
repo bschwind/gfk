@@ -6,8 +6,7 @@
 #include <GFK/ConsoleGame.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Graphics/Mesh.hpp>
-#include <GFK/Network/UDPSocket.hpp>
-#include <GFK/Network/NetworkBuffer.hpp>
+#include <GFK/Network/NetDiscoveryServer.hpp>
 #include <enet/enet.h>
 
 using namespace gfk;
@@ -35,6 +34,7 @@ private:
 	int updateCounter;
 	unsigned short playerIdCounter;
 	NetworkHelper netHelper;
+	NetDiscoveryServer netDiscoveryServer;
 };
 
 }

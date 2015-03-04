@@ -89,6 +89,8 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Network/UDPSocket.cpp \
 	$(GFK_SRC)/GFK/Network/BytePacker.cpp \
 	$(GFK_SRC)/GFK/Network/NetworkBuffer.cpp \
+	$(GFK_SRC)/GFK/Network/NetDiscoveryServer.cpp \
+	$(GFK_SRC)/GFK/Network/NetDiscoveryClient.cpp \
 	$(GFK_SRC)/GFK/Graphics/MonitorConfig.cpp \
 	$(GFK_SRC)/GFK/Graphics/GraphicsDevice.cpp \
 	$(GFK_SRC)/GFK/Graphics/Color.cpp \

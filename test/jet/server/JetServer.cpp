@@ -32,6 +32,9 @@ void JetServer::Initialize()
 			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
 		}
 	);
+
+	// Run net discovery on port 55778, inform clients that port 55777 is what the server is using
+	netDiscoveryServer.Start(55778, 55777);
 }
 
 void JetServer::LoadContent()
@@ -54,6 +57,7 @@ void JetServer::Update(const gfk::GameTime &gameTime)
 
 void JetServer::UpdateNetwork(const gfk::GameTime &gameTime)
 {
+	netDiscoveryServer.RespondToDiscoveryRequests();
 	netHelper.Receive(gameTime);
 }
 

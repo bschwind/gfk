@@ -22,7 +22,7 @@ UDPSocket::~UDPSocket()
 	Close();
 }
 
-bool UDPSocket::Bind(unsigned short port)
+bool UDPSocket::Bind(unsigned short port, bool blocking)
 {
 	if (IsOpen())
 	{
@@ -56,22 +56,25 @@ bool UDPSocket::Bind(unsigned short port)
 
 	Logger::Logf("Opened UDP socket on port %u with handle %d\n", socketPort, handle);
 
-	// Set socket to non-blocking mode
-	#if defined(PLATFORM_WINDOWS)
-		DWORD nonBlocking = 1;
-		if (ioctlsocket(handle, FIONBIO, &nonBlocking) != 0)
-		{
-			Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
-			return false;
-		}
-	#else
-		int nonBlocking = 1;
-		if (fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
-		{
-			Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
-			return false;
-		}
-	#endif
+	if (!blocking)
+	{
+		// Set socket to non-blocking mode
+		#if defined(PLATFORM_WINDOWS)
+			DWORD nonBlocking = 1;
+			if (ioctlsocket(handle, FIONBIO, &nonBlocking) != 0)
+			{
+				Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
+				return false;
+			}
+		#else
+			int nonBlocking = 1;
+			if (fcntl(handle, F_SETFL, O_NONBLOCK, nonBlocking) == -1)
+			{
+				Logger::LogErrorf("Could not set socket with handle %i to non-blocking IO\n", handle);
+				return false;
+			}
+		#endif
+	}
 
 	// Enable UDP broadcast
 	int broadcast = 1;
@@ -154,13 +157,6 @@ int UDPSocket::Receive(IPAddress &sender, void *data, int size) const
 
 bool UDPSocket::InitializeSocketLayer()
 {
-	#if defined(PLATFORM_WINDOWS)
-		WSADATA WsaData;
-		return WSAStartup(MAKEWORD(2,2), &WsaData) == NO_ERROR;
-	#else
-		return true;
-	#endif
-
 	if (enet_initialize() != 0)
 	{
 		Logger::LogErrorf("An error occurred while initializing Enet");
@@ -168,6 +164,8 @@ bool UDPSocket::InitializeSocketLayer()
 
 	// todo - how does atexit work?
 	atexit(enet_deinitialize);
+
+	return true;
 }
 
 void UDPSocket::ShutdownSocketLayer()

@@ -3,6 +3,7 @@
 #include "objects/Jet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/System/Logger.hpp>
+#include <GFK/Network/NetDiscoveryClient.hpp>
 #include <sstream>
 #include <cmath>
 
@@ -32,7 +33,17 @@ void AndroidJetGame::Initialize()
 	gfk::Game::Initialize();
 	primBatch.Initialize();
 
-	jetClient.ConnectToServer("192.168.24.53", 55777, ClientType::GFK_ANDROID);
+	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 0.3);
+
+	if (hosts.size() > 0)
+	{
+		const IPAddress &firstHost = *hosts.cbegin();
+		jetClient.ConnectToServer(firstHost.GetIPV4String(), firstHost.GetPort(), ClientType::GFK_ANDROID);
+	}
+	else
+	{
+		jetClient.ConnectToServer("192.168.24.53", 55777, ClientType::GFK_ANDROID);
+	}
 
 	Device.SetClearColor(Color::Black);
 }
