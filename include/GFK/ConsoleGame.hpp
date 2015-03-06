@@ -3,6 +3,7 @@
 #include <GFK/System/GameTime.hpp>
 #include <iostream>
 #include <string>
+#include <atomic>
 
 namespace gfk
 {
@@ -18,7 +19,7 @@ public:
 	void Tick();
 	void Exit();
 protected:
-	static bool exitRequested;
+	static std::atomic<bool> exitRequested;
 	bool isFixedTimeStep;
 	int targetUpdateFramesPerSecond;
 

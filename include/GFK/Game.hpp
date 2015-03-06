@@ -4,6 +4,7 @@
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <iostream>
 #include <string>
+#include <atomic>
 
 namespace gfk
 {
@@ -24,7 +25,7 @@ public:
 	void Exit();
 protected:
 	gfk::GraphicsDevice Device;
-	static bool exitRequested;
+	static std::atomic<bool> exitRequested;
 	bool isFixedTimeStep;
 	int targetUpdateFramesPerSecond;
 

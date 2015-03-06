@@ -14,7 +14,7 @@
 namespace gfk
 {
 
-bool Game::exitRequested = false;
+std::atomic<bool> Game::exitRequested(false);
 
 Game::Game() :
 isFixedTimeStep(false),

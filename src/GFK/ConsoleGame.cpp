@@ -6,7 +6,7 @@
 namespace gfk
 {
 
-bool ConsoleGame::exitRequested = false;
+std::atomic<bool> ConsoleGame::exitRequested(false);
 
 ConsoleGame::ConsoleGame(bool isFixedTimeStep, int targetUpdateFramesPerSecond) :
 isFixedTimeStep(isFixedTimeStep),
