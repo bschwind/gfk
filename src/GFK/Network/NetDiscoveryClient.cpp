@@ -1,6 +1,7 @@
 #include <GFK/Network/NetDiscoveryClient.hpp>
 #include <GFK/Network/NetDiscoveryServer.hpp>
 #include <GFK/System/GameTime.hpp>
+#include <GFK/System/Logger.hpp>
 
 namespace gfk
 {
@@ -28,8 +29,11 @@ std::unordered_set<IPAddress> NetDiscoveryClient::FindHosts(unsigned short port,
 
 	if (!validAddress)
 	{
+		Logger::Logf("IP address is not valid\n");
 		return hosts;
 	}
+
+	Logger::Logf("Broadcast address is %s\n", destination.GetIPV4String().c_str());
 
 	// This is the magic number for NetDiscoveryUtil to actually respond
 	unsigned int magicNum = NetDiscoveryServer::MagicNumber;
@@ -56,6 +60,8 @@ std::unordered_set<IPAddress> NetDiscoveryClient::FindHosts(unsigned short port,
 
 			continue;
 		}
+
+		Logger::Log("Got a response\n");
 
 		unsigned short responsePort = netBuffer.ReadUnsignedInt16();
 		hosts.insert(IPAddress(responseAddress.GetAddress(), responsePort));

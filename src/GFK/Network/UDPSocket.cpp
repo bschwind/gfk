@@ -54,7 +54,7 @@ bool UDPSocket::Bind(unsigned short port, bool blocking)
 
 	socketPort = port;
 
-	Logger::Logf("Opened UDP socket on port %u with handle %d\n", socketPort, handle);
+	Logger::Logf("Opened UDP socket on port %hu with handle %i\n", socketPort, handle);
 
 	if (!blocking)
 	{
@@ -91,7 +91,7 @@ void UDPSocket::Close()
 {
 	if (IsOpen())
 	{
-		Logger::Logf("Closing socket with handle %d on port %u\n", handle, socketPort);
+		Logger::Logf("Closing socket with handle %i on port %u\n", handle, socketPort);
 
 		#if defined(PLATFORM_WINDOWS)
 			closesocket(handle);
