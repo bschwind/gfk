@@ -127,16 +127,19 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 			}
 		);
 	}
-	else if (protocol == Packet::JET_INPUT_REQ)
+	else if (protocol == Packet::GAME_INPUT_REQ)
 	{
-		float throttleAmt = netBuffer.ReadFloat32();
-		float rollInput = netBuffer.ReadFloat32();
-		float pitchInput = netBuffer.ReadFloat32();
-		float yawInput = netBuffer.ReadFloat32();
-		float thrusterEnabled = netBuffer.ReadUnsignedByte();
-		unsigned int updateCount = netBuffer.ReadUnsignedInt32();
+		GameInput input;
 
-		clientData.jet.Update(throttleAmt, rollInput, pitchInput, yawInput, thrusterEnabled == 1, gameTime);
+		input.sequenceNumber = netBuffer.ReadUnsignedInt32();
+		input.mouseDiffX = netBuffer.ReadFloat32();
+		input.mouseDiffY = netBuffer.ReadFloat32();
+		unsigned int keyBitfield = netBuffer.ReadUnsignedInt32();
+
+		clientData.jet.Update(input, gameTime);
+
+		// TODO - validate input sequence number
+		clientData.lastInputSequenceNumber = input.sequenceNumber;
 	}
 	else if (protocol == Packet::DISCONNECT_REQ)
 	{
@@ -159,7 +162,7 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 		netHelper.ForEachClient([this](const ClientData &clientData)
 			{
 				// Write jet data for all clients
-				netHelper.WritePacket(JetInputPacketRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation()));
+				netHelper.WritePacket(JetInputPacketRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation(), clientData.jet.GetEngineRPM(), clientData.lastInputSequenceNumber));
 			}
 		);
 

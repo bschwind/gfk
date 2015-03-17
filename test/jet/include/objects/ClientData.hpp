@@ -16,8 +16,13 @@ public:
 
 	unsigned short id;
 	unsigned char clientType;
+	unsigned int lastInputSequenceNumber;
 	Outbox outbox;
-	Jet jet;
+	Jet jet; // The most recent jet state from the server
+
+	Jet displayJet; // The interpolated jet
+	Jet lastJet; // The second-to-last jet state from the server
+	float currentSmoothing;
 protected:
 private:
 };

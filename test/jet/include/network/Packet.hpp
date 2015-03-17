@@ -1,5 +1,6 @@
 #pragma once
 
+#include "objects/GameInput.hpp"
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/Quaternion.hpp>
@@ -21,7 +22,7 @@ public:
 	static const unsigned short NEW_ANDROID_CLIENT_RES = 3;
 	static const unsigned short DISCONNECT_REQ = 4;
 	static const unsigned short DISCONNECT_RES = 5;
-	static const unsigned short JET_INPUT_REQ = 6;
+	static const unsigned short GAME_INPUT_REQ = 6;
 	static const unsigned short JET_INPUT_RES = 7;
 	static const unsigned short CLIENT_ID_RES = 8;
 
@@ -59,17 +60,11 @@ public:
     void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
-class JetInputPacketReq : public Packet {
+class GameInputPacketReq : public Packet {
 public:
-	float throttleAmt;
-	float rollInput;
-	float pitchInput;
-	float yawInput;
-	unsigned char thrusterEnabled; // 0 - false, 1 - true
-	unsigned int updateCount;
-	
-	JetInputPacketReq();
-	JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled, unsigned int updateCount);
+	GameInput input;
+
+	GameInputPacketReq(const GameInput &input);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 
@@ -78,8 +73,10 @@ public:
 	unsigned short id;
 	Vector3 position;
 	Quaternion rotation;
+	float engineRPM;
+	unsigned int lastInputSequenceNumber;
 
-	JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot);
+	JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot, float engineRPM, unsigned int lastInputSequenceNumber);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 };
 

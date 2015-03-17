@@ -41,6 +41,28 @@ void Jet::Reset()
 	rotQuat = Quaternion::CreateFromBasisVectors(initialRight, initialUp);
 }
 
+void Jet::Update(const GameInput &input, const GameTime &gameTime)
+{
+	float throttle = 0.0f;
+	bool thrusterEnabled = false;
+
+	if (input.keyW)
+	{
+		throttle = 1.0f;
+	}
+	else if (input.keyS)
+	{
+		throttle = -1.0f;
+	}
+
+	if (input.keyLeftShift)
+	{
+		thrusterEnabled = true;
+	}
+
+	Update(throttle, input.mouseDiffX, input.mouseDiffY, 0.0f, thrusterEnabled, gameTime);
+}
+
 void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime)
 {
 	float dt = (float)gameTime.ElapsedGameTime;
@@ -102,24 +124,34 @@ void Jet::SetRotation(const Quaternion &rot)
 	rotQuat = rot;
 }
 
-Vector3 Jet::GetUp()
+Vector3 Jet::GetUp() const
 {
 	return up;
 }
 
-Vector3 Jet::GetForward()
+Vector3 Jet::GetForward() const
 {
 	return forward;
 }
 
-Vector3 Jet::GetRight()
+Vector3 Jet::GetRight() const
 {
 	return right;
 }
 
-Matrix Jet::GetTransform()
+Matrix Jet::GetTransform() const
 {
 	return Matrix::CreateTranslation(position) * Matrix::CreateFromQuaternion(rotQuat);
+}
+
+float Jet::GetEngineRPM() const
+{
+	return engineRPM;
+}
+
+void Jet::SetEngineRPM(float rpm)
+{
+	engineRPM = rpm;
 }
 
 }

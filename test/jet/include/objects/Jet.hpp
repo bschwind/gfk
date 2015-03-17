@@ -1,5 +1,6 @@
 #pragma once
 
+#include "objects/GameInput.hpp"
 #include <GFK/Math/Vector3.hpp>
 #include <GFK/Math/Quaternion.hpp>
 #include <GFK/Math/Matrix.hpp>
@@ -18,15 +19,18 @@ public:
 	~Jet();
 
 	void Reset();
+	void Update(const GameInput &input, const GameTime &gameTime);
 	void Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime);
 	Vector3 GetPosition() const;
 	void SetPosition(const Vector3 &pos);
 	Quaternion GetRotation() const;
 	void SetRotation(const Quaternion &rot);
-	Vector3 GetUp();
-	Vector3 GetForward();
-	Vector3 GetRight();
-	Matrix GetTransform();
+	Vector3 GetUp() const;
+	Vector3 GetForward() const;
+	Vector3 GetRight() const;
+	Matrix GetTransform() const;
+	float GetEngineRPM() const;
+	void SetEngineRPM(float rpm);
 protected:
 private:
 	static const float IDLE_RPM;

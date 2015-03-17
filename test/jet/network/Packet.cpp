@@ -82,48 +82,35 @@ void NewAndroidClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 }
 
 
-// JetInputPacketReq
-JetInputPacketReq::JetInputPacketReq() :
-Packet(Packet::JET_INPUT_REQ),
-throttleAmt(0.0f),
-rollInput(0.0f),
-pitchInput(0.0f),
-yawInput(0.0f),
-thrusterEnabled(0)
+// Game Input Request Packet
+GameInputPacketReq::GameInputPacketReq(const GameInput &input) :
+Packet(Packet::GAME_INPUT_REQ),
+input(input)
 {
 
 }
 
-JetInputPacketReq::JetInputPacketReq(float throttleAmt, float rollInput, float pitchInput, float yawInput, unsigned char thrusterEnabled, unsigned int updateCount) :
-Packet(Packet::JET_INPUT_REQ),
-throttleAmt(throttleAmt),
-rollInput(rollInput),
-pitchInput(pitchInput),
-yawInput(yawInput),
-thrusterEnabled(thrusterEnabled),
-updateCount()
-{
-
-}
-
-void JetInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void GameInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteFloat32(throttleAmt);
-	buffer.WriteFloat32(rollInput);
-	buffer.WriteFloat32(pitchInput);
-	buffer.WriteFloat32(yawInput);
-	buffer.WriteUnsignedByte(thrusterEnabled);
-	buffer.WriteUnsignedInt32(updateCount);
+	buffer.WriteUnsignedInt32(input.sequenceNumber);
+	buffer.WriteFloat32(input.mouseDiffX);
+	buffer.WriteFloat32(input.mouseDiffY);
+
+	// todo - put key presses in here
+	unsigned int keyBitfield = 0;
+	buffer.WriteUnsignedInt32(keyBitfield);
 }
 
 
 // Jet Input Response Packet
-JetInputPacketRes::JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot) :
+JetInputPacketRes::JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot, float engineRPM, unsigned int lastInputSequenceNumber) :
 Packet(Packet::JET_INPUT_RES),
 id(id),
 position(pos),
-rotation(rot)
+rotation(rot),
+engineRPM(engineRPM),
+lastInputSequenceNumber(lastInputSequenceNumber)
 {
 
 }
@@ -141,6 +128,10 @@ void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteFloat32(rotation.Y);
 	buffer.WriteFloat32(rotation.Z);
 	buffer.WriteFloat32(rotation.W);
+
+	buffer.WriteFloat32(engineRPM);
+
+	buffer.WriteUnsignedInt32(lastInputSequenceNumber);
 }
 
 // DisconnectPacketReq

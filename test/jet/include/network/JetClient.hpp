@@ -23,9 +23,16 @@ public:
 	void ProcessIncomingPackets(const gfk::GameTime &gameTime);
 	void WritePacket(const Packet &packet);
 	void SendOutgoingPackets();
+	void Update(const gfk::GameTime &gameTime);
+	ClientData* GetLocalClient();
 
 	std::map<unsigned short, ClientData> players;
 	unsigned short localPlayerId;
+
+	// todo - this is pretty hacky, the input gathering
+	//        should be built into JetClient instead of
+	//        this variable being used externally
+	bool receivedNewInput;
 private:
 	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
 	

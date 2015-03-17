@@ -4,5 +4,6 @@ add_executable(jetServer
 				../network/Packet.cpp
 				../network/Outbox.cpp
 				../objects/Jet.cpp
-				../objects/ClientData.cpp)
+				../objects/ClientData.cpp
+				../objects/GameInput.cpp)
 target_link_libraries(jetServer gfk)

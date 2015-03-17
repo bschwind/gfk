@@ -33,11 +33,13 @@ void AndroidJetGame::Initialize()
 	gfk::Game::Initialize();
 	primBatch.Initialize();
 
-	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 0.3);
+	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 1.0);
 
 	if (hosts.size() > 0)
 	{
 		const IPAddress &firstHost = *hosts.cbegin();
+
+		Logger::Log(firstHost.GetIPV4String());
 		jetClient.ConnectToServer(firstHost.GetIPV4String(), firstHost.GetPort(), ClientType::GFK_ANDROID);
 	}
 	else
@@ -77,6 +79,7 @@ void AndroidJetGame::UpdateGame(const gfk::GameTime &gameTime)
 {
 	float dt = gameTime.ElapsedGameTime;
 	double totalTime = gameTime.TotalGameTime;
+	jetClient.Update(gameTime);
 }
 
 void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
@@ -105,15 +108,16 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 	primBatch.End();
 
-	for (auto player : jetClient.players)
+	for (const auto &player : jetClient.players)
 	{
-		Matrix world = player.second.jet.GetTransform();
-		float jetX = player.second.jet.GetPosition().X;
-		float jetY = player.second.jet.GetPosition().Y;
-		float jetZ = player.second.jet.GetPosition().Z;
+		Matrix world = player.second.displayJet.GetTransform();
+		float jetX = player.second.displayJet.GetPosition().X;
+		float jetY = player.second.displayJet.GetPosition().Y;
+		float jetZ = player.second.displayJet.GetPosition().Z;
 
 		primBatch.Begin(PrimitiveType::LineList, cam);
 		primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
+		primBatch.DrawLine(Vector3(), Vector3(jetX, jetY, jetZ), Color::Green, Color::Green);
 		primBatch.End();
 
 		primBatch.Begin(PrimitiveType::TriangleList, cam, world);

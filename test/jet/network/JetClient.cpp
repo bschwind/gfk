@@ -4,6 +4,8 @@
 #include <chrono>
 #include <thread>
 
+#include <iostream>
+
 using namespace gfk;
 
 namespace jetGame
@@ -71,6 +73,7 @@ void JetClient::SendOutgoingPackets()
 
 void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 {
+	receivedNewInput = false;
 	if (protocol == Packet::JET_INPUT_RES)
 	{
 		unsigned short playerId = netBuffer.ReadUnsignedInt16();
@@ -83,12 +86,37 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		float jetRZ = netBuffer.ReadFloat32();
 		float jetRW = netBuffer.ReadFloat32();
 
+		float engineRPM = netBuffer.ReadFloat32();
+
+		unsigned int lastInputSequenceNumber = netBuffer.ReadUnsignedInt32();
+
 		if (players.find(playerId) != players.end())
 		{
-			ClientData &player = players[playerId];
+			ClientData *player = &players[playerId];
 
-			player.jet.SetPosition(Vector3(jetX, jetY, jetZ));
-			player.jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
+			if (lastInputSequenceNumber > player->lastInputSequenceNumber)
+			{
+				// If this is a remote player
+				if (localPlayerId != playerId)
+				{
+					player->lastJet = player->displayJet;
+					player->currentSmoothing = 0.0f;
+
+					player->jet.SetPosition(Vector3(jetX, jetY, jetZ));
+					player->jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
+					player->jet.SetEngineRPM(engineRPM);
+					player->lastInputSequenceNumber = lastInputSequenceNumber;
+				}
+				else
+				{
+					player->jet.SetPosition(Vector3(jetX, jetY, jetZ));
+					player->jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
+					player->jet.SetEngineRPM(engineRPM);
+					player->lastInputSequenceNumber = lastInputSequenceNumber;
+				}
+
+				receivedNewInput = true;
+			}
 		}
 	}
 	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
@@ -96,12 +124,14 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		unsigned short playerId = netBuffer.ReadUnsignedInt16();
 		Logger::Logf("Desktop user joined with id %hu\n", playerId);
 		players[playerId] = ClientData();
+		players[playerId].id = playerId;
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
 	{
 		unsigned short playerId = netBuffer.ReadUnsignedInt16();
 		Logger::Logf("Android user joined with id %hu\n", playerId);
 		players[playerId] = ClientData();
+		players[playerId].id = playerId;
 	}
 	else if (protocol == Packet::CLIENT_ID_RES)
 	{
@@ -113,6 +143,45 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		unsigned short playerId = netBuffer.ReadUnsignedInt16();
 		Logger::Logf("Player %hu disconnected\n", playerId);
 		players.erase(playerId);
+	}
+}
+
+void JetClient::Update(const gfk::GameTime &gameTime)
+{
+	for (auto &player : players)
+	{
+		// Only update remote players
+		if (localPlayerId != player.second.id)
+		{
+			// TODO - count the number of frames between state updates
+			//        to find the actual number here, instead of just 15.0f
+			float increment = 1.0f / 15.0f;
+			player.second.currentSmoothing += increment;
+
+			if (player.second.currentSmoothing > 1.0f)
+			{
+				// For now, prevent "extrapolation"
+				player.second.currentSmoothing = 1.0f;
+			}
+
+			Vector3 lerpedPos = Vector3::Lerp(player.second.lastJet.GetPosition(), player.second.jet.GetPosition(), player.second.currentSmoothing);
+			player.second.displayJet.SetPosition(lerpedPos);
+
+			Quaternion lerpedRot = Quaternion::Slerp(player.second.lastJet.GetRotation(), player.second.jet.GetRotation(), player.second.currentSmoothing);
+			player.second.displayJet.SetRotation(lerpedRot);
+		}
+	}
+}
+
+ClientData* JetClient::GetLocalClient()
+{
+	if (players.find(localPlayerId) != players.end())
+	{
+		return &players[localPlayerId];
+	}
+	else
+	{
+		return nullptr;
 	}
 }
 

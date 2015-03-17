@@ -5,13 +5,21 @@ namespace jetGame
 {
 
 ClientData::ClientData() :
-outbox(0)
+id(0),
+clientType(0),
+lastInputSequenceNumber(0),
+outbox(0),
+currentSmoothing(0.0f)
 {
 
 }
 
 ClientData::ClientData(unsigned int outgoingBufferSize) :
-outbox(outgoingBufferSize)
+id(0),
+clientType(0),
+lastInputSequenceNumber(0),
+outbox(outgoingBufferSize),
+currentSmoothing(0.0f)
 {
 
 }

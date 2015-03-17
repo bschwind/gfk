@@ -21,7 +21,8 @@ networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
 vrCam(),
-mesh("assets/f18Hornet.3DS")
+mesh("assets/f18Hornet.3DS"),
+inputSequenceNumber(0)
 {
 	isFixedTimeStep = true;
 	targetUpdateFramesPerSecond = 60;
@@ -78,15 +79,79 @@ void JetGame::Update(const gfk::GameTime &gameTime)
 void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 {
 	jetClient.ProcessIncomingPackets(gameTime);
-}
 
-unsigned int updateCount = 0;
+	ClientData *localClient = jetClient.GetLocalClient();
+
+	if (localClient)
+	{
+		Jet &jet = localClient->jet;
+		unsigned int lastInputSequenceNumber = jetClient.players[jetClient.localPlayerId].lastInputSequenceNumber;
+
+		if (inputs.size() > 0 && jetClient.receivedNewInput)
+		{
+			jetClient.receivedNewInput = false;
+
+			// Flush out all inputs already acked
+			GameInput &frontInput = inputs.front();
+			while (inputs.size() > 0 && frontInput.sequenceNumber <= lastInputSequenceNumber)
+			{
+				inputs.pop_front();
+				frontInput = inputs.front();
+			}
+
+			if (inputs.size() > 0)
+			{
+				// Apply the rest of the unacknowledged inputs,
+				// starting from the last known good server state
+				for (GameInput &input : inputs)
+				{
+					jet.Update(input, gameTime);
+				}
+			}
+		}
+	}
+}
 
 void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 {
 	float dt = gameTime.ElapsedGameTime;
 
-	// Update Input
+	ClientData *localClient = jetClient.GetLocalClient();
+
+	if (localClient)
+	{
+		// If we're connected, get the current input, save it to our
+		// input history, and locally apply it to the local jet
+		GameInput newInput = GetCurrentInput(gameTime);
+		inputs.push_back(newInput);
+		GameInputPacketReq gameInputPacket(newInput);
+		jetClient.WritePacket(gameInputPacket);
+
+		Jet &jet = localClient->jet;
+		jet.Update(newInput, gameTime);
+
+		camera.Update(dt, jet.GetForward(), jet.GetUp(), jet.GetRight());
+		camera.SetPos(jet.GetPosition() + Vector3::Transform(Vector3(0, 0.25f, 1.1f), jet.GetRotation()) * 1.5f);
+	}
+
+	// Update interpolation for remote clients
+	jetClient.Update(gameTime);
+
+	if (Keyboard::IsKeyDown(Keys::Escape))
+	{
+		gfk::Game::Exit();
+	}
+
+	if (Keyboard::IsKeyDown(Keys::Space))
+	{
+		vrCam.Recenter();
+	}
+}
+
+GameInput JetGame::GetCurrentInput(const gfk::GameTime &gameTime)
+{
+	GameInput input;
+
 	Vector2 diff = Mouse::GetPos();
 
 	// This is a dirty hack for the way the GLFW cursor "jumps" when
@@ -101,53 +166,24 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 
 	Mouse::SetPos(Vector2(0,0));
 
-	float throttle = 0.0f;
-	bool thrusterEnabled = false;
+	input.sequenceNumber = inputSequenceNumber++;
+	input.mouseDiffX = diff.X;
+	input.mouseDiffY = diff.Y;
 
 	if (Keyboard::IsKeyDown(Keys::W))
 	{
-		throttle = 1.0f;
+		input.keyW = true;
 	}
-	else if (Keyboard::IsKeyDown(Keys::S))
+	if (Keyboard::IsKeyDown(Keys::S))
 	{
-		throttle = -1.0f;
+		input.keyS = true;
 	}
-
 	if (Keyboard::IsKeyDown(Keys::LeftShift))
 	{
-		thrusterEnabled = true;
+		input.keyLeftShift = true;
 	}
 
-	Quaternion cameraRotation = vrCam.GetRotation();// * Quaternion::CreateFromAxisAngle(Vector3(0, 1, 0), MathHelper::ToRadians(90.0f));
-
-	jetInputPacket.throttleAmt = throttle;
-	jetInputPacket.rollInput = diff.X;
-	jetInputPacket.pitchInput = diff.Y;
-	jetInputPacket.yawInput = 0.0f;
-	jetInputPacket.thrusterEnabled = thrusterEnabled ? 1 : 0;
-	jetInputPacket.updateCount = updateCount;
-	jetClient.WritePacket(jetInputPacket);
-
-	if (jetClient.players.find(jetClient.localPlayerId) != jetClient.players.end())
-	{
-		Jet &jet = jetClient.players[jetClient.localPlayerId].jet;
-		camera.Update(dt, Vector3::Transform(jet.GetForward(), jet.GetRotation()),
-			Vector3::Transform(jet.GetUp(), jet.GetRotation()),
-			Vector3::Transform(jet.GetRight(), jet.GetRotation()));
-		camera.SetPos(jet.GetPosition() + Vector3::Transform(Vector3(0, 0.25f, 1.1f), jet.GetRotation()) * 1.5f);
-	}
-
-	if (Keyboard::IsKeyDown(Keys::Escape))
-	{
-		gfk::Game::Exit();
-	}
-
-	if (Keyboard::IsKeyDown(Keys::Space))
-	{
-		vrCam.Recenter();
-	}
-
-	updateCount++;
+	return input;
 }
 
 void JetGame::SendStateToServer(const gfk::GameTime &gameTime)
@@ -186,9 +222,19 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 	primBatch.End();
 
-	for (auto player : jetClient.players)
+	for (const auto &player : jetClient.players)
 	{
-		Matrix world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+		Matrix world = Matrix::Identity;
+
+		if (player.second.id == jetClient.localPlayerId)
+		{
+			world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+		}
+		else
+		{
+			world = player.second.displayJet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+		}
+
 		primBatch.Begin(PrimitiveType::TriangleList, camera, world);
 		primBatch.DrawMesh(mesh);
 		primBatch.End();
