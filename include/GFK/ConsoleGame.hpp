@@ -12,7 +12,7 @@ class ConsoleGame
 {
 public:
 	ConsoleGame(bool isFixedTimeStep, int targetUpdateFramesPerSecond);
-	~ConsoleGame();
+	virtual ~ConsoleGame();
 	virtual void Initialize();
 	virtual void UnloadContent();
 	void Run();

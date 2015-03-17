@@ -16,7 +16,7 @@ public:
 	Game(const std::string &title, 
 		 int screenWidth, 
 		 int screenHeight);
-	~Game();
+	virtual ~Game();
 	virtual void Initialize();
 	virtual void UnloadContent();
 	void Run();
