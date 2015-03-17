@@ -5,6 +5,7 @@ add_executable(jet
 				JetGame.cpp
 				objects/Jet.cpp
 				objects/ClientData.cpp
+				objects/GameInput.cpp
 				network/NetworkHelper.cpp
 				network/Packet.cpp
 				network/Outbox.cpp
