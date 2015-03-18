@@ -30,7 +30,7 @@ public:
 	void RegisterReceiveHandler(std::function<void (gfk::NetworkBuffer&, unsigned short, ClientData&, const gfk::GameTime&)> handler);
 
 	void Receive(const gfk::GameTime &gameTime);
-	void WritePacket(const Packet &packet);
+	void WritePacket(const Packet &packet, bool reliable);
 	void ForEachPeer(std::function<void (const ENetPeer *peer)> handler);
 	void ForEachClient(std::function<void (const ClientData &clientData)> handler);
 	void Send();

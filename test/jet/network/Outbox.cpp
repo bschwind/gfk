@@ -8,17 +8,23 @@ namespace jetGame
 {
 
 Outbox::Outbox() :
-outgoingBuffer(0),
-headerBuffer(4),
-packetCount(0)
+outgoingBufferReliable(0),
+outgoingBufferUnreliable(0),
+headerBufferReliable(4),
+headerBufferUnreliable(4),
+packetCountReliable(0),
+packetCountUnreliable(0)
 {
 
 }
 
 Outbox::Outbox(unsigned int outgoingBufferSize) :
-outgoingBuffer(outgoingBufferSize),
-headerBuffer(4),
-packetCount(0)
+outgoingBufferReliable(outgoingBufferSize),
+outgoingBufferUnreliable(outgoingBufferSize),
+headerBufferReliable(4),
+headerBufferUnreliable(4),
+packetCountReliable(0),
+packetCountUnreliable(0)
 {
 
 }
@@ -28,47 +34,93 @@ Outbox::~Outbox()
 
 }
 
-void Outbox::WritePacket(const Packet &packet)
+void Outbox::WritePacket(const Packet &packet, bool reliable)
 {
-	if (packetCount == 0)
+	if (!reliable)
 	{
-		// Write packet header
-		outgoingBuffer.Reset();
-		WriteHeader(1);
+		if (packetCountUnreliable == 0)
+		{
+			// Write packet header
+			outgoingBufferUnreliable.Reset();
+			WriteHeader(1, reliable);
 
-		outgoingBuffer.WriteHeader(headerBuffer);
+			outgoingBufferUnreliable.WriteHeader(headerBufferUnreliable);
+		}
+
+		packet.WriteToBuffer(outgoingBufferUnreliable);
+		packetCountUnreliable++;
 	}
+	else
+	{
+		if (packetCountReliable == 0)
+		{
+			// Write packet header
+			outgoingBufferReliable.Reset();
+			WriteHeader(1, reliable);
 
-	packet.WriteToBuffer(outgoingBuffer);
-	packetCount++;
+			outgoingBufferReliable.WriteHeader(headerBufferReliable);
+		}
+
+		packet.WriteToBuffer(outgoingBufferReliable);
+		packetCountReliable++;
+	}
 }
 
-void Outbox::WriteHeader(unsigned short numPackets)
+void Outbox::WriteHeader(unsigned short numPackets, bool reliable)
 {
-	headerBuffer.Reset();
-	headerBuffer.WriteUnsignedInt16(2); // Version
-	headerBuffer.WriteUnsignedInt16(numPackets); // Number of packets
+	if (!reliable)
+	{
+		headerBufferUnreliable.Reset();
+		headerBufferUnreliable.WriteUnsignedInt16(2); // Version
+		headerBufferUnreliable.WriteUnsignedInt16(numPackets); // Number of packets
+	}
+	else
+	{
+		headerBufferReliable.Reset();
+		headerBufferReliable.WriteUnsignedInt16(2); // Version
+		headerBufferReliable.WriteUnsignedInt16(numPackets); // Number of packets
+	}
 }
 
 void Outbox::Send(ENetPeer *peer)
 {
-	if (packetCount > 0)
+	if (packetCountUnreliable > 0)
 	{
-		WriteHeader(packetCount);
-		outgoingBuffer.WriteHeaderNoCountIncrement(headerBuffer);
-		ENetPacket *packet = enet_packet_create(outgoingBuffer.GetDataBuffer(), outgoingBuffer.GetBufferCount(), 0);
+		WriteHeader(packetCountUnreliable, false);
+		outgoingBufferUnreliable.WriteHeaderNoCountIncrement(headerBufferUnreliable);
+		ENetPacket *packet = enet_packet_create(outgoingBufferUnreliable.GetDataBuffer(), outgoingBufferUnreliable.GetBufferCount(), 0);
 		
 		enet_peer_send(peer, 0, packet);
 
-		Reset();
+		Reset(false);
+	}
+
+	if (packetCountReliable > 0)
+	{
+		WriteHeader(packetCountReliable, true);
+		outgoingBufferReliable.WriteHeaderNoCountIncrement(headerBufferReliable);
+		ENetPacket *packet = enet_packet_create(outgoingBufferReliable.GetDataBuffer(), outgoingBufferReliable.GetBufferCount(), ENET_PACKET_FLAG_RELIABLE);
+
+		enet_peer_send(peer, 1, packet);
+
+		Reset(true);
 	}
 }
 
-void Outbox::Reset()
+void Outbox::Reset(bool reliable)
 {
-	packetCount = 0;
-	headerBuffer.Reset();
-	outgoingBuffer.Reset();
+	if (!reliable)
+	{
+		packetCountUnreliable = 0;
+		headerBufferUnreliable.Reset();
+		outgoingBufferUnreliable.Reset();
+	}
+	else
+	{
+		packetCountReliable = 0;
+		headerBufferReliable.Reset();
+		outgoingBufferReliable.Reset();
+	}
 }
 
 }

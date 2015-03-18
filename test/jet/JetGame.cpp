@@ -128,7 +128,7 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 		GameInput newInput = GetCurrentInput(gameTime);
 		inputs.push_back(newInput);
 		GameInputPacketReq gameInputPacket(newInput);
-		jetClient.WritePacket(gameInputPacket);
+		jetClient.WritePacket(gameInputPacket, false);
 
 		Jet &jet = localClient->jet;
 		jet.Update(newInput, gameTime);

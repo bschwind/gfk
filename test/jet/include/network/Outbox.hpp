@@ -14,16 +14,19 @@ public:
 	Outbox(unsigned int outgoingBufferSize);
 	~Outbox();
 
-	void WritePacket(const Packet &packet);
+	void WritePacket(const Packet &packet, bool reliable);
 	void Send(ENetPeer *peer);
-	void Reset();
+	void Reset(bool reliable);
 protected:
 private:
-	gfk::NetworkBuffer outgoingBuffer;
-	gfk::NetworkBuffer headerBuffer; // For storing the variable packet header
-	unsigned short packetCount;
+	gfk::NetworkBuffer outgoingBufferReliable;
+	gfk::NetworkBuffer outgoingBufferUnreliable;
+	gfk::NetworkBuffer headerBufferReliable; // For storing the variable packet header
+	gfk::NetworkBuffer headerBufferUnreliable; // For storing the variable packet header
+	unsigned short packetCountReliable;
+	unsigned short packetCountUnreliable;
 
-	void WriteHeader(unsigned short numPackets);
+	void WriteHeader(unsigned short numPackets, bool reliable);
 };
 
 }

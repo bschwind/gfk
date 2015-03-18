@@ -171,11 +171,11 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 	}
 }
 
-void NetworkHelper::WritePacket(const Packet &packet)
+void NetworkHelper::WritePacket(const Packet &packet, bool reliable)
 {
 	if (connectionType == ConnectionType::Client)
 	{
-		serverOutbox.WritePacket(packet);
+		serverOutbox.WritePacket(packet, reliable);
 	}
 	else
 	{
@@ -188,7 +188,7 @@ void NetworkHelper::WritePacket(const Packet &packet)
 			}
 
 			ClientData &clientData = *static_cast<ClientData*>(currentPeer->data);
-			clientData.outbox.WritePacket(packet);
+			clientData.outbox.WritePacket(packet, reliable);
 		}
 	}
 }

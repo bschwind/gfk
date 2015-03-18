@@ -34,11 +34,11 @@ void JetClient::ConnectToServer(const std::string &hostName, unsigned short port
 
 	if (clientType == ClientType::DESKTOP)
 	{
-		netHelper.WritePacket(NewDesktopClientPacketReq());
+		netHelper.WritePacket(NewDesktopClientPacketReq(), true);
 	}
 	else if (clientType == ClientType::GFK_ANDROID)
 	{
-		netHelper.WritePacket(NewAndroidClientPacketReq());
+		netHelper.WritePacket(NewAndroidClientPacketReq(), true);
 	}
 
 	netHelper.Send();
@@ -46,7 +46,7 @@ void JetClient::ConnectToServer(const std::string &hostName, unsigned short port
 
 void JetClient::DisconnectFromServer()
 {
-	netHelper.WritePacket(DisconnectPacketReq());
+	netHelper.WritePacket(DisconnectPacketReq(), true);
 	netHelper.Send();
 
 	// HACK: Give the disconnect packet time to reach the server
@@ -61,9 +61,9 @@ void JetClient::ProcessIncomingPackets(const gfk::GameTime &gameTime)
 	netHelper.Receive(gameTime);
 }
 
-void JetClient::WritePacket(const Packet &packet)
+void JetClient::WritePacket(const Packet &packet, bool reliable)
 {
-	netHelper.WritePacket(packet);
+	netHelper.WritePacket(packet, reliable);
 }
 
 void JetClient::SendOutgoingPackets()

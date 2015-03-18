@@ -21,7 +21,7 @@ public:
 	void ConnectToServer(const std::string &hostName, unsigned short port, unsigned char clientType);
 	void DisconnectFromServer();
 	void ProcessIncomingPackets(const gfk::GameTime &gameTime);
-	void WritePacket(const Packet &packet);
+	void WritePacket(const Packet &packet, bool reliable);
 	void SendOutgoingPackets();
 	void Update(const gfk::GameTime &gameTime);
 	ClientData* GetLocalClient();
