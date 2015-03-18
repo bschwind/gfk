@@ -124,7 +124,10 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		clientData.jet.Update(input, gameTime);
 
 		// TODO - validate input sequence number
-		clientData.lastInputSequenceNumber = input.sequenceNumber;
+		if (input.sequenceNumber > clientData.lastInputSequenceNumber)
+		{
+			clientData.lastInputSequenceNumber = input.sequenceNumber;
+		}
 	}
 	else if (protocol == Packet::DISCONNECT_REQ)
 	{

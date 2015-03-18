@@ -73,7 +73,6 @@ void JetClient::SendOutgoingPackets()
 
 void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 {
-	receivedNewInput = false;
 	if (protocol == Packet::JET_INPUT_RES)
 	{
 		JetInputPacketRes jetStatePacket = JetInputPacketRes::ReadFromBuffer(netBuffer);
@@ -90,13 +89,15 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 					player.lastJet = player.displayJet;
 					player.currentSmoothing = 0.0f;
 				}
+				else
+				{
+					receivedNewInput = true;
+				}
 
 				player.jet.SetPosition(jetStatePacket.position);
 				player.jet.SetRotation(jetStatePacket.rotation);
 				player.jet.SetEngineRPM(jetStatePacket.engineRPM);
 				player.lastInputSequenceNumber = jetStatePacket.lastInputSequenceNumber;
-
-				receivedNewInput = true;
 			}
 		}
 	}
