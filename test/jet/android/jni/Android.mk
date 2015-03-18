@@ -82,6 +82,7 @@ LOCAL_SRC_FILES := \
 	../../network/Outbox.cpp \
 	../../objects/ClientData.cpp \
 	../../objects/Jet.cpp \
+	../../objects/GameInput.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \
 	$(GFK_SRC)/GFK/Network/IPAddress.cpp \

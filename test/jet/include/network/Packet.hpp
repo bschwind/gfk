@@ -36,12 +36,14 @@ class NewDesktopClientPacketReq : public Packet {
 public:
 	NewDesktopClientPacketReq();
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static NewDesktopClientPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class NewAndroidClientPacketReq : public Packet {
 public:
 	NewAndroidClientPacketReq();
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static NewAndroidClientPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class NewDesktopClientPacketRes : public Packet {
@@ -50,6 +52,7 @@ public:
 
 	NewDesktopClientPacketRes(unsigned short id);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static NewDesktopClientPacketRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class NewAndroidClientPacketRes : public Packet {
@@ -58,6 +61,7 @@ public:
 
     NewAndroidClientPacketRes(unsigned short id);
     void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+    static NewAndroidClientPacketRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class GameInputPacketReq : public Packet {
@@ -66,11 +70,12 @@ public:
 
 	GameInputPacketReq(const GameInput &input);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static GameInputPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class JetInputPacketRes : public Packet {
 public:
-	unsigned short id;
+	unsigned short playerID;
 	Vector3 position;
 	Quaternion rotation;
 	float engineRPM;
@@ -78,12 +83,14 @@ public:
 
 	JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot, float engineRPM, unsigned int lastInputSequenceNumber);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static JetInputPacketRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class DisconnectPacketReq : public Packet {
 public:
 	DisconnectPacketReq();
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static DisconnectPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class DisconnectPacketRes : public Packet {
@@ -91,6 +98,7 @@ public:
 	unsigned short id;
 	DisconnectPacketRes(unsigned short id);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static DisconnectPacketRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 class ClientIdPacketRes : public Packet {
@@ -98,6 +106,7 @@ public:
 	unsigned short id;
 	ClientIdPacketRes(unsigned short id);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static ClientIdPacketRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };
 
 }

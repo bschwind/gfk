@@ -21,6 +21,7 @@ public:
 	~JetServer();
 	void Initialize();
 	void UnloadContent();
+	void PrintServerInfo();
 protected:
 	void LoadContent();
 	void Update(const gfk::GameTime &gameTime);

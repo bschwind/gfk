@@ -25,6 +25,7 @@ public:
 	void SendOutgoingPackets();
 	void Update(const gfk::GameTime &gameTime);
 	ClientData* GetLocalClient();
+	void PrintGameInfo();
 
 	std::map<unsigned short, ClientData> players;
 	unsigned short localPlayerId;

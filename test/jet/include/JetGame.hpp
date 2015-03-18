@@ -4,7 +4,6 @@
 #include "objects/ClientData.hpp"
 #include "objects/GameInput.hpp"
 #include "JetCamera.hpp"
-#include "network/NetworkHelper.hpp"
 #include "network/Packet.hpp"
 #include "network/JetClient.hpp"
 #include <GFK/Game.hpp>

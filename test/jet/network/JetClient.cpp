@@ -12,8 +12,8 @@ namespace jetGame
 {
 
 JetClient::JetClient() :
-netHelper(NetworkHelper::ConnectionType::Client),
-localPlayerId(0)
+localPlayerId(0),
+netHelper(NetworkHelper::ConnectionType::Client)
 {
 
 }
@@ -76,44 +76,25 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	receivedNewInput = false;
 	if (protocol == Packet::JET_INPUT_RES)
 	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		float jetX = netBuffer.ReadFloat32();
-		float jetY = netBuffer.ReadFloat32();
-		float jetZ = netBuffer.ReadFloat32();
+		JetInputPacketRes jetStatePacket = JetInputPacketRes::ReadFromBuffer(netBuffer);
 
-		float jetRX = netBuffer.ReadFloat32();
-		float jetRY = netBuffer.ReadFloat32();
-		float jetRZ = netBuffer.ReadFloat32();
-		float jetRW = netBuffer.ReadFloat32();
-
-		float engineRPM = netBuffer.ReadFloat32();
-
-		unsigned int lastInputSequenceNumber = netBuffer.ReadUnsignedInt32();
-
-		if (players.find(playerId) != players.end())
+		if (players.find(jetStatePacket.playerID) != players.end())
 		{
-			ClientData *player = &players[playerId];
+			ClientData &player = players[jetStatePacket.playerID];
 
-			if (lastInputSequenceNumber > player->lastInputSequenceNumber)
+			if (jetStatePacket.lastInputSequenceNumber > player.lastInputSequenceNumber)
 			{
-				// If this is a remote player
-				if (localPlayerId != playerId)
+				// If this is a remote player, update the smoothing variables
+				if (localPlayerId != jetStatePacket.playerID)
 				{
-					player->lastJet = player->displayJet;
-					player->currentSmoothing = 0.0f;
+					player.lastJet = player.displayJet;
+					player.currentSmoothing = 0.0f;
+				}
 
-					player->jet.SetPosition(Vector3(jetX, jetY, jetZ));
-					player->jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
-					player->jet.SetEngineRPM(engineRPM);
-					player->lastInputSequenceNumber = lastInputSequenceNumber;
-				}
-				else
-				{
-					player->jet.SetPosition(Vector3(jetX, jetY, jetZ));
-					player->jet.SetRotation(Quaternion(jetRX, jetRY, jetRZ, jetRW));
-					player->jet.SetEngineRPM(engineRPM);
-					player->lastInputSequenceNumber = lastInputSequenceNumber;
-				}
+				player.jet.SetPosition(jetStatePacket.position);
+				player.jet.SetRotation(jetStatePacket.rotation);
+				player.jet.SetEngineRPM(jetStatePacket.engineRPM);
+				player.lastInputSequenceNumber = jetStatePacket.lastInputSequenceNumber;
 
 				receivedNewInput = true;
 			}
@@ -121,28 +102,37 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	}
 	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
 	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Desktop user joined with id %hu\n", playerId);
-		players[playerId] = ClientData();
-		players[playerId].id = playerId;
+		NewDesktopClientPacketRes packet = NewDesktopClientPacketRes::ReadFromBuffer(netBuffer);
+		Logger::Logf("Desktop user joined with id %hu\n", packet.id);
+		players[packet.id] = ClientData();
+		players[packet.id].id = packet.id;
+		players[packet.id].clientType = ClientType::DESKTOP;
+
+		PrintGameInfo();
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
 	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Android user joined with id %hu\n", playerId);
-		players[playerId] = ClientData();
-		players[playerId].id = playerId;
+		NewAndroidClientPacketRes packet = NewAndroidClientPacketRes::ReadFromBuffer(netBuffer);
+		Logger::Logf("Android user joined with id %hu\n", packet.id);
+		players[packet.id] = ClientData();
+		players[packet.id].id = packet.id;
+		players[packet.id].clientType = ClientType::GFK_ANDROID;
+
+		PrintGameInfo();
 	}
 	else if (protocol == Packet::CLIENT_ID_RES)
 	{
-		localPlayerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Got ID from server: %hu\n", localPlayerId);
+		ClientIdPacketRes packet = ClientIdPacketRes::ReadFromBuffer(netBuffer);
+		localPlayerId = packet.id;
+		Logger::Logf("My ID from the server: %hu\n", packet.id);
 	}
 	else if (protocol == Packet::DISCONNECT_RES)
 	{
-		unsigned short playerId = netBuffer.ReadUnsignedInt16();
-		Logger::Logf("Player %hu disconnected\n", playerId);
-		players.erase(playerId);
+		DisconnectPacketRes packet = DisconnectPacketRes::ReadFromBuffer(netBuffer);
+		Logger::Logf("Player %hu disconnected\n", packet.id);
+		players.erase(packet.id);
+
+		PrintGameInfo();
 	}
 }
 
@@ -183,6 +173,17 @@ ClientData* JetClient::GetLocalClient()
 	{
 		return nullptr;
 	}
+}
+
+void JetClient::PrintGameInfo()
+{
+	Logger::Logf("\nThere are %d/%d players\n", players.size(), 32);
+	for (const auto &player : players)
+	{
+		Logger::Logf("Client %hu: client type is %d\n", player.second.id, static_cast<unsigned int>(player.second.clientType));
+	}
+
+	Logger::Log("\n");
 }
 
 }

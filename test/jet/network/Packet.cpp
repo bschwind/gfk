@@ -38,6 +38,11 @@ void NewDesktopClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	Packet::WriteToBuffer(buffer);
 }
 
+NewDesktopClientPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return NewDesktopClientPacketReq();
+}
+
 
 // NewAndroidClientPacketReq
 NewAndroidClientPacketReq::NewAndroidClientPacketReq() :
@@ -49,6 +54,11 @@ Packet(Packet::NEW_ANDROID_CLIENT_REQ)
 void NewAndroidClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
+}
+
+NewAndroidClientPacketReq NewAndroidClientPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return NewAndroidClientPacketReq();
 }
 
 
@@ -66,6 +76,13 @@ void NewDesktopClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteUnsignedInt16(id);
 }
 
+NewDesktopClientPacketRes NewDesktopClientPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	NewDesktopClientPacketRes packet(buffer.ReadUnsignedInt16());
+
+	return packet;
+}
+
 
 // NewAndroidClientPacketRes
 NewAndroidClientPacketRes::NewAndroidClientPacketRes(unsigned short id) :
@@ -81,8 +98,15 @@ void NewAndroidClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteUnsignedInt16(id);
 }
 
+NewAndroidClientPacketRes NewAndroidClientPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	NewAndroidClientPacketRes packet(buffer.ReadUnsignedInt16());
 
-// Game Input Request Packet
+	return packet;
+}
+
+
+// GameInputPacketReq
 GameInputPacketReq::GameInputPacketReq(const GameInput &input) :
 Packet(Packet::GAME_INPUT_REQ),
 input(input)
@@ -102,11 +126,23 @@ void GameInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteUnsignedInt32(keyBitfield);
 }
 
+GameInputPacketReq GameInputPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	GameInput input;
+	input.sequenceNumber = buffer.ReadUnsignedInt32();
+	input.mouseDiffX = buffer.ReadFloat32();
+	input.mouseDiffY = buffer.ReadFloat32();
+	unsigned int keyBitfield = buffer.ReadUnsignedInt32();
+	// todo - read booleans from keyBitfield
 
-// Jet Input Response Packet
+	return GameInputPacketReq(input);
+}
+
+
+// JetInputPacketRes
 JetInputPacketRes::JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot, float engineRPM, unsigned int lastInputSequenceNumber) :
 Packet(Packet::JET_INPUT_RES),
-id(id),
+playerID(id),
 position(pos),
 rotation(rot),
 engineRPM(engineRPM),
@@ -118,21 +154,25 @@ lastInputSequenceNumber(lastInputSequenceNumber)
 void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteUnsignedInt16(id);
 
-	buffer.WriteFloat32(position.X);
-	buffer.WriteFloat32(position.Y);
-	buffer.WriteFloat32(position.Z);
-
-	buffer.WriteFloat32(rotation.X);
-	buffer.WriteFloat32(rotation.Y);
-	buffer.WriteFloat32(rotation.Z);
-	buffer.WriteFloat32(rotation.W);
-
+	buffer.WriteUnsignedInt16(playerID);
+	buffer.WriteVector3(position);
+	buffer.WriteQuaternion(rotation);
 	buffer.WriteFloat32(engineRPM);
-
 	buffer.WriteUnsignedInt32(lastInputSequenceNumber);
 }
+
+JetInputPacketRes JetInputPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	unsigned short id = buffer.ReadUnsignedInt16();
+	Vector3 pos = buffer.ReadVector3();
+	Quaternion rot = buffer.ReadQuaternion();
+	float engineRPM = buffer.ReadFloat32();
+	unsigned int sequenceNumber = buffer.ReadUnsignedInt32();
+
+	return JetInputPacketRes(id, pos, rot, engineRPM, sequenceNumber);
+}
+
 
 // DisconnectPacketReq
 DisconnectPacketReq::DisconnectPacketReq() :
@@ -145,6 +185,12 @@ void DisconnectPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 }
+
+DisconnectPacketReq DisconnectPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return DisconnectPacketReq();
+}
+
 
 // DisconnectPacketRes
 DisconnectPacketRes::DisconnectPacketRes(unsigned short id) :
@@ -160,6 +206,12 @@ void DisconnectPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteUnsignedInt16(id);
 }
 
+DisconnectPacketRes DisconnectPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return DisconnectPacketRes(buffer.ReadUnsignedInt16());
+}
+
+
 // ClientIdPacketRes
 ClientIdPacketRes::ClientIdPacketRes(unsigned short id) :
 Packet(Packet::CLIENT_ID_RES),
@@ -172,6 +224,11 @@ void ClientIdPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteUnsignedInt16(id);
+}
+
+ClientIdPacketRes ClientIdPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return ClientIdPacketRes(buffer.ReadUnsignedInt16());
 }
 
 }

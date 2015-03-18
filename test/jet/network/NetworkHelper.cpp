@@ -103,6 +103,7 @@ void NetworkHelper::DisconnectFromServer()
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
 				Logger::Log("Disconected from server\n");
+				event.peer->data = NULL;
 				return;
 		}
 	}
@@ -157,6 +158,7 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 					Logger::Logf("User %d disconnected\n", clientData->id);
 					delete clientData;
 				}
+				event.peer->data = NULL;
 				break;
 			case ENET_EVENT_TYPE_NONE:
 				Logger::Log("Nothing happened...");

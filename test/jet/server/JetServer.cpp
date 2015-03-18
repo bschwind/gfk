@@ -47,6 +47,18 @@ void JetServer::UnloadContent()
 	gfk::ConsoleGame::UnloadContent();
 }
 
+void JetServer::PrintServerInfo()
+{
+	std::cout << std::endl << "There are " << netHelper.GetPlayerCount() << "/" << netHelper.GetMaxPlayerCount() << " players" << std::endl;
+	netHelper.ForEachClient([](const ClientData &client)
+		{
+			std::cout << "Client " << client.id << ": client type is " << static_cast<unsigned int>(client.clientType) << std::endl;
+		}
+	);
+
+	std::cout << std::endl;
+}
+
 void JetServer::Update(const gfk::GameTime &gameTime)
 {
 	UpdateNetwork(gameTime);
@@ -75,26 +87,28 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		netHelper.WritePacket(NewDesktopClientPacketRes(clientData.id));
 
 		// Inform the new users of the existing clients
-		netHelper.ForEachClient([this, &clientData](const ClientData &data)
+		netHelper.ForEachClient([this, &clientData](const ClientData &otherPlayer)
 			{
-				if (data.id == clientData.id)
+				if (otherPlayer.id == clientData.id)
 				{
 					return;
 				}
 
-				if (data.clientType == ClientType::DESKTOP)
+				if (otherPlayer.clientType == ClientType::DESKTOP)
 				{
-					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
+					clientData.outbox.WritePacket(NewDesktopClientPacketRes(otherPlayer.id));
 				}
-				else if (data.clientType == ClientType::GFK_ANDROID)
+				else if (otherPlayer.clientType == ClientType::GFK_ANDROID)
 				{
-					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
+					clientData.outbox.WritePacket(NewAndroidClientPacketRes(otherPlayer.id));
 				}
 
 			}
 		);
 
 		clientData.outbox.WritePacket(ClientIdPacketRes(clientData.id));
+
+		PrintServerInfo();
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_REQ)
 	{
@@ -108,34 +122,30 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		netHelper.WritePacket(NewAndroidClientPacketRes(clientData.id));
 
 		// Inform the new users of the existing clients
-		netHelper.ForEachClient([this, &clientData](const ClientData &data)
+		netHelper.ForEachClient([this, &clientData](const ClientData &otherPlayer)
 			{
-				if (data.id == clientData.id)
+				if (otherPlayer.id == clientData.id)
 				{
 					return;
 				}
 
-				if (data.clientType == ClientType::DESKTOP)
+				if (otherPlayer.clientType == ClientType::DESKTOP)
 				{
-					clientData.outbox.WritePacket(NewDesktopClientPacketRes(data.id));
+					clientData.outbox.WritePacket(NewDesktopClientPacketRes(otherPlayer.id));
 				}
-				else if (data.clientType == ClientType::GFK_ANDROID)
+				else if (otherPlayer.clientType == ClientType::GFK_ANDROID)
 				{
-					clientData.outbox.WritePacket(NewAndroidClientPacketRes(data.id));
+					clientData.outbox.WritePacket(NewAndroidClientPacketRes(otherPlayer.id));
 				}
 
 			}
 		);
+
+		PrintServerInfo();
 	}
 	else if (protocol == Packet::GAME_INPUT_REQ)
 	{
-		GameInput input;
-
-		input.sequenceNumber = netBuffer.ReadUnsignedInt32();
-		input.mouseDiffX = netBuffer.ReadFloat32();
-		input.mouseDiffY = netBuffer.ReadFloat32();
-		unsigned int keyBitfield = netBuffer.ReadUnsignedInt32();
-
+		GameInput input = GameInputPacketReq::ReadFromBuffer(netBuffer).input;
 		clientData.jet.Update(input, gameTime);
 
 		// TODO - validate input sequence number
@@ -145,6 +155,8 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	{
 		Logger::Logf("User %hu wants to disconnect\n", clientData.id);
 		netHelper.WritePacket(DisconnectPacketRes(clientData.id));
+
+		PrintServerInfo();
 	}
 }
 
