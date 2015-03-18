@@ -47,7 +47,7 @@ namespace std
 	template <>
 	struct hash<gfk::IPAddress>
 	{
-		size_t operator()(gfk::IPAddress const &x) const noexcept
+		size_t operator()(gfk::IPAddress const &x) const
 		{
 			return ((51 + std::hash<unsigned int>()(x.GetAddress())) * 51
 				+ std::hash<unsigned short>()(x.GetPort())
