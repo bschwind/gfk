@@ -34,6 +34,9 @@ public:
 	void ForEachPeer(std::function<void (const ENetPeer *peer)> handler);
 	void ForEachClient(std::function<void (const ClientData &clientData)> handler);
 	void Send();
+
+	unsigned int GetPlayerCount();
+	unsigned int GetMaxPlayerCount();
 protected:
 private:
 	ConnectionType connectionType;

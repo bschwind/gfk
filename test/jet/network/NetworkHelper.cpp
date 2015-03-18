@@ -50,7 +50,9 @@ void NetworkHelper::ConnectToServer(const std::string &hostName, unsigned short 
 		return;
 	}
 
-	host = enet_host_create(NULL, 1, 2, 0, 0);
+	// 56K modem with 56 Kbps downstream bandwidth
+	// 56K modem with 14 Kbps upstream bandwidth
+	host = enet_host_create(NULL, 1, 2, 57600 / 8, 14400 / 8);
 
 	if (host == NULL)
 	{
@@ -145,6 +147,8 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 						handlePacketFunction(incomingBuffer, protocol, *clientData, gameTime);
 					}
 				}
+
+				enet_packet_destroy(event.packet);
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
 				clientData = static_cast<ClientData*>(event.peer->data);
@@ -238,6 +242,16 @@ void NetworkHelper::Send()
 	}
 
 	enet_host_flush(host);
+}
+
+unsigned int NetworkHelper::GetPlayerCount()
+{
+	return host->connectedPeers;
+}
+
+unsigned int NetworkHelper::GetMaxPlayerCount()
+{
+	return host->peerCount;
 }
 
 }
