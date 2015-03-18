@@ -96,7 +96,10 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 			while (inputs.size() > 0 && frontInput.sequenceNumber <= lastInputSequenceNumber)
 			{
 				inputs.pop_front();
-				frontInput = inputs.front();
+				if (inputs.size() > 0)
+				{
+					frontInput = inputs.front();
+				}
 			}
 
 			if (inputs.size() > 0)
