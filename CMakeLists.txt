@@ -148,7 +148,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network gfk-system enet net_adapter_static)
+target_link_libraries(gfk-network gfk-system gfk-math enet net_adapter_static)
 
 if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)

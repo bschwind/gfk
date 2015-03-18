@@ -1,6 +1,9 @@
 #pragma once
 
 #include <GFK/Network/UDPSocket.hpp>
+#include <GFK/Math/Vector2.hpp>
+#include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Quaternion.hpp>
 #include <vector>
 
 namespace gfk
@@ -29,6 +32,10 @@ public:
 	void WriteHeader(NetworkBuffer &headerBuffer);
 	void WriteHeaderNoCountIncrement(NetworkBuffer &headerBuffer);
 
+	void WriteVector2(const Vector2 &v);
+	void WriteVector3(const Vector3 &v);
+	void WriteQuaternion(const Quaternion &q);
+
 	unsigned char ReadUnsignedByte();
 	signed char ReadSignedByte();
 	signed short int ReadSignedInt16();
@@ -39,6 +46,10 @@ public:
 	unsigned long long int ReadUnsignedInt64();
 	float ReadFloat32();
 	double ReadFloat64();
+
+	Vector2 ReadVector2();
+	Vector3 ReadVector3();
+	Quaternion ReadQuaternion();
 
 	void PopulateData(unsigned char *data, size_t length);
 

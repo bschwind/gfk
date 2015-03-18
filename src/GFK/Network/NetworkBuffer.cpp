@@ -136,6 +136,27 @@ void NetworkBuffer::WriteHeaderNoCountIncrement(NetworkBuffer &headerBuffer)
 	memcpy(&dataBuffer[0], headerBuffer.GetDataBuffer(), headerBuffer.GetBufferCount());
 }
 
+void NetworkBuffer::WriteVector2(const Vector2 &v)
+{
+	WriteFloat32(v.X);
+	WriteFloat32(v.Y);
+}
+
+void NetworkBuffer::WriteVector3(const Vector3 &v)
+{
+	WriteFloat32(v.X);
+	WriteFloat32(v.Y);
+	WriteFloat32(v.Z);
+}
+
+void NetworkBuffer::WriteQuaternion(const Quaternion &q)
+{
+	WriteFloat32(q.X);
+	WriteFloat32(q.Y);
+	WriteFloat32(q.Z);
+	WriteFloat32(q.W);
+}
+
 unsigned char NetworkBuffer::ReadUnsignedByte()
 {
 	unsigned char value = dataBuffer[readCounter];
@@ -240,6 +261,21 @@ float NetworkBuffer::ReadFloat32()
 double NetworkBuffer::ReadFloat64()
 {
 	return BytePacker::UnpackFloat64(ReadUnsignedInt64());
+}
+
+Vector2 NetworkBuffer::ReadVector2()
+{
+	return Vector2(ReadFloat32(), ReadFloat32());
+}
+
+Vector3 NetworkBuffer::ReadVector3()
+{
+	return Vector3(ReadFloat32(), ReadFloat32(), ReadFloat32());
+}
+
+Quaternion NetworkBuffer::ReadQuaternion()
+{
+	return Quaternion(ReadFloat32(), ReadFloat32(), ReadFloat32(), ReadFloat32());
 }
 
 void NetworkBuffer::PopulateData(unsigned char *data, size_t length)
