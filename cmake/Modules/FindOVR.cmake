@@ -34,6 +34,11 @@ if (WIN32)
 	endif()
 endif()
 
+if (LINUX)
+	set(LINUX_OVR_LIB_NAME "libovr.a")
+	set(LINUX_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/linux/release/x86_64/)
+endif()
+
 FIND_PATH(OVR_INCLUDE_PATH
 	NAMES OVR.h OVR_Kernel.h OVR_Version.h
 	PATHS ${PROJECT_SOURCE_DIR}/lib/ovr/include/
@@ -41,9 +46,11 @@ FIND_PATH(OVR_INCLUDE_PATH
 
 FIND_LIBRARY(OVR_LIBRARY
 	NAMES
+		${LINUX_OVR_LIB_NAME} # Linux
 		libovr.a # OS X
 		${WINDOWS_OVR_LIB_NAME} # Windows
 	PATHS
+		${LINUX_OVR_PATH}
 		${PROJECT_SOURCE_DIR}/lib/ovr/osx/
 		${WINDOWS_OVR_PATH}
 )
