@@ -265,17 +265,26 @@ double NetworkBuffer::ReadFloat64()
 
 Vector2 NetworkBuffer::ReadVector2()
 {
-	return Vector2(ReadFloat32(), ReadFloat32());
+	float x = ReadFloat32();
+	float y = ReadFloat32();
+	return Vector2(x, y);
 }
 
 Vector3 NetworkBuffer::ReadVector3()
 {
-	return Vector3(ReadFloat32(), ReadFloat32(), ReadFloat32());
+	float x = ReadFloat32();
+	float y = ReadFloat32();
+	float z = ReadFloat32();
+	return Vector3(x, y, z);
 }
 
 Quaternion NetworkBuffer::ReadQuaternion()
 {
-	return Quaternion(ReadFloat32(), ReadFloat32(), ReadFloat32(), ReadFloat32());
+	float x = ReadFloat32();
+	float y = ReadFloat32();
+	float z = ReadFloat32();
+	float w = ReadFloat32();
+	return Quaternion(x, y, z, w);
 }
 
 void NetworkBuffer::PopulateData(unsigned char *data, size_t length)
