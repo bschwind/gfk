@@ -2,6 +2,7 @@
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <GFK/Network/BytePacker.hpp>
 #include <GFK/Network/IPAddress.hpp>
+#include <cstring>
 
 namespace gfk
 {
@@ -133,7 +134,7 @@ void NetworkBuffer::WriteHeaderNoCountIncrement(NetworkBuffer &headerBuffer)
 	// Copy the header buffer into this network buffer
 	// This is to support the case where the client doesn't know ahead of time
 	// how many packets it will write
-	memcpy(&dataBuffer[0], headerBuffer.GetDataBuffer(), headerBuffer.GetBufferCount());
+	std::memcpy(&dataBuffer[0], headerBuffer.GetDataBuffer(), headerBuffer.GetBufferCount());
 }
 
 void NetworkBuffer::WriteVector2(const Vector2 &v)
@@ -295,7 +296,7 @@ void NetworkBuffer::PopulateData(unsigned char *data, size_t length)
 		amountToCopy = bufferCapacity;
 	}
 
-	memcpy(&dataBuffer[0], data, amountToCopy);
+	std::memcpy(&dataBuffer[0], data, amountToCopy);
 
 	Reset();
 	bufferCounter = amountToCopy;
