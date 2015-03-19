@@ -39,6 +39,11 @@ if (LINUX)
 	set(LINUX_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/linux/release/x86_64/)
 endif()
 
+if (APPLE)
+	set(APPLE_OVR_LIB_NAME "libovr.a")
+	set(APPLE_OVR_PATH ${PROJECT_SOURCE_DIR}/lib/ovr/osx/)
+endif()
+
 FIND_PATH(OVR_INCLUDE_PATH
 	NAMES OVR.h OVR_Kernel.h OVR_Version.h
 	PATHS ${PROJECT_SOURCE_DIR}/lib/ovr/include/
@@ -46,13 +51,13 @@ FIND_PATH(OVR_INCLUDE_PATH
 
 FIND_LIBRARY(OVR_LIBRARY
 	NAMES
-		${LINUX_OVR_LIB_NAME} # Linux
-		libovr.a # OS X
-		${WINDOWS_OVR_LIB_NAME} # Windows
+		${LINUX_OVR_LIB_NAME}
+		${APPLE_OVR_LIB_NAME}
+		${WINDOWS_OVR_LIB_NAME}
 	PATHS
 		${LINUX_OVR_PATH}
-		${PROJECT_SOURCE_DIR}/lib/ovr/osx/
-		${WINDOWS_OVR_PATH}
+		${APPLE_OVR_PATH}
+		${WINDOWS_OVR_LIB_NAME}
 )
 
 SET(OVR_FOUND "NO")
