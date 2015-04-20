@@ -181,6 +181,14 @@ GameInput JetGame::GetCurrentInput(const gfk::GameTime &gameTime)
 	{
 		input.keyS = true;
 	}
+	if (Keyboard::IsKeyDown(Keys::A))
+	{
+		input.keyA = true;
+	}
+	if (Keyboard::IsKeyDown(Keys::D))
+	{
+		input.keyD = true;
+	}
 	if (Keyboard::IsKeyDown(Keys::LeftShift))
 	{
 		input.keyLeftShift = true;

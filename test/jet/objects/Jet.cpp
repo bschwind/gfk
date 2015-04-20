@@ -44,6 +44,7 @@ void Jet::Reset()
 void Jet::Update(const GameInput &input, const GameTime &gameTime)
 {
 	float throttle = 0.0f;
+	float yawInput = 0.0f;
 	bool thrusterEnabled = false;
 
 	if (input.keyW)
@@ -55,12 +56,21 @@ void Jet::Update(const GameInput &input, const GameTime &gameTime)
 		throttle = -1.0f;
 	}
 
+	if (input.keyA)
+	{
+		yawInput = 1.0f;
+	}
+	else if (input.keyD)
+	{
+		yawInput = -1.0f;
+	}
+
 	if (input.keyLeftShift)
 	{
 		thrusterEnabled = true;
 	}
 
-	Update(throttle, input.mouseDiffX, input.mouseDiffY, 0.0f, thrusterEnabled, gameTime);
+	Update(throttle, input.mouseDiffX, input.mouseDiffY, yawInput, thrusterEnabled, gameTime);
 }
 
 void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime)
@@ -70,6 +80,7 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	// Update rotational values
 	float rollSpeed = 1.0f;
 	float pitchSpeed = 1.0f;
+	float yawSpeed = 0.25f;
 
 	// Update engine speed
 	if (engineRPM < IDLE_RPM)
@@ -81,15 +92,23 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	float throttleSpeed = thrusterEnabled ? 180.0f : 100.0f;
 	engineRPM += throttleAmt * throttleSpeed * dt;
 
-	// Handle Roll
-	Quaternion diffQuat = Quaternion::CreateFromAxisAngle(forward, rollInput * rollSpeed * dt);
+	// Handle Yaw
+	Quaternion diffQuat = Quaternion::CreateFromAxisAngle(up, yawInput * yawSpeed * dt);
 	rotQuat = diffQuat * rotQuat;
 
 	ReOrient();
 
+	// Handle Roll
+	diffQuat = Quaternion::CreateFromAxisAngle(forward, rollInput * rollSpeed * dt);
+	rotQuat = diffQuat * rotQuat;
+
+	ReOrient();
+
+	// Handle Pitch
 	diffQuat = Quaternion::CreateFromAxisAngle(right, pitchInput * pitchSpeed * dt);
 	rotQuat = diffQuat * rotQuat;
 
+	// Prevent numerical drift
 	rotQuat.Normalize();
 
 	ReOrient();

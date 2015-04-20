@@ -123,6 +123,11 @@ void GameInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 
 	// todo - put key presses in here
 	unsigned int keyBitfield = 0;
+	keyBitfield |= (input.keyW ? (1 << 0) : 0);
+	keyBitfield |= (input.keyS ? (1 << 1) : 0);
+	keyBitfield |= (input.keyA ? (1 << 2) : 0);
+	keyBitfield |= (input.keyD ? (1 << 3) : 0);
+	keyBitfield |= (input.keyLeftShift ? (1 << 4) : 0);
 	buffer.WriteUnsignedInt32(keyBitfield);
 }
 
@@ -134,6 +139,12 @@ GameInputPacketReq GameInputPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer
 	input.mouseDiffY = buffer.ReadFloat32();
 	unsigned int keyBitfield = buffer.ReadUnsignedInt32();
 	// todo - read booleans from keyBitfield
+
+	input.keyW = keyBitfield & (1 << 0);
+	input.keyS = keyBitfield & (1 << 1);
+	input.keyA = keyBitfield & (1 << 2);
+	input.keyD = keyBitfield & (1 << 3);
+	input.keyLeftShift = keyBitfield & (1 << 4);
 
 	return GameInputPacketReq(input);
 }
