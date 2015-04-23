@@ -1,0 +1,30 @@
+#include "network/{CLASS_NAME}.hpp"
+
+namespace {NAMESPACE}
+{
+
+// Base Packet Class
+{CLASS_NAME}::{CLASS_NAME}(unsigned short protocol) :
+protocol(protocol)
+{
+
+}
+
+{CLASS_NAME}::~{CLASS_NAME}()
+{
+
+}
+
+void {CLASS_NAME}::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	buffer.WriteUnsignedInt16(protocol);
+}
+
+unsigned short {CLASS_NAME}::GetPacketType()
+{
+	return protocol;
+}
+
+{CLASS_IMPLEMENTATIONS}
+
+}

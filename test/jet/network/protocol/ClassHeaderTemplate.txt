@@ -1,0 +1,6 @@
+class {PROTOCOL_CLASS_NAME} : public {CLASS_NAME} {
+public:
+	{FIELDS}{PROTOCOL_CLASS_NAME}({CONSTRUCTOR_PARAMETERS});
+	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+	static {PROTOCOL_CLASS_NAME} ReadFromBuffer(gfk::NetworkBuffer &buffer);
+};

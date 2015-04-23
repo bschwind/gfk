@@ -1,0 +1,50 @@
+{
+	"version": "1",
+	"protocols" : [
+		{
+			"name" : "NEW_DESKTOP_CLIENT_REQ"
+		},
+		{
+			"name" : "NEW_DESKTOP_CLIENT_RES",
+			"id" : "uint16"
+		},
+		{
+			"name" : "NEW_ANDROID_CLIENT_REQ"
+		},
+		{
+			"name" : "NEW_ANDROID_CLIENT_RES",
+			"id" : "uint16"
+		},
+		{
+			"name" : "GAME_INPUT_REQ",
+			"sequenceNumber" : "uint32",
+			"mouseX" : "float32",
+			"mouseY" : "float32",
+			"keyW" : "bool",
+			"keyS" : "bool",
+			"keyA" : "bool",
+			"keyD" : "bool",
+			"keyLeftShift" : "bool"
+		},
+		{
+			"name" : "JET_INPUT_RES",
+			"playerID" : "uint16",
+			"position" : "vector3",
+			"rotation" : "quaternion",
+			"engineRPM" : "float32",
+			"lastInputSequenceNumber" : "uint32"
+		},
+		{
+			"name" : "DISCONNECT_REQ",
+			"id" : "uint16"
+		},
+		{
+			"name" : "DISCONNECT_RES",
+			"id" : "uint16"
+		},
+		{
+			"name" : "CLIENT_ID_RES",
+			"id" : "uint16"
+		}
+	]
+}

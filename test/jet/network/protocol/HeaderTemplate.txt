@@ -1,0 +1,29 @@
+#pragma once
+
+#include "objects/GameInput.hpp"
+#include <GFK/Network/NetworkBuffer.hpp>
+#include <GFK/Math/Vector3.hpp>
+#include <GFK/Math/Quaternion.hpp>
+
+using namespace gfk;
+
+namespace {NAMESPACE}
+{
+
+class {CLASS_NAME}
+{
+public:
+	{CLASS_NAME}(unsigned short protocol);
+	~{CLASS_NAME}();
+
+	{PACKET_TYPES}
+
+	unsigned short GetPacketType();
+	virtual void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
+
+	unsigned short protocol;
+};
+
+{CLASS_DECLARATIONS}
+
+}
