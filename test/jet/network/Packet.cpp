@@ -25,147 +25,139 @@ unsigned short Packet::GetPacketType()
 	return protocol;
 }
 
-
-// NewDesktopClientPacketReq
-NewDesktopClientPacketReq::NewDesktopClientPacketReq() :
+// NewDesktopClientReq
+NewDesktopClientReq::NewDesktopClientReq() :
 Packet(Packet::NEW_DESKTOP_CLIENT_REQ)
 {
 
 }
 
-void NewDesktopClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewDesktopClientReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 }
 
-NewDesktopClientPacketReq ReadFromBuffer(gfk::NetworkBuffer &buffer)
+NewDesktopClientReq NewDesktopClientReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	return NewDesktopClientPacketReq();
+	return NewDesktopClientReq();
 }
 
-
-// NewAndroidClientPacketReq
-NewAndroidClientPacketReq::NewAndroidClientPacketReq() :
-Packet(Packet::NEW_ANDROID_CLIENT_REQ)
-{
-
-}
-
-void NewAndroidClientPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
-{
-	Packet::WriteToBuffer(buffer);
-}
-
-NewAndroidClientPacketReq NewAndroidClientPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
-{
-	return NewAndroidClientPacketReq();
-}
-
-
-// NewDesktopClientPacketRes
-NewDesktopClientPacketRes::NewDesktopClientPacketRes(unsigned short id) :
+// NewDesktopClientRes
+NewDesktopClientRes::NewDesktopClientRes(unsigned short id) :
 Packet(Packet::NEW_DESKTOP_CLIENT_RES),
 id(id)
 {
 
 }
 
-void NewDesktopClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewDesktopClientRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteUnsignedInt16(id);
 }
 
-NewDesktopClientPacketRes NewDesktopClientPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+NewDesktopClientRes NewDesktopClientRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	NewDesktopClientPacketRes packet(buffer.ReadUnsignedInt16());
-
-	return packet;
+	unsigned short id = buffer.ReadUnsignedInt16();
+	return NewDesktopClientRes(id);
 }
 
+// NewAndroidClientReq
+NewAndroidClientReq::NewAndroidClientReq() :
+Packet(Packet::NEW_ANDROID_CLIENT_REQ)
+{
 
-// NewAndroidClientPacketRes
-NewAndroidClientPacketRes::NewAndroidClientPacketRes(unsigned short id) :
+}
+
+void NewAndroidClientReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+{
+	Packet::WriteToBuffer(buffer);
+}
+
+NewAndroidClientReq NewAndroidClientReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+{
+	return NewAndroidClientReq();
+}
+
+// NewAndroidClientRes
+NewAndroidClientRes::NewAndroidClientRes(unsigned short id) :
 Packet(Packet::NEW_ANDROID_CLIENT_RES),
 id(id)
 {
 
 }
 
-void NewAndroidClientPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void NewAndroidClientRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteUnsignedInt16(id);
 }
 
-NewAndroidClientPacketRes NewAndroidClientPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+NewAndroidClientRes NewAndroidClientRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	NewAndroidClientPacketRes packet(buffer.ReadUnsignedInt16());
-
-	return packet;
+	unsigned short id = buffer.ReadUnsignedInt16();
+	return NewAndroidClientRes(id);
 }
 
-
-// GameInputPacketReq
-GameInputPacketReq::GameInputPacketReq(const GameInput &input) :
+// GameInputReq
+GameInputReq::GameInputReq(unsigned int sequenceNumber, float mouseX, float mouseY, bool keyW, bool keyS, bool keyA, bool keyD, bool keyLeftShift) :
 Packet(Packet::GAME_INPUT_REQ),
-input(input)
+sequenceNumber(sequenceNumber),
+mouseX(mouseX),
+mouseY(mouseY),
+keyW(keyW),
+keyS(keyS),
+keyA(keyA),
+keyD(keyD),
+keyLeftShift(keyLeftShift)
 {
 
 }
 
-void GameInputPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void GameInputReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-	buffer.WriteUnsignedInt32(input.sequenceNumber);
-	buffer.WriteFloat32(input.mouseDiffX);
-	buffer.WriteFloat32(input.mouseDiffY);
-
-	// todo - put key presses in here
-	unsigned int keyBitfield = 0;
-	keyBitfield |= (input.keyW ? (1 << 0) : 0);
-	keyBitfield |= (input.keyS ? (1 << 1) : 0);
-	keyBitfield |= (input.keyA ? (1 << 2) : 0);
-	keyBitfield |= (input.keyD ? (1 << 3) : 0);
-	keyBitfield |= (input.keyLeftShift ? (1 << 4) : 0);
-	buffer.WriteUnsignedInt32(keyBitfield);
+	buffer.WriteUnsignedInt32(sequenceNumber);
+	buffer.WriteFloat32(mouseX);
+	buffer.WriteFloat32(mouseY);
+	unsigned char bitfield = 0;
+	bitfield |= (keyW ? (1 << 0) : 0);
+	bitfield |= (keyS ? (1 << 1) : 0);
+	bitfield |= (keyA ? (1 << 2) : 0);
+	bitfield |= (keyD ? (1 << 3) : 0);
+	bitfield |= (keyLeftShift ? (1 << 4) : 0);
+	buffer.WriteUnsignedByte(bitfield);
 }
 
-GameInputPacketReq GameInputPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+GameInputReq GameInputReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	GameInput input;
-	input.sequenceNumber = buffer.ReadUnsignedInt32();
-	input.mouseDiffX = buffer.ReadFloat32();
-	input.mouseDiffY = buffer.ReadFloat32();
-	unsigned int keyBitfield = buffer.ReadUnsignedInt32();
-	// todo - read booleans from keyBitfield
-
-	input.keyW = keyBitfield & (1 << 0);
-	input.keyS = keyBitfield & (1 << 1);
-	input.keyA = keyBitfield & (1 << 2);
-	input.keyD = keyBitfield & (1 << 3);
-	input.keyLeftShift = keyBitfield & (1 << 4);
-
-	return GameInputPacketReq(input);
+	unsigned int sequenceNumber = buffer.ReadUnsignedInt32();
+	float mouseX = buffer.ReadFloat32();
+	float mouseY = buffer.ReadFloat32();
+	unsigned char bitfield = buffer.ReadUnsignedByte();
+	bool keyW = bitfield & (1 << 0);
+	bool keyS = bitfield & (1 << 1);
+	bool keyA = bitfield & (1 << 2);
+	bool keyD = bitfield & (1 << 3);
+	bool keyLeftShift = bitfield & (1 << 4);
+	return GameInputReq(sequenceNumber, mouseX, mouseY, keyW, keyS, keyA, keyD, keyLeftShift);
 }
 
-
-// JetInputPacketRes
-JetInputPacketRes::JetInputPacketRes(unsigned short id, const Vector3 &pos, const Quaternion &rot, float engineRPM, unsigned int lastInputSequenceNumber) :
+// JetInputRes
+JetInputRes::JetInputRes(unsigned short playerID, Vector3 position, Quaternion rotation, float engineRPM, unsigned int lastInputSequenceNumber) :
 Packet(Packet::JET_INPUT_RES),
-playerID(id),
-position(pos),
-rotation(rot),
+playerID(playerID),
+position(position),
+rotation(rotation),
 engineRPM(engineRPM),
 lastInputSequenceNumber(lastInputSequenceNumber)
 {
 
 }
 
-void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void JetInputRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
-
 	buffer.WriteUnsignedInt16(playerID);
 	buffer.WriteVector3(position);
 	buffer.WriteQuaternion(rotation);
@@ -173,73 +165,71 @@ void JetInputPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteUnsignedInt32(lastInputSequenceNumber);
 }
 
-JetInputPacketRes JetInputPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+JetInputRes JetInputRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	unsigned short id = buffer.ReadUnsignedInt16();
-	Vector3 pos = buffer.ReadVector3();
-	Quaternion rot = buffer.ReadQuaternion();
+	unsigned short playerID = buffer.ReadUnsignedInt16();
+	Vector3 position = buffer.ReadVector3();
+	Quaternion rotation = buffer.ReadQuaternion();
 	float engineRPM = buffer.ReadFloat32();
-	unsigned int sequenceNumber = buffer.ReadUnsignedInt32();
-
-	return JetInputPacketRes(id, pos, rot, engineRPM, sequenceNumber);
+	unsigned int lastInputSequenceNumber = buffer.ReadUnsignedInt32();
+	return JetInputRes(playerID, position, rotation, engineRPM, lastInputSequenceNumber);
 }
 
-
-// DisconnectPacketReq
-DisconnectPacketReq::DisconnectPacketReq() :
+// DisconnectReq
+DisconnectReq::DisconnectReq() :
 Packet(Packet::DISCONNECT_REQ)
 {
 
 }
 
-void DisconnectPacketReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void DisconnectReq::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 }
 
-DisconnectPacketReq DisconnectPacketReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+DisconnectReq DisconnectReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	return DisconnectPacketReq();
+	return DisconnectReq();
 }
 
-
-// DisconnectPacketRes
-DisconnectPacketRes::DisconnectPacketRes(unsigned short id) :
+// DisconnectRes
+DisconnectRes::DisconnectRes(unsigned short id) :
 Packet(Packet::DISCONNECT_RES),
 id(id)
 {
 
 }
 
-void DisconnectPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void DisconnectRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteUnsignedInt16(id);
 }
 
-DisconnectPacketRes DisconnectPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+DisconnectRes DisconnectRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	return DisconnectPacketRes(buffer.ReadUnsignedInt16());
+	unsigned short id = buffer.ReadUnsignedInt16();
+	return DisconnectRes(id);
 }
 
-
-// ClientIdPacketRes
-ClientIdPacketRes::ClientIdPacketRes(unsigned short id) :
+// ClientIdRes
+ClientIdRes::ClientIdRes(unsigned short id) :
 Packet(Packet::CLIENT_ID_RES),
 id(id)
 {
 
 }
 
-void ClientIdPacketRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
+void ClientIdRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 {
 	Packet::WriteToBuffer(buffer);
 	buffer.WriteUnsignedInt16(id);
 }
 
-ClientIdPacketRes ClientIdPacketRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
+ClientIdRes ClientIdRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 {
-	return ClientIdPacketRes(buffer.ReadUnsignedInt16());
+	unsigned short id = buffer.ReadUnsignedInt16();
+	return ClientIdRes(id);
 }
 
 }

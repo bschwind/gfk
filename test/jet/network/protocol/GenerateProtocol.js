@@ -3,6 +3,20 @@ var fs = require("fs");
 var namespace = "jetGame";
 var className = "Packet";
 
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+var outputDirectory = process.argv[2];
+
+if (!outputDirectory) {
+	outputDirectory = "./";
+}
+
+if (!endsWith(outputDirectory, "/")) {
+	outputDirectory += "/";
+}
+
 var typeToCPPType = {
 	"bool" : "bool",
 	"uint8" : "unsigned char",
@@ -242,5 +256,5 @@ var header = generateHeaderFile(inputData);
 var implementation = generateImplementation(inputData);
 
 // Write header and implementation to file
-fs.writeFileSync(className + ".hpp", header);
-fs.writeFileSync(className + ".cpp", implementation);
+fs.writeFileSync(outputDirectory + className + ".hpp", header);
+fs.writeFileSync(outputDirectory + className + ".cpp", implementation);

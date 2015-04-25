@@ -127,7 +127,7 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 		// input history, and locally apply it to the local jet
 		GameInput newInput = GetCurrentInput(gameTime);
 		inputs.push_back(newInput);
-		GameInputPacketReq gameInputPacket(newInput);
+		GameInputReq gameInputPacket(newInput.sequenceNumber, newInput.mouseDiffX, newInput.mouseDiffY, newInput.keyW, newInput.keyS, newInput.keyA, newInput.keyD, newInput.keyLeftShift);
 		jetClient.WritePacket(gameInputPacket, false);
 
 		Jet &jet = localClient->jet;

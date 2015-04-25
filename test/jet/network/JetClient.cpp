@@ -34,11 +34,11 @@ void JetClient::ConnectToServer(const std::string &hostName, unsigned short port
 
 	if (clientType == ClientType::DESKTOP)
 	{
-		netHelper.WritePacket(NewDesktopClientPacketReq(), true);
+		netHelper.WritePacket(NewDesktopClientReq(), true);
 	}
 	else if (clientType == ClientType::GFK_ANDROID)
 	{
-		netHelper.WritePacket(NewAndroidClientPacketReq(), true);
+		netHelper.WritePacket(NewAndroidClientReq(), true);
 	}
 
 	netHelper.Send();
@@ -46,7 +46,7 @@ void JetClient::ConnectToServer(const std::string &hostName, unsigned short port
 
 void JetClient::DisconnectFromServer()
 {
-	netHelper.WritePacket(DisconnectPacketReq(), true);
+	netHelper.WritePacket(DisconnectReq(), true);
 	netHelper.Send();
 
 	// HACK: Give the disconnect packet time to reach the server
@@ -75,7 +75,7 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 {
 	if (protocol == Packet::JET_INPUT_RES)
 	{
-		JetInputPacketRes jetStatePacket = JetInputPacketRes::ReadFromBuffer(netBuffer);
+		JetInputRes jetStatePacket = JetInputRes::ReadFromBuffer(netBuffer);
 
 		if (players.find(jetStatePacket.playerID) != players.end())
 		{
@@ -103,7 +103,7 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	}
 	else if (protocol == Packet::NEW_DESKTOP_CLIENT_RES)
 	{
-		NewDesktopClientPacketRes packet = NewDesktopClientPacketRes::ReadFromBuffer(netBuffer);
+		NewDesktopClientRes packet = NewDesktopClientRes::ReadFromBuffer(netBuffer);
 		Logger::Logf("Desktop user joined with id %hu\n", packet.id);
 		players[packet.id] = ClientData();
 		players[packet.id].id = packet.id;
@@ -113,7 +113,7 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	}
 	else if (protocol == Packet::NEW_ANDROID_CLIENT_RES)
 	{
-		NewAndroidClientPacketRes packet = NewAndroidClientPacketRes::ReadFromBuffer(netBuffer);
+		NewAndroidClientRes packet = NewAndroidClientRes::ReadFromBuffer(netBuffer);
 		Logger::Logf("Android user joined with id %hu\n", packet.id);
 		players[packet.id] = ClientData();
 		players[packet.id].id = packet.id;
@@ -123,13 +123,13 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	}
 	else if (protocol == Packet::CLIENT_ID_RES)
 	{
-		ClientIdPacketRes packet = ClientIdPacketRes::ReadFromBuffer(netBuffer);
+		ClientIdRes packet = ClientIdRes::ReadFromBuffer(netBuffer);
 		localPlayerId = packet.id;
 		Logger::Logf("My ID from the server: %hu\n", packet.id);
 	}
 	else if (protocol == Packet::DISCONNECT_RES)
 	{
-		DisconnectPacketRes packet = DisconnectPacketRes::ReadFromBuffer(netBuffer);
+		DisconnectRes packet = DisconnectRes::ReadFromBuffer(netBuffer);
 		Logger::Logf("Player %hu disconnected\n", packet.id);
 		players.erase(packet.id);
 

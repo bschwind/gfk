@@ -35,8 +35,7 @@
 			"lastInputSequenceNumber" : "uint32"
 		},
 		{
-			"name" : "DISCONNECT_REQ",
-			"id" : "uint16"
+			"name" : "DISCONNECT_REQ"
 		},
 		{
 			"name" : "DISCONNECT_RES",
