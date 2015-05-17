@@ -86,9 +86,12 @@ public:
 	Vector3 position;
 	Quaternion rotation;
 	float engineRPM;
+	float rollVel;
+	float pitchVel;
+	float yawVel;
 	unsigned int lastInputSequenceNumber;
 
-	JetInputRes(unsigned short playerID, Vector3 position, Quaternion rotation, float engineRPM, unsigned int lastInputSequenceNumber);
+	JetInputRes(unsigned short playerID, Vector3 position, Quaternion rotation, float engineRPM, float rollVel, float pitchVel, float yawVel, unsigned int lastInputSequenceNumber);
 	void WriteToBuffer(gfk::NetworkBuffer &buffer) const;
 	static JetInputRes ReadFromBuffer(gfk::NetworkBuffer &buffer);
 };

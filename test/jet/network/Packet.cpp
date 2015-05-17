@@ -144,12 +144,15 @@ GameInputReq GameInputReq::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 }
 
 // JetInputRes
-JetInputRes::JetInputRes(unsigned short playerID, Vector3 position, Quaternion rotation, float engineRPM, unsigned int lastInputSequenceNumber) :
+JetInputRes::JetInputRes(unsigned short playerID, Vector3 position, Quaternion rotation, float engineRPM, float rollVel, float pitchVel, float yawVel, unsigned int lastInputSequenceNumber) :
 Packet(Packet::JET_INPUT_RES),
 playerID(playerID),
 position(position),
 rotation(rotation),
 engineRPM(engineRPM),
+rollVel(rollVel),
+pitchVel(pitchVel),
+yawVel(yawVel),
 lastInputSequenceNumber(lastInputSequenceNumber)
 {
 
@@ -162,6 +165,9 @@ void JetInputRes::WriteToBuffer(gfk::NetworkBuffer &buffer) const
 	buffer.WriteVector3(position);
 	buffer.WriteQuaternion(rotation);
 	buffer.WriteFloat32(engineRPM);
+	buffer.WriteFloat32(rollVel);
+	buffer.WriteFloat32(pitchVel);
+	buffer.WriteFloat32(yawVel);
 	buffer.WriteUnsignedInt32(lastInputSequenceNumber);
 }
 
@@ -171,8 +177,11 @@ JetInputRes JetInputRes::ReadFromBuffer(gfk::NetworkBuffer &buffer)
 	Vector3 position = buffer.ReadVector3();
 	Quaternion rotation = buffer.ReadQuaternion();
 	float engineRPM = buffer.ReadFloat32();
+	float rollVel = buffer.ReadFloat32();
+	float pitchVel = buffer.ReadFloat32();
+	float yawVel = buffer.ReadFloat32();
 	unsigned int lastInputSequenceNumber = buffer.ReadUnsignedInt32();
-	return JetInputRes(playerID, position, rotation, engineRPM, lastInputSequenceNumber);
+	return JetInputRes(playerID, position, rotation, engineRPM, rollVel, pitchVel, yawVel, lastInputSequenceNumber);
 }
 
 // DisconnectReq

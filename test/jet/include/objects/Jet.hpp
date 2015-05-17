@@ -31,6 +31,10 @@ public:
 	Matrix GetTransform() const;
 	float GetEngineRPM() const;
 	void SetEngineRPM(float rpm);
+	float GetRollVel() const;
+	float GetPitchVel() const;
+	float GetYawVel() const;
+	void SetRollPitchYawVel(float rollVel, float pitchVel, float yawVel);
 protected:
 private:
 	static const float IDLE_RPM;

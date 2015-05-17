@@ -97,6 +97,7 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 				player.jet.SetPosition(jetStatePacket.position);
 				player.jet.SetRotation(jetStatePacket.rotation);
 				player.jet.SetEngineRPM(jetStatePacket.engineRPM);
+				player.jet.SetRollPitchYawVel(jetStatePacket.rollVel, jetStatePacket.pitchVel, jetStatePacket.yawVel);
 				player.lastInputSequenceNumber = jetStatePacket.lastInputSequenceNumber;
 			}
 		}

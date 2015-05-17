@@ -185,4 +185,27 @@ void Jet::SetEngineRPM(float rpm)
 	engineRPM = rpm;
 }
 
+float Jet::GetRollVel() const
+{
+	return rollVel;
+}
+
+float Jet::GetPitchVel() const
+{
+	return pitchVel;
+}
+
+
+float Jet::GetYawVel() const
+{
+	return yawVel;
+}
+
+void Jet::SetRollPitchYawVel(float rollVel, float pitchVel, float yawVel)
+{
+	this->rollVel = rollVel;
+	this->pitchVel = pitchVel;
+	this->yawVel = yawVel;
+}
+
 }

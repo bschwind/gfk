@@ -32,6 +32,9 @@
 			"position" : "vector3",
 			"rotation" : "quaternion",
 			"engineRPM" : "float32",
+			"rollVel" : "float32",
+			"pitchVel" : "float32",
+			"yawVel" : "float32",
 			"lastInputSequenceNumber" : "uint32"
 		},
 		{

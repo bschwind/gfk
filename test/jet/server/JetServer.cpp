@@ -163,7 +163,14 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 		netHelper.ForEachClient([this](const ClientData &clientData)
 			{
 				// Write jet data for all clients
-				netHelper.WritePacket(JetInputRes(clientData.id, clientData.jet.GetPosition(), clientData.jet.GetRotation(), clientData.jet.GetEngineRPM(), clientData.lastInputSequenceNumber), false);
+				netHelper.WritePacket(JetInputRes(clientData.id,
+					clientData.jet.GetPosition(),
+					clientData.jet.GetRotation(),
+					clientData.jet.GetEngineRPM(),
+					clientData.jet.GetRollVel(),
+					clientData.jet.GetPitchVel(),
+					clientData.jet.GetYawVel(),
+					clientData.lastInputSequenceNumber), false);
 			}
 		);
 
