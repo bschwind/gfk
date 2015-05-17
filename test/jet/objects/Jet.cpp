@@ -1,6 +1,7 @@
 #include "objects/Jet.hpp"
 #include <GFK/Math/MathHelper.hpp>
 #include <iostream>
+#include <cmath>
 
 namespace jetGame
 {
@@ -99,6 +100,9 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	// Handle Yaw
 	yawVel += yawInput * yawSpeed * dt;
 	yawVel *= 0.9f;
+	if (fabs(yawVel) <= 0.000005f) {
+		yawVel = 0.0f;
+	}
 	Quaternion diffQuat = Quaternion::CreateFromAxisAngle(up, yawVel);
 	rotQuat = diffQuat * rotQuat;
 
@@ -108,6 +112,9 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	rollVel += rollInput * rollSpeed * dt;
 	rollVel *= 0.9f;
 	rollVel = MathHelper::Clamp(rollVel, -0.09f, 0.09f);
+	if (fabs(rollVel) <= 0.000005f) {
+		rollVel = 0.0f;
+	}
 	diffQuat = Quaternion::CreateFromAxisAngle(forward, rollVel);
 	rotQuat = diffQuat * rotQuat;
 
@@ -117,6 +124,9 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	pitchVel += pitchInput * pitchSpeed * dt;
 	pitchVel *= 0.9f;
 	pitchVel = MathHelper::Clamp(pitchVel, -0.05f, 0.05f);
+	if (fabs(pitchVel) <= 0.000005f) {
+		pitchVel = 0.0f;
+	}
 	diffQuat = Quaternion::CreateFromAxisAngle(right, pitchVel);
 	rotQuat = diffQuat * rotQuat;
 
