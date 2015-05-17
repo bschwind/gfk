@@ -47,6 +47,10 @@ private:
 	Vector3 up;
 	Vector3 right;
 
+	float rollVel;
+	float pitchVel;
+	float yawVel;
+
 	Quaternion rotQuat;
 
 	void ReOrient();

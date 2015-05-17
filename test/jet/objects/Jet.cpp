@@ -1,4 +1,5 @@
 #include "objects/Jet.hpp"
+#include <GFK/Math/MathHelper.hpp>
 #include <iostream>
 
 namespace jetGame
@@ -22,6 +23,9 @@ initialRight(Vector3::Cross(initialForward, initialUp)),
 forward(initialForward),
 up(initialUp),
 right(initialRight),
+rollVel(0.0f),
+pitchVel(0.0f),
+yawVel(0.0f),
 rotQuat(Quaternion::CreateFromBasisVectors(initialRight, initialUp))
 {
 
@@ -78,9 +82,9 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	float dt = (float)gameTime.ElapsedGameTime;
 
 	// Update rotational values
-	float rollSpeed = 1.0f;
-	float pitchSpeed = 1.0f;
-	float yawSpeed = 0.25f;
+	float rollSpeed = 0.015f;
+	float pitchSpeed = 0.015f;
+	float yawSpeed = 0.015f;
 
 	// Update engine speed
 	if (engineRPM < IDLE_RPM)
@@ -93,19 +97,27 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 	engineRPM += throttleAmt * throttleSpeed * dt;
 
 	// Handle Yaw
-	Quaternion diffQuat = Quaternion::CreateFromAxisAngle(up, yawInput * yawSpeed * dt);
+	yawVel += yawInput * yawSpeed * dt;
+	yawVel *= 0.9f;
+	Quaternion diffQuat = Quaternion::CreateFromAxisAngle(up, yawVel);
 	rotQuat = diffQuat * rotQuat;
 
 	ReOrient();
 
 	// Handle Roll
-	diffQuat = Quaternion::CreateFromAxisAngle(forward, rollInput * rollSpeed * dt);
+	rollVel += rollInput * rollSpeed * dt;
+	rollVel *= 0.9f;
+	rollVel = MathHelper::Clamp(rollVel, -0.09f, 0.09f);
+	diffQuat = Quaternion::CreateFromAxisAngle(forward, rollVel);
 	rotQuat = diffQuat * rotQuat;
 
 	ReOrient();
 
 	// Handle Pitch
-	diffQuat = Quaternion::CreateFromAxisAngle(right, pitchInput * pitchSpeed * dt);
+	pitchVel += pitchInput * pitchSpeed * dt;
+	pitchVel *= 0.9f;
+	pitchVel = MathHelper::Clamp(pitchVel, -0.05f, 0.05f);
+	diffQuat = Quaternion::CreateFromAxisAngle(right, pitchVel);
 	rotQuat = diffQuat * rotQuat;
 
 	// Prevent numerical drift
