@@ -72,6 +72,7 @@ add_subdirectory(lib/glfw)
 add_subdirectory(lib/assimp)
 add_subdirectory(lib/enet)
 add_subdirectory(lib/net_adapter)
+add_subdirectory(lib/libnatpmp)
 find_package(OVR)
 
 # Link against libuuid for Linux
@@ -84,6 +85,7 @@ include_directories(lib/glew/include)
 include_directories(lib/glfw/include)
 include_directories(lib/assimp/include)
 include_directories(lib/enet/include)
+include_directories(lib/libnatpmp)
 include_directories(lib/net_adapter/include)
 include_directories(${OVR_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -135,6 +137,7 @@ add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetworkBuffer.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryServer.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryClient.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/PortMapper.cpp
 )
 
 add_library(gfk-system STATIC
@@ -148,7 +151,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network gfk-system gfk-math enet net_adapter_static)
+target_link_libraries(gfk-network gfk-system gfk-math enet net_adapter_static natpmp)
 
 if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)

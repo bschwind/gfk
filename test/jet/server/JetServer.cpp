@@ -2,6 +2,7 @@
 #include "network/Packet.hpp"
 #include "network/ClientType.hpp"
 #include <GFK/System/Logger.hpp>
+#include <GFK/Network/PortMapper.hpp>
 #include <bitset>
 
 using namespace jetGame;
@@ -27,6 +28,11 @@ void JetServer::Initialize()
 	gfk::ConsoleGame::Initialize();
 
 	netHelper.StartServer(55777);
+	netHelper.RegisterMappingHandler([this]()
+					 {
+						 HandlePortMappingChange();
+					 }
+		);
 	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 		{
 			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
@@ -49,6 +55,20 @@ void JetServer::UnloadContent()
 
 void JetServer::PrintServerInfo()
 {
+	if (netHelper.IsPortMappingActive())
+	{
+		IPAddress address = netHelper.GetPublicIPAddress();
+		std::cout << "Port mapped, clients should connect to "
+			  << address.GetIPV4String() << ":"
+			  << address.GetPort() << std::endl;
+	}
+	else
+	{
+		// Ideally we should check for and display the error message,
+		// if any, here.
+		std::cout << "Port mapping unavailable" << std::endl;
+	}
+
 	std::cout << std::endl << "There are " << netHelper.GetPlayerCount() << "/" << netHelper.GetMaxPlayerCount() << " players" << std::endl;
 	netHelper.ForEachClient([](const ClientData &client)
 		{
@@ -147,6 +167,10 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 
 		PrintServerInfo();
 	}
+}
+
+void JetServer::HandlePortMappingChange() {
+	PrintServerInfo();
 }
 
 void JetServer::UpdateGame(const gfk::GameTime &gameTime)

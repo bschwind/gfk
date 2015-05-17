@@ -4,6 +4,9 @@ target_link_libraries(client gfk)
 add_executable(server ServerTest.cpp)
 target_link_libraries(server gfk-network)
 
+add_executable(portMapperTest PortMapperTest.cpp)
+target_link_libraries(portMapperTest gfk-network)
+
 add_executable(bytePackerTest BytePackerTest.cpp)
 target_link_libraries(bytePackerTest gfk-network)
 
