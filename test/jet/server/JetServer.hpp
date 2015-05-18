@@ -30,6 +30,7 @@ private:
 	void UpdateGame(const gfk::GameTime &gameTime);
 	void SendStateToPlayers(const gfk::GameTime &gameTime);
 	void HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime);
+	void HandlePortMappingChange();
 	int networkCounter;
 	int networkSendsPerSecond;
 	int updateCounter;

@@ -11,7 +11,8 @@ namespace jetGame
 NetworkHelper::NetworkHelper(ConnectionType connectionType) :
 connectionType(connectionType),
 serverOutbox(connectionType == ConnectionType::Server ? 0 : 4096),
-incomingBuffer(4096)
+incomingBuffer(4096),
+automaticPortMapping(true)
 {
 
 }
@@ -40,6 +41,10 @@ void NetworkHelper::StartServer(unsigned short port)
 	else
 	{
 		Logger::Log("Server started\n");
+	}
+
+	if (automaticPortMapping) {
+		portMapping.Create(port);
 	}
 }
 
@@ -114,6 +119,11 @@ void NetworkHelper::RegisterReceiveHandler(std::function<void (gfk::NetworkBuffe
 	handlePacketFunction = handler;
 }
 
+void NetworkHelper::RegisterMappingHandler(std::function<void ()> handler)
+{
+	handleMappingFunction = handler;
+}
+
 void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 {
 	ENetEvent event;
@@ -168,6 +178,11 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 		}
 
 		serviceReturn = enet_host_service(host, &event, 0);
+	}
+
+	if (automaticPortMapping && portMapping.Update() && handleMappingFunction)
+	{
+		handleMappingFunction();
 	}
 }
 
@@ -256,4 +271,23 @@ unsigned int NetworkHelper::GetMaxPlayerCount()
 	return host->peerCount;
 }
 
+bool NetworkHelper::IsPortMappingActive()
+{
+	return portMapping.IsMapped();
+}
+
+bool NetworkHelper::HasPortMappingError()
+{
+	return portMapping.HasError();
+}
+
+std::string NetworkHelper::GetPortMappingError()
+{
+	return portMapping.GetError();
+}
+
+IPAddress NetworkHelper::GetPublicIPAddress()
+{
+	return portMapping.GetPublicIPAddress();
+}
 }

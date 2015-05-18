@@ -27,6 +27,11 @@ void JetServer::Initialize()
 	gfk::ConsoleGame::Initialize();
 
 	netHelper.StartServer(55777);
+	netHelper.RegisterMappingHandler([this]()
+					 {
+						 HandlePortMappingChange();
+					 }
+		);
 	netHelper.RegisterReceiveHandler([this](gfk::NetworkBuffer &networkBuffer, unsigned short protocol, ClientData &clientData, const gfk::GameTime &gameTime)
 		{
 			HandleGamePacket(networkBuffer, protocol, clientData, gameTime);
@@ -35,6 +40,7 @@ void JetServer::Initialize()
 
 	// Run net discovery on port 55778, inform clients that port 55777 is what the server is using
 	netDiscoveryServer.Start(55778, 55777);
+	PrintServerInfo();
 }
 
 void JetServer::LoadContent()
@@ -49,6 +55,23 @@ void JetServer::UnloadContent()
 
 void JetServer::PrintServerInfo()
 {
+	if (netHelper.IsPortMappingActive())
+	{
+		IPAddress address = netHelper.GetPublicIPAddress();
+		std::cout << "Port mapped, clients should connect to "
+			  << address.GetIPV4String() << ":"
+			  << address.GetPort() << std::endl;
+	}
+	else if (netHelper.HasPortMappingError())
+	{
+		std::cout << "Port mapping error: "
+			  << netHelper.GetPortMappingError() << std::endl;
+	}
+	else
+	{
+		std::cout << "Port mapping in progress" << std::endl;
+	}
+
 	std::cout << std::endl << "There are " << netHelper.GetPlayerCount() << "/" << netHelper.GetMaxPlayerCount() << " players" << std::endl;
 	netHelper.ForEachClient([](const ClientData &client)
 		{
@@ -147,6 +170,10 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 
 		PrintServerInfo();
 	}
+}
+
+void JetServer::HandlePortMappingChange() {
+	PrintServerInfo();
 }
 
 void JetServer::UpdateGame(const gfk::GameTime &gameTime)
