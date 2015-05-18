@@ -4,7 +4,7 @@
 #include "network/Outbox.hpp"
 #include "objects/ClientData.hpp"
 #include <GFK/Network/NetworkBuffer.hpp>
-#include <GFK/Network/PortMapper.hpp>
+#include <GFK/Network/PortMapping.hpp>
 #include <GFK/System/GameTime.hpp>
 #include <enet/enet.h>
 #include <string>
@@ -40,6 +40,8 @@ public:
 	unsigned int GetPlayerCount();
 	unsigned int GetMaxPlayerCount();
 	bool IsPortMappingActive();
+	bool HasPortMappingError();
+	std::string GetPortMappingError();
 	IPAddress GetPublicIPAddress();
 protected:
 private:
@@ -52,7 +54,7 @@ private:
 	ENetPeer *serverConnection; // Only for Client types
 	Outbox serverOutbox;
 	gfk::NetworkBuffer incomingBuffer;
-	gfk::PortMapper portMapper; // Only for Server types
+	gfk::PortMapping portMapping; // Only for Server types
 	bool automaticPortMapping; // Only for Server types
 };
 

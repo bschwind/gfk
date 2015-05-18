@@ -2,7 +2,6 @@
 #include "network/Packet.hpp"
 #include "network/ClientType.hpp"
 #include <GFK/System/Logger.hpp>
-#include <GFK/Network/PortMapper.hpp>
 #include <bitset>
 
 using namespace jetGame;
@@ -41,6 +40,7 @@ void JetServer::Initialize()
 
 	// Run net discovery on port 55778, inform clients that port 55777 is what the server is using
 	netDiscoveryServer.Start(55778, 55777);
+	PrintServerInfo();
 }
 
 void JetServer::LoadContent()
@@ -62,11 +62,14 @@ void JetServer::PrintServerInfo()
 			  << address.GetIPV4String() << ":"
 			  << address.GetPort() << std::endl;
 	}
+	else if (netHelper.HasPortMappingError())
+	{
+		std::cout << "Port mapping error: "
+			  << netHelper.GetPortMappingError() << std::endl;
+	}
 	else
 	{
-		// Ideally we should check for and display the error message,
-		// if any, here.
-		std::cout << "Port mapping unavailable" << std::endl;
+		std::cout << "Port mapping in progress" << std::endl;
 	}
 
 	std::cout << std::endl << "There are " << netHelper.GetPlayerCount() << "/" << netHelper.GetMaxPlayerCount() << " players" << std::endl;

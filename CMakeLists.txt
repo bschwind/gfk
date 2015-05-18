@@ -65,6 +65,8 @@ endif ()
 
 # Enable all warnings
 add_definitions(-Wall -DGLEW_STATIC)
+# Enable human-readable errors from libnatpmp
+add_definitions( -DENABLE_STRNATPMPERR )
 
 # Set up external libraries
 add_subdirectory(lib/glew)
@@ -137,7 +139,7 @@ add_library(gfk-network STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetworkBuffer.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryServer.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/NetDiscoveryClient.cpp
-			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/PortMapper.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Network/PortMapping.cpp
 )
 
 add_library(gfk-system STATIC

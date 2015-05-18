@@ -1,7 +1,6 @@
 #include "network/NetworkHelper.hpp"
 #include "objects/ClientData.hpp"
 #include <GFK/System/Logger.hpp>
-#include <GFK/Network/PortMapper.hpp>
 #include <iostream>
 
 using namespace gfk;
@@ -45,7 +44,7 @@ void NetworkHelper::StartServer(unsigned short port)
 	}
 
 	if (automaticPortMapping) {
-		portMapper.CreatePortMapping(port);
+		portMapping.Create(port);
 	}
 }
 
@@ -181,7 +180,7 @@ void NetworkHelper::Receive(const gfk::GameTime &gameTime)
 		serviceReturn = enet_host_service(host, &event, 0);
 	}
 
-	if (automaticPortMapping && portMapper.Update() && handleMappingFunction)
+	if (automaticPortMapping && portMapping.Update() && handleMappingFunction)
 	{
 		handleMappingFunction();
 	}
@@ -274,11 +273,21 @@ unsigned int NetworkHelper::GetMaxPlayerCount()
 
 bool NetworkHelper::IsPortMappingActive()
 {
-	return portMapper.IsActive();
+	return portMapping.IsMapped();
+}
+
+bool NetworkHelper::HasPortMappingError()
+{
+	return portMapping.HasError();
+}
+
+std::string NetworkHelper::GetPortMappingError()
+{
+	return portMapping.GetError();
 }
 
 IPAddress NetworkHelper::GetPublicIPAddress()
 {
-	return portMapper.GetPublicIPAddress();
+	return portMapping.GetPublicIPAddress();
 }
 }

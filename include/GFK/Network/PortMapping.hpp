@@ -7,23 +7,34 @@
 namespace gfk
 {
 
-class PortMapper
+class PortMapping
 {
 public:
-	PortMapper();
-	~PortMapper();
+	PortMapping();
+	~PortMapping();
 
+	void Create(unsigned short localPort);
 	bool Update();
-	void CreatePortMapping(unsigned short localPort);
-	bool IsActive();
+	bool IsMapped();
+	bool HasError();
+	std::string GetError();
 	IPAddress GetPublicIPAddress();
 protected:
 	void RequestPublicIPAddress();
 private:
 	natpmp_t handle;
-	bool hasPublicResponse;
+	enum State
+	{
+		UNMAPPED,
+		REQUESTING_MAPPING,
+		REQUESTING_ADDRESS,
+		MAPPED,
+		ERROR
+	};
+	State state;
+	int errorCode;
+
 	natpmpresp_t publicResponse;
-	bool hasMappingResponse;
 	natpmpresp_t mappingResponse;
 };
 
