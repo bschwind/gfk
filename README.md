@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bschwind/gfk.svg)](https://travis-ci.org/bschwind/gfk)
+
 GFK
 ========
 
