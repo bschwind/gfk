@@ -49,6 +49,7 @@ typedef unsigned short uint16_t;
 #include "declspec.h"
 #else	/* WIN32 */
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #endif	/* WIN32 */
 
 #include "declspec.h"

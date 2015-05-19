@@ -37,6 +37,8 @@ typedef unsigned long uint32_t;
 typedef unsigned short uint16_t;
 #endif
 #define in_addr_t uint32_t
+#else
+#include <arpa/inet.h>
 #endif
 #include "declspec.h"
 

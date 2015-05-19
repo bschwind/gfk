@@ -1,6 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 GFK_PATH := $(LOCAL_PATH)/../../../..
 ENET_PATH := $(LOCAL_PATH)/../../../../lib/enet
+NAT_PMP_PATH := $(LOCAL_PATH)/../../../../lib/libnatpmp
 IF_ADDRS_PATH := $(LOCAL_PATH)/../../../../lib/android_ifaddrs
 NET_ADAPTER_PATH := $(LOCAL_PATH)/../../../../lib/net_adapter
 JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
@@ -10,6 +11,7 @@ JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 #LOCAL_SRC_FILES is relative to the jni directory
 GFK_SRC := ../../../../src
 ENET_SRC := ../../../../lib/enet
+NAT_PMP_SRC := ../../../../lib/libnatpmp
 IF_ADDRS_SRC := ../../../../lib/android_ifaddrs/src
 NET_ADAPTER_SRC := ../../../../lib/net_adapter/src
 
@@ -46,6 +48,20 @@ include $(BUILD_STATIC_LIBRARY)
 
 
 
+# NAT_PMP
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libnatpmp
+LOCAL_C_INCLUDES := ${NAT_PMP_PATH}
+LOCAL_CFLAGS += -DENABLE_STRNATPMPERR
+LOCAL_SRC_FILES := \
+	${NAT_PMP_SRC}/natpmp.c \
+	${NAT_PMP_SRC}/getgateway.c
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+
 # NET_ADAPTER
 include $(CLEAR_VARS)
 
@@ -70,6 +86,7 @@ LOCAL_CFLAGS := -fexceptions
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
                     $(JET_INCLUDE_PATH) \
                     $(ENET_PATH)/include/ \
+                    $(NAT_PMP_PATH) \
                     $(NET_ADAPTER_PATH)/include/
 
 LOCAL_SRC_FILES := \
@@ -92,6 +109,7 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Network/NetworkBuffer.cpp \
 	$(GFK_SRC)/GFK/Network/NetDiscoveryServer.cpp \
 	$(GFK_SRC)/GFK/Network/NetDiscoveryClient.cpp \
+	$(GFK_SRC)/GFK/Network/PortMapping.cpp \
 	$(GFK_SRC)/GFK/Graphics/MonitorConfig.cpp \
 	$(GFK_SRC)/GFK/Graphics/GraphicsDevice.cpp \
 	$(GFK_SRC)/GFK/Graphics/Color.cpp \
@@ -109,8 +127,10 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/System/Logger.cpp \
 
 LOCAL_LDLIBS := -llog -lGLESv2
+LOCAL_CPPFLAGS += -DENABLE_STRNATPMPERR
 LOCAL_SHARED_LIBRARIES += libandroid
 LOCAL_STATIC_LIBRARIES += libenet
+LOCAL_STATIC_LIBRARIES += libnatpmp
 LOCAL_STATIC_LIBRARIES += libnetadapter
 
 include $(BUILD_SHARED_LIBRARY)

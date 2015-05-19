@@ -11,8 +11,8 @@ before_install:
   - sudo apt-get update -qq
 
   # Start Android setup
-  - wget http://dl.google.com/android/android-sdk_r22-linux.tgz
-  - tar -zxf android-sdk_r22-linux.tgz
+  - wget http://dl.google.com/android/android-sdk_r24.2-linux.tgz
+  - tar -zxf android-sdk_r24.2-linux.tgz
   - export ANDROID_HOME=`pwd`/android-sdk-linux
   - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
   # newest Android NDK
@@ -22,6 +22,10 @@ before_install:
   - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
   # manually set sdk.dir variable, according to local paths
   - echo "sdk.dir=$ANDROID_HOME" > local.properties
+  - sudo apt-get install -qq -y expect
+  - android list sdk
+  - android list target
+  - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk -a --no-ui --filter tools,platform-tools,build-tools-22.0.1,android-22
   # End Android setup
 
 install:
@@ -42,6 +46,6 @@ install:
 before_script:
   - cmake .
 script:
+  - make VERBOSE=1
   - cd test/jet/android
   - ndk-build && ant debug
-  - make VERBOSE=1
