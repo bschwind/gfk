@@ -66,7 +66,11 @@ endif ()
 # Enable all warnings
 add_definitions(-Wall -DGLEW_STATIC)
 # Enable human-readable errors from libnatpmp
-add_definitions( -DENABLE_STRNATPMPERR )
+add_definitions(-DENABLE_STRNATPMPERR)
+
+# Enable desired 3D model file formats
+option(ASSIMP_BUILD_3DS_IMPORTER "" TRUE)
+option(ASSIMP_BUILD_IRR_IMPORTER "" TRUE)
 
 # Set up external libraries
 add_subdirectory(lib/glew)
