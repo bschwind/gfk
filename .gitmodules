@@ -7,3 +7,6 @@
 [submodule "lib/glew"]
 	path = lib/glew
 	url = https://github.com/bschwind/glew-cmake.git
+[submodule "lib/android-ifaddrs"]
+	path = lib/android-ifaddrs
+	url = https://github.com/bschwind/android-ifaddrs.git
