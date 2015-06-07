@@ -77,7 +77,7 @@ add_subdirectory(lib/glew)
 add_subdirectory(lib/glfw)
 add_subdirectory(lib/assimp)
 add_subdirectory(lib/enet)
-add_subdirectory(lib/net_adapter)
+add_subdirectory(lib/net-adapter)
 add_subdirectory(lib/libnatpmp)
 find_package(OVR)
 
@@ -92,7 +92,7 @@ include_directories(lib/glfw/include)
 include_directories(lib/assimp/include)
 include_directories(lib/enet/include)
 include_directories(lib/libnatpmp)
-include_directories(lib/net_adapter/include)
+include_directories(lib/net-adapter/include)
 include_directories(${OVR_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -157,7 +157,7 @@ add_library(gfk STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Components/GameObject.cpp
 )
 
-target_link_libraries(gfk-network gfk-system gfk-math enet net_adapter_static natpmp)
+target_link_libraries(gfk-network gfk-system gfk-math enet net-adapter-static natpmp)
 
 if (WIN32)
 	target_link_libraries(gfk-graphics OpenGL32)
