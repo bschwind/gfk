@@ -3,7 +3,7 @@ GFK_PATH := $(LOCAL_PATH)/../../../..
 ENET_PATH := $(LOCAL_PATH)/../../../../lib/enet
 NAT_PMP_PATH := $(LOCAL_PATH)/../../../../lib/libnatpmp
 IF_ADDRS_PATH := $(LOCAL_PATH)/../../../../lib/android-ifaddrs
-NET_ADAPTER_PATH := $(LOCAL_PATH)/../../../../lib/net_adapter
+NET_ADAPTER_PATH := $(LOCAL_PATH)/../../../../lib/net-adapter
 JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 
 # TODO - When the GFK library is stable enough, just include
@@ -13,7 +13,7 @@ GFK_SRC := ../../../../src
 ENET_SRC := ../../../../lib/enet
 NAT_PMP_SRC := ../../../../lib/libnatpmp
 IF_ADDRS_SRC := ../../../../lib/android-ifaddrs/src
-NET_ADAPTER_SRC := ../../../../lib/net_adapter/src
+NET_ADAPTER_SRC := ../../../../lib/net-adapter/src
 
 
 
