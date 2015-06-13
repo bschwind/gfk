@@ -13,3 +13,6 @@
 [submodule "lib/net-adapter"]
 	path = lib/net-adapter
 	url = https://github.com/bschwind/net-adapter-cmake.git
+[submodule "lib/glfw"]
+	path = lib/glfw
+	url = https://github.com/bschwind/glfw.git
