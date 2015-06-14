@@ -16,3 +16,6 @@
 [submodule "lib/glfw"]
 	path = lib/glfw
 	url = https://github.com/bschwind/glfw.git
+[submodule "lib/libnatpmp"]
+	path = lib/libnatpmp
+	url = https://github.com/bschwind/libnatpmp.git
