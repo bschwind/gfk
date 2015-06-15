@@ -1,5 +1,7 @@
 LOCAL_PATH := $(call my-dir)
+
 GFK_PATH := $(LOCAL_PATH)/../../../..
+ASSIMP_PATH := $(LOCAL_PATH)/../../../../lib/assimp
 ENET_PATH := $(LOCAL_PATH)/../../../../lib/enet
 NAT_PMP_PATH := $(LOCAL_PATH)/../../../../lib/libnatpmp
 IF_ADDRS_PATH := $(LOCAL_PATH)/../../../../lib/android-ifaddrs
@@ -10,71 +12,6 @@ JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 #        the .so libraries instead of building from source
 #LOCAL_SRC_FILES is relative to the jni directory
 GFK_SRC := ../../../../src
-ENET_SRC := ../../../../lib/enet
-NAT_PMP_SRC := ../../../../lib/libnatpmp
-IF_ADDRS_SRC := ../../../../lib/android-ifaddrs/src
-NET_ADAPTER_SRC := ../../../../lib/net-adapter/src
-
-
-
-# ANDROID-IFADDRS
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := libandroidifaddrs
-LOCAL_C_INCLUDES := ${IF_ADDRS_PATH}/include/
-LOCAL_SRC_FILES := \
-	${IF_ADDRS_SRC}/ifaddrs.c \
-
-include $(BUILD_STATIC_LIBRARY)
-
-
-
-# ENET
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := libenet
-LOCAL_C_INCLUDES := ${ENET_PATH}/include/
-LOCAL_SRC_FILES := \
-	${ENET_SRC}/callbacks.c \
-	${ENET_SRC}/compress.c \
-	${ENET_SRC}/host.c \
-	${ENET_SRC}/list.c \
-	${ENET_SRC}/packet.c \
-	${ENET_SRC}/peer.c \
-	${ENET_SRC}/protocol.c \
-	${ENET_SRC}/unix.c
-
-include $(BUILD_STATIC_LIBRARY)
-
-
-
-# NAT_PMP
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := libnatpmp
-LOCAL_C_INCLUDES := ${NAT_PMP_PATH}
-LOCAL_CFLAGS += -DENABLE_STRNATPMPERR
-LOCAL_SRC_FILES := \
-	${NAT_PMP_SRC}/natpmp.c \
-	${NAT_PMP_SRC}/getgateway.c
-
-include $(BUILD_STATIC_LIBRARY)
-
-
-
-# NET_ADAPTER
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := libnetadapter
-LOCAL_C_INCLUDES := ${NET_ADAPTER_PATH}/include/ \
-					${IF_ADDRS_PATH}/include/
-LOCAL_STATIC_LIBRARIES += libandroidifaddrs
-LOCAL_SRC_FILES := \
-	${NET_ADAPTER_SRC}/NetAdapter_Shared.cpp \
-	${NET_ADAPTER_SRC}/NetAdapter_Unix.cpp \
-
-include $(BUILD_STATIC_LIBRARY)
-
 
 
 # GFK
@@ -84,6 +21,7 @@ LOCAL_MODULE := libgfk
 LOCAL_CFLAGS := -fexceptions
 
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
+                    $(ASSIMP_PATH)/include/ \
                     $(JET_INCLUDE_PATH) \
                     $(ENET_PATH)/include/ \
                     $(NAT_PMP_PATH) \
@@ -113,6 +51,8 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Graphics/MonitorConfig.cpp \
 	$(GFK_SRC)/GFK/Graphics/GraphicsDevice.cpp \
 	$(GFK_SRC)/GFK/Graphics/Color.cpp \
+        $(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
+        $(GFK_SRC)/GFK/Graphics/Mesh.cpp \
 	$(GFK_SRC)/GFK/Graphics/PackedColor.cpp \
 	$(GFK_SRC)/GFK/Graphics/Camera2D.cpp \
 	$(GFK_SRC)/GFK/Math/Matrix.cpp \
@@ -129,8 +69,18 @@ LOCAL_SRC_FILES := \
 LOCAL_LDLIBS := -llog -lGLESv2
 LOCAL_CPPFLAGS += -DENABLE_STRNATPMPERR
 LOCAL_SHARED_LIBRARIES += libandroid
+LOCAL_STATIC_LIBRARIES += libassimp
 LOCAL_STATIC_LIBRARIES += libenet
 LOCAL_STATIC_LIBRARIES += libnatpmp
 LOCAL_STATIC_LIBRARIES += libnetadapter
 
 include $(BUILD_SHARED_LIBRARY)
+
+# Build our dependencies
+TEMP_LOCAL_PATH := $(LOCAL_PATH)
+
+include $(TEMP_LOCAL_PATH)/lib/android_ifaddrs/Android.mk
+include $(TEMP_LOCAL_PATH)/lib/enet/Android.mk
+include $(TEMP_LOCAL_PATH)/lib/natpmp/Android.mk
+include $(TEMP_LOCAL_PATH)/lib/net_adapter/Android.mk
+include $(TEMP_LOCAL_PATH)/lib/assimp/Android.mk
