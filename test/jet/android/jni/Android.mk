@@ -14,6 +14,20 @@ JET_INCLUDE_PATH := $(LOCAL_PATH)/../../include
 GFK_SRC := ../../../../src
 
 
+# Native Activity
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := native-activity
+LOCAL_C_INCLUDES := $(GFK_PATH)/include/
+LOCAL_SRC_FILES := main.cpp
+LOCAL_LDLIBS := -llog -landroid -lEGL -lGLESv2
+LOCAL_STATIC_LIBRARIES := android_native_app_glue
+LOCAL_STATIC_LIBRARIES += libgfk
+
+include $(BUILD_SHARED_LIBRARY)
+
+
+
 # GFK
 include $(CLEAR_VARS)
 
@@ -21,11 +35,11 @@ LOCAL_MODULE := libgfk
 LOCAL_CFLAGS := -fexceptions
 
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
-                    $(ASSIMP_PATH)/include/ \
-                    $(JET_INCLUDE_PATH) \
-                    $(ENET_PATH)/include/ \
-                    $(NAT_PMP_PATH) \
-                    $(NET_ADAPTER_PATH)/include/
+		    $(ASSIMP_PATH)/include/ \
+		    $(JET_INCLUDE_PATH) \
+		    $(ENET_PATH)/include/ \
+		    $(NAT_PMP_PATH) \
+		    $(NET_ADAPTER_PATH)/include/
 
 LOCAL_SRC_FILES := \
 	GFKAndroidWrapper.cpp \
@@ -51,8 +65,8 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Graphics/MonitorConfig.cpp \
 	$(GFK_SRC)/GFK/Graphics/GraphicsDevice.cpp \
 	$(GFK_SRC)/GFK/Graphics/Color.cpp \
-        $(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
-        $(GFK_SRC)/GFK/Graphics/Mesh.cpp \
+	$(GFK_SRC)/GFK/Graphics/AssImpBridge.cpp \
+	$(GFK_SRC)/GFK/Graphics/Mesh.cpp \
 	$(GFK_SRC)/GFK/Graphics/PackedColor.cpp \
 	$(GFK_SRC)/GFK/Graphics/Camera2D.cpp \
 	$(GFK_SRC)/GFK/Math/Matrix.cpp \
@@ -66,7 +80,6 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/System/GameTime.cpp \
 	$(GFK_SRC)/GFK/System/Logger.cpp \
 
-LOCAL_LDLIBS := -llog -lGLESv2
 LOCAL_CPPFLAGS += -DENABLE_STRNATPMPERR
 LOCAL_SHARED_LIBRARIES += libandroid
 LOCAL_STATIC_LIBRARIES += libassimp
@@ -74,7 +87,7 @@ LOCAL_STATIC_LIBRARIES += libenet
 LOCAL_STATIC_LIBRARIES += libnatpmp
 LOCAL_STATIC_LIBRARIES += libnetadapter
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 # Build our dependencies
 TEMP_LOCAL_PATH := $(LOCAL_PATH)
@@ -84,3 +97,5 @@ include $(TEMP_LOCAL_PATH)/lib/enet/Android.mk
 include $(TEMP_LOCAL_PATH)/lib/natpmp/Android.mk
 include $(TEMP_LOCAL_PATH)/lib/net_adapter/Android.mk
 include $(TEMP_LOCAL_PATH)/lib/assimp/Android.mk
+
+$(call import-module,android/native_app_glue)

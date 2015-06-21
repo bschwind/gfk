@@ -2,7 +2,7 @@ package com.android.gfk;
 
 public class GFKLib {
 	 static {
-		 System.loadLibrary("gfk");
+		 // System.loadLibrary("gfk");
 	 }
 
 	 public static native void init();
