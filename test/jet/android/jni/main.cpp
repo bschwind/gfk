@@ -8,7 +8,6 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 #include <GFK/System/Logger.hpp>
-#include <GFK/Math/Vector2.hpp>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "gfk", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "gfk", __VA_ARGS__))
@@ -220,8 +219,6 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  * event loop for receiving input events and doing other things.
  */
 void android_main(struct android_app* state) {
-    gfk::Vector2 vec(1.0f, 2.1f);
-    gfk::Logger::Logf("(%f, %f)", vec.X, vec.Y);
     struct engine engine;
 
     // Make sure glue isn't stripped.
