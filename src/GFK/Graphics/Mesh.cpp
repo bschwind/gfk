@@ -15,44 +15,6 @@ Mesh::Mesh()
 	name = "empty";
 }
 
-Mesh::Mesh(const std::string &fileName)
-{
-	name = fileName;
-	Assimp::Importer importer;
-
-	const aiScene* scene = importer.ReadFile(fileName, aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate);
-	const aiNode* rootNode = scene->mRootNode;
-
-	AddNodeRecursive(scene, rootNode, Matrix::Identity);
-
-	numVertices = vertexBuffer.size();
-
-#if !defined(PLATFORM_ANDROID)
-	// Use a Vertex Array Object
-	glGenVertexArrays(1, &vao);
-	GLErrorCheck();
-	glBindVertexArray(vao);
-	GLErrorCheck();
-#endif
-	// Create a Vertex Buffer Object that will store the vertices on video memory
-	glGenBuffers(1, &vbo);
-	GLErrorCheck();
-
-	// Allocate space and upload the data from CPU to GPU
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	GLErrorCheck();
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPositionColor) * vertexBuffer.size(), &vertexBuffer.front(), GL_STATIC_DRAW);
-	GLErrorCheck();
-
-	BindAttributes();
-
-#if !defined(PLATFORM_ANDROID)
-	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
-	glBindVertexArray(0);
-	GLErrorCheck();
-#endif
-}
-
 Mesh::~Mesh()
 {
 #if !defined(PLATFORM_ANDROID)
@@ -163,6 +125,44 @@ void Mesh::Unbind() const
 #endif
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	GLErrorCheck();
+}
+
+void Mesh::Load(const std::string &fileName)
+{
+	name = fileName;
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile(fileName, aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	const aiNode* rootNode = scene->mRootNode;
+
+	AddNodeRecursive(scene, rootNode, Matrix::Identity);
+
+	numVertices = vertexBuffer.size();
+
+#if !defined(PLATFORM_ANDROID)
+	// Use a Vertex Array Object
+	glGenVertexArrays(1, &vao);
+	GLErrorCheck();
+	glBindVertexArray(vao);
+	GLErrorCheck();
+#endif
+	// Create a Vertex Buffer Object that will store the vertices on video memory
+	glGenBuffers(1, &vbo);
+	GLErrorCheck();
+
+	// Allocate space and upload the data from CPU to GPU
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	GLErrorCheck();
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPositionColor) * vertexBuffer.size(), &vertexBuffer.front(), GL_STATIC_DRAW);
+	GLErrorCheck();
+
+	BindAttributes();
+
+#if !defined(PLATFORM_ANDROID)
+	// Bind to 0 so we don't inadvertently record any more GL operations on the VAO
+	glBindVertexArray(0);
+	GLErrorCheck();
+#endif
 }
 
 void Mesh::BindAttributes() const

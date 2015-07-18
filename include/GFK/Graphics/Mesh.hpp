@@ -17,10 +17,10 @@ class Mesh
 {
 public:
 	Mesh();
-	Mesh(const std::string &fileName);
 	~Mesh();
 	void Bind() const;
 	void Unbind() const;
+	void Load(const std::string &fileName);
 
 	int numVertices;
 

@@ -21,7 +21,7 @@ networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
 vrCam(),
-mesh("assets/f18Hornet.3DS"),
+mesh(),
 inputSequenceNumber(0)
 {
 	isFixedTimeStep = true;
@@ -39,6 +39,7 @@ JetGame::~JetGame()
 void JetGame::Initialize()
 {
 	gfk::Game::Initialize();
+	mesh.Load("assets/f18Hornet.3DS");
 	primBatch.Initialize();
 
 	auto renderFunction = [this](gfk::GameTime gameTime, float interpolationFactor)
