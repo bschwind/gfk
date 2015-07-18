@@ -1,10 +1,15 @@
 #pragma once
 
+#include <GFK/OSDetection.hpp>
 #include <GFK/System/GameTime.hpp>
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <iostream>
 #include <string>
 #include <atomic>
+
+#if defined(PLATFORM_ANDROID)
+	#include <android_native_app_glue.h>
+#endif
 
 namespace gfk
 {
@@ -23,6 +28,9 @@ public:
 	void Tick();
 	virtual void ResizeWindow(int width, int height);
 	void Exit();
+#if defined(PLATFORM_ANDROID)
+	android_app* GetAndroidApp() const;
+#endif
 protected:
 	gfk::GraphicsDevice Device;
 	static std::atomic<bool> exitRequested;
@@ -40,6 +48,10 @@ private:
 	double dt;
 	double accumulator;
 	double currentTime;
+
+#if defined(PLATFORM_ANDROID)
+	android_app* app;
+#endif
 
 	static void SignalHandler(int signal);
 	static void WindowResizeHandler(GLFWwindow *window, int width, int height);

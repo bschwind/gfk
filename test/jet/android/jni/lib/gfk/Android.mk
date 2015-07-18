@@ -68,6 +68,7 @@ LOCAL_STATIC_LIBRARIES += libassimp
 LOCAL_STATIC_LIBRARIES += libenet
 LOCAL_STATIC_LIBRARIES += libnatpmp
 LOCAL_STATIC_LIBRARIES += libnetadapter
+LOCAL_STATIC_LIBRARIES += android_native_app_glue
 
 include $(BUILD_STATIC_LIBRARY)
 

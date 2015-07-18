@@ -15,7 +15,8 @@ namespace jetGame
 AndroidJetGame::AndroidJetGame() :
 Game(),
 networkCounter(0),
-networkSendsPerSecond(10)
+networkSendsPerSecond(10),
+mesh()
 {
 	Logger::Log("Jet Game Constructor!");
 	isFixedTimeStep = true;
@@ -31,6 +32,7 @@ void AndroidJetGame::Initialize()
 {
 	Logger::Log("initialize()!");
 	gfk::Game::Initialize();
+	mesh.Load("assets/f18Hornet.3DS");
 	primBatch.Initialize();
 
 	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 1.0);

@@ -70,6 +70,7 @@ void Game::Initialize()
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();
 
+	Device.Initialize(*this);
 	MonitorConfig::SetupMonitor(width, height, title, false);
 	Device.SetClearColor(Color::CornflowerBlue);
 
@@ -189,6 +190,13 @@ void Game::ResizeWindow(int width, int height)
 	this->height = height;
 	Device.ResizeWindow(width, height);
 }
+
+#if defined(PLATFORM_ANDROID)
+	android_app* Game::GetAndroidApp() const
+	{
+		return app;
+	}
+#endif
 
 void Game::HandleEvents()
 {

@@ -15,3 +15,8 @@ LOCAL_SRC_FILES := \
 	${NET_ADAPTER_SRC}/NetAdapter_Unix.cpp \
 
 include $(BUILD_STATIC_LIBRARY)
+
+# Build our dependencies
+TEMP_LOCAL_PATH := $(LOCAL_PATH)
+
+include $(TEMP_LOCAL_PATH)/../../lib/android_ifaddrs/Android.mk

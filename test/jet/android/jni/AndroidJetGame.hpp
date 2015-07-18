@@ -5,6 +5,7 @@
 #include "network/JetClient.hpp"
 #include "objects/ClientData.hpp"
 #include <GFK/Game.hpp>
+#include <GFK/Graphics/Mesh.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
@@ -36,6 +37,7 @@ private:
 	PrimitiveBatch3D primBatch;
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
+	Mesh mesh;
 	JetClient jetClient;
 };
 

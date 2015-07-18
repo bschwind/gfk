@@ -7,6 +7,7 @@
 #include <android/sensor.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
+#include <GFK/Game.hpp>
 #include <GFK/System/Logger.hpp>
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "gfk", __VA_ARGS__))
@@ -27,10 +28,6 @@ struct saved_state {
 struct engine {
     struct android_app* app;
 
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
     int animating;
     EGLDisplay display;
     EGLSurface surface;
@@ -43,7 +40,8 @@ struct engine {
 /**
  * Initialize an EGL context for the current display.
  */
-static int engine_init_display(struct engine* engine) {
+static int initDisplay(struct engine* engine) {
+    gfk::Logger::Log("Initialize OpenGL");
     // initialize OpenGL ES and EGL
 
     /*
@@ -118,15 +116,14 @@ static int engine_init_display(struct engine* engine) {
 /**
  * Just the current frame in the display.
  */
-static void engine_draw_frame(struct engine* engine) {
+static void drawFrame(struct engine* engine) {
     if (engine->display == NULL) {
         // No display.
         return;
     }
 
     // Just fill the screen with a color.
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle,
-            ((float)engine->state.y)/engine->height, 1);
+    glClearColor(((float)engine->state.x)/engine->width, 1.0f, ((float)engine->state.y)/engine->height, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     eglSwapBuffers(engine->display, engine->surface);
@@ -135,7 +132,7 @@ static void engine_draw_frame(struct engine* engine) {
 /**
  * Tear down the EGL context currently associated with the display.
  */
-static void engine_term_display(struct engine* engine) {
+static void terminateDisplay(struct engine* engine) {
     if (engine->display != EGL_NO_DISPLAY) {
         eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (engine->context != EGL_NO_CONTEXT) {
@@ -155,8 +152,13 @@ static void engine_term_display(struct engine* engine) {
 /**
  * Process the next input event.
  */
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+static int32_t handleInput(struct android_app* app, AInputEvent* event) {
     struct engine* engine = (struct engine*)app->userData;
+
+    gfk::Logger::Log("Handling Input");
+
+    gfk::Logger::Logf("%i", AInputEvent_getType(event));
+
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
         engine->animating = 1;
         engine->state.x = AMotionEvent_getX(event, 0);
@@ -173,42 +175,35 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     struct engine* engine = (struct engine*)app->userData;
     switch (cmd) {
         case APP_CMD_SAVE_STATE:
-            // The system has asked us to save our current state.  Do so.
+            gfk::Logger::Log("Save state");
+            // The system has asked us to save our current state. Do so.
             engine->app->savedState = malloc(sizeof(struct saved_state));
             *((struct saved_state*)engine->app->savedState) = engine->state;
             engine->app->savedStateSize = sizeof(struct saved_state);
             break;
         case APP_CMD_INIT_WINDOW:
+            gfk::Logger::Log("Init window");
             // The window is being shown, get it ready.
             if (engine->app->window != NULL) {
-                engine_init_display(engine);
-                engine_draw_frame(engine);
+                gfk::Logger::Logf("Screen size is (%i, %i)", ANativeWindow_getWidth(engine->app->window), ANativeWindow_getHeight(engine->app->window));
+
+                initDisplay(engine);
+                drawFrame(engine);
             }
             break;
         case APP_CMD_TERM_WINDOW:
+            gfk::Logger::Log("Terminate Window");
             // The window is being hidden or closed, clean it up.
-            engine_term_display(engine);
+            terminateDisplay(engine);
             break;
         case APP_CMD_GAINED_FOCUS:
-            // When our app gains focus, we start monitoring the accelerometer.
-            if (engine->accelerometerSensor != NULL) {
-                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-                        engine->accelerometerSensor);
-                // We'd like to get 60 events per second (in us).
-                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-                        engine->accelerometerSensor, (1000L/60)*1000);
-            }
+            gfk::Logger::Log("App Gained Focus");
             break;
         case APP_CMD_LOST_FOCUS:
-            // When our app loses focus, we stop monitoring the accelerometer.
-            // This is to avoid consuming battery while not being used.
-            if (engine->accelerometerSensor != NULL) {
-                ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-                        engine->accelerometerSensor);
-            }
+            gfk::Logger::Log("App lost focus");
             // Also stop animating.
             engine->animating = 0;
-            engine_draw_frame(engine);
+            drawFrame(engine);
             break;
     }
 }
@@ -218,70 +213,58 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
-void android_main(struct android_app* state) {
+void android_main(struct android_app* app) {
+    gfk::Logger::Log("Start Main");
     struct engine engine;
+    gfk::Game game;
+    int eventLoopTimeoutMs = 0;
 
     // Make sure glue isn't stripped.
     app_dummy();
 
     memset(&engine, 0, sizeof(engine));
-    state->userData = &engine;
-    state->onAppCmd = engine_handle_cmd;
-    state->onInputEvent = engine_handle_input;
-    engine.app = state;
+    app->userData = &engine;
+    app->onAppCmd = engine_handle_cmd;
+    app->onInputEvent = handleInput;
+    engine.app = app;
 
-    // Prepare to monitor accelerometer
-    engine.sensorManager = ASensorManager_getInstance();
-    engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
-            ASENSOR_TYPE_ACCELEROMETER);
-    engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
-            state->looper, LOOPER_ID_USER, NULL, NULL);
-
-    if (state->savedState != NULL) {
+    if (app->savedState != NULL) {
         // We are starting with a previous saved state; restore from it.
-        engine.state = *(struct saved_state*)state->savedState;
+        engine.state = *(struct saved_state*)app->savedState;
     }
 
     // loop waiting for stuff to do.
-
     while (1) {
         // Read all pending events.
-        int ident;
+        int eventID;
         int events;
         struct android_poll_source* source;
 
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-                (void**)&source)) >= 0) {
+        // The first parameter is a timeout (ms).
+        // 0 = Return without blocking
+        // -1 = Block until an event is available
+        eventID = ALooper_pollAll(eventLoopTimeoutMs, NULL, &events, (void**)&source);
 
+        // Loop until all events are read, then continue
+        // to draw the next frame of animation.
+        while (eventID >= 0) {
             // Process this event.
             if (source != NULL) {
-                source->process(state, source);
-            }
-
-            // If a sensor has data, process it now.
-            if (ident == LOOPER_ID_USER) {
-                if (engine.accelerometerSensor != NULL) {
-                    ASensorEvent event;
-                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
-                            &event, 1) > 0) {
-                        LOGI("accelerometer: x=%f y=%f z=%f",
-                                event.acceleration.x, event.acceleration.y,
-                                event.acceleration.z);
-                    }
-                }
+                source->process(app, source);
             }
 
             // Check if we are exiting.
-            if (state->destroyRequested != 0) {
-                engine_term_display(&engine);
+            if (app->destroyRequested != 0) {
+                terminateDisplay(&engine);
+                gfk::Logger::Log("Stopping main");
                 return;
             }
+
+            eventID = ALooper_pollAll(eventLoopTimeoutMs, NULL, &events, (void**)&source);
         }
 
         if (engine.animating) {
+            gfk::Logger::Logf("Screen size is (%i, %i)", ANativeWindow_getWidth(engine.app->window), ANativeWindow_getHeight(engine.app->window));
             // Done with events; draw next animation frame.
             engine.state.angle += .01f;
             if (engine.state.angle > 1) {
@@ -290,7 +273,8 @@ void android_main(struct android_app* state) {
 
             // Drawing is throttled to the screen update rate, so there
             // is no need to do timing here.
-            engine_draw_frame(&engine);
+            drawFrame(&engine);
+            engine.animating = 0;
         }
     }
 }
