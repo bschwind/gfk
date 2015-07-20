@@ -42,14 +42,12 @@ Graphics2DTest::~Graphics2DTest()
 void Graphics2DTest::Initialize()
 {
 	gfk::Game::Initialize();
-	primBatch.Initialize();
-
-	Device.SetClearColor(Color::White);
 }
 
 void Graphics2DTest::LoadContent()
 {
-
+	primBatch.Initialize();
+	Device.SetClearColor(Color::White);
 }
 
 void Graphics2DTest::UnloadContent()

@@ -19,7 +19,10 @@ automaticPortMapping(true)
 
 NetworkHelper::~NetworkHelper()
 {
-	enet_host_destroy(host);
+	if (host)
+	{
+		enet_host_destroy(host);
+	}
 }
 
 void NetworkHelper::StartServer(unsigned short port)

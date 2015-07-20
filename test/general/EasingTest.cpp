@@ -46,14 +46,12 @@ EasingTest::~EasingTest()
 void EasingTest::Initialize()
 {
 	gfk::Game::Initialize();
-	primBatch.Initialize();
-
-	Device.SetClearColor(Color::White);
 }
 
 void EasingTest::LoadContent()
 {
-
+	primBatch.Initialize();
+	Device.SetClearColor(Color::White);
 }
 
 void EasingTest::UnloadContent()

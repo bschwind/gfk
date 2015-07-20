@@ -10,6 +10,7 @@ namespace gfk
 {
 
 GraphicsDevice::GraphicsDevice() :
+state(Uninitialized),
 gameShouldClose(false)
 {
 
@@ -17,18 +18,16 @@ gameShouldClose(false)
 
 GraphicsDevice::~GraphicsDevice()
 {
-#if !defined(PLATFORM_ANDROID)
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		glfwDestroyWindow(*iter);
-	}
-	
-	glfwTerminate();
-#endif
+	Uninitialize();
 }
 
 void GraphicsDevice::Initialize(const gfk::Game &game)
 {
+	if (state == Initialized)
+	{
+		return;
+	}
+
 #if defined(PLATFORM_ANDROID)
 	InitializeAndroid(game);
 #endif
@@ -37,6 +36,28 @@ void GraphicsDevice::Initialize(const gfk::Game &game)
 	InitializeGLEW();
 	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 #endif
+
+	state = Initialized;
+}
+
+void GraphicsDevice::Uninitialize()
+{
+	if (state == Uninitialized)
+	{
+		return;
+	}
+#if defined(PLATFORM_ANDROID)
+	UninitializeAndroid();
+#endif
+#if !defined(PLATFORM_ANDROID)
+	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
+	{
+		glfwDestroyWindow(*iter);
+	}
+
+	glfwTerminate();
+#endif
+	state = Uninitialized;
 }
 
 #if !defined(PLATFORM_ANDROID)
@@ -140,6 +161,7 @@ void GraphicsDevice::InitializeWindows()
 #if defined(PLATFORM_ANDROID)
 	int GraphicsDevice::InitializeAndroid(const gfk::Game &game)
 	{
+		Logger::Log("Start up OpenGL");
 		// initialize OpenGL ES and EGL
 
 		// Here specify the attributes of the desired configuration.
@@ -201,16 +223,13 @@ void GraphicsDevice::InitializeWindows()
 		androidSurface.context = context;
 		androidSurface.surface = surface;
 
-		// Initialize GL state.
-		// TODO - These probably shouldn't be used
-		glEnable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-
 		return 0;
 	}
 
 	void GraphicsDevice::UninitializeAndroid()
 	{
+		Logger::Log("Tear down OpenGL");
+
 		if (androidSurface.display != EGL_NO_DISPLAY) {
 		    eglMakeCurrent(androidSurface.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 		    if (androidSurface.context != EGL_NO_CONTEXT) {
@@ -299,6 +318,9 @@ void GraphicsDevice::ResizeWindow(int width, int height)
 
 void GraphicsDevice::SwapBuffers()
 {
+#if defined(PLATFORM_ANDROID)
+	eglSwapBuffers(androidSurface.display, androidSurface.surface);
+#endif
 #if !defined(PLATFORM_ANDROID)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{

@@ -14,34 +14,34 @@ using namespace gfk;
 namespace jetGame
 {
 
-AndroidJetGame game;
+// AndroidJetGame game;
 
-extern "C"
-{
-	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_init(JNIEnv * env, jobject obj);
-	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_resize(JNIEnv * env, jobject obj, jint width, jint height);
-	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_step(JNIEnv * env, jobject obj);
-	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_unloadContent(JNIEnv * env, jobject obj);
-};
+// extern "C"
+// {
+// 	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_init(JNIEnv * env, jobject obj);
+// 	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_resize(JNIEnv * env, jobject obj, jint width, jint height);
+// 	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_step(JNIEnv * env, jobject obj);
+// 	JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_unloadContent(JNIEnv * env, jobject obj);
+// };
 
-JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_init(JNIEnv * env, jobject obj)
-{
-	game.Initialize();
-}
+// JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_init(JNIEnv * env, jobject obj)
+// {
+// 	game.Initialize();
+// }
 
-JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_resize(JNIEnv * env, jobject obj, jint width, jint height)
-{
-	game.ResizeWindow(width, height);
-}
+// JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_resize(JNIEnv * env, jobject obj, jint width, jint height)
+// {
+// 	game.ResizeWindow(width, height);
+// }
 
-JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_step(JNIEnv * env, jobject obj)
-{
-	game.Tick();
-}
+// JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_step(JNIEnv * env, jobject obj)
+// {
+// 	game.Tick();
+// }
 
-JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_unloadContent(JNIEnv * env, jobject obj)
-{
-	game.UnloadContent();
-}
+// JNIEXPORT void JNICALL Java_com_android_gfk_GFKLib_unloadContent(JNIEnv * env, jobject obj)
+// {
+// 	game.UnloadContent();
+// }
 
 }

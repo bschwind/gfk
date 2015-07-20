@@ -18,11 +18,16 @@ class Game
 {
 public:
 	Game();
+#if defined(PLATFORM_ANDROID)
+	Game(android_app* app);
+#endif
 	Game(const std::string &title, 
 		 int screenWidth, 
 		 int screenHeight);
 	virtual ~Game();
 	virtual void Initialize();
+	void InitializeGraphics();
+	void UninitializeGraphics();
 	virtual void UnloadContent();
 	void Run();
 	void Tick();

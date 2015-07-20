@@ -3,6 +3,7 @@
 #include <GFK/Math/MathHelper.hpp>
 #include <iostream>
 #include <cmath>
+#include <GFK/System/Logger.hpp>
 
 namespace gfk
 {
@@ -40,7 +41,7 @@ void PrimitiveBatch3D::Initialize() {
 	// Allocate space and upload the data from CPU to GPU
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	GLErrorCheck();
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize * sizeof(VertexPositionColor), vertexBuffer, GL_DYNAMIC_DRAW);
 	GLErrorCheck();
 
 	InitializeShader();
@@ -116,15 +117,15 @@ void PrimitiveBatch3D::BindAttributes()
 
 	// Specify how the data for position can be accessed
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["position"], 3, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Position));
-	GLErrorCheck();
+	GLErrorCheck("position");
 	glVertexAttribPointer(GLSL_ATTRIB_MAP["color"], 4, GL_FLOAT, GL_FALSE, stride, (void *)offsetof(VertexPositionColor, Color));
-	GLErrorCheck();
+	GLErrorCheck("color");
 
 	// Enable the attribute
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["position"]);
-	GLErrorCheck();
+	GLErrorCheck("position again");
 	glEnableVertexAttribArray(GLSL_ATTRIB_MAP["color"]);
-	GLErrorCheck();
+	GLErrorCheck("color again");
 }
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
@@ -172,11 +173,11 @@ void PrimitiveBatch3D::Flush()
 	// Consider "double buffering" the vertex data for performance,
 	// if it comes to that.
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	GLErrorCheck();
+	GLErrorCheck("bind buffer VBO");
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertCounter * sizeof(VertexPositionColor), vertexBuffer);
-	GLErrorCheck();
+	GLErrorCheck("buffer sub data ");
 	glEnable(GL_DEPTH_TEST);
-	GLErrorCheck();
+	GLErrorCheck("enable depth test");
 
 	shader.SetUniform("world", world);
 	shader.SetUniform("view", view);
@@ -187,7 +188,7 @@ void PrimitiveBatch3D::Flush()
 	GLErrorCheck();
 #else
 	BindAttributes();
-	GLErrorCheck();
+	GLErrorCheck("empty bind attributes");
 #endif
 
 	int primitiveMode = GL_LINES;
@@ -197,7 +198,7 @@ void PrimitiveBatch3D::Flush()
 	}
 
 	glDrawArrays(primitiveMode, 0, vertCounter);
-	GLErrorCheck();
+	GLErrorCheck("draw arrays");
 
 	vertCounter = 0;
 }

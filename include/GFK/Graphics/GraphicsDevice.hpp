@@ -20,6 +20,14 @@ public:
 	GraphicsDevice();
 	~GraphicsDevice();
 
+	enum GraphicsState
+	{
+		Uninitialized,
+		Initialized
+	};
+
+	GraphicsState state;
+
 	void SetClearColor(const gfk::Color &color);
 	void SetClearColor(const gfk::PackedColor &color);
 	void SetDepthClearValue(float depth);
@@ -28,6 +36,7 @@ public:
 	void ClearColor();
 	void Display();
 	void Initialize(const gfk::Game &game);
+	void Uninitialize();
 	void ResizeWindow(int width, int height);
 	void SwapBuffers();
 	void UpdateWindowEvents();
@@ -52,6 +61,7 @@ private:
 		EGLSurface surface;
 		EGLContext context;
 	};
+
 
 	AndroidSurface androidSurface;
 

@@ -10,6 +10,7 @@
 #endif
 #include <chrono>
 #include <thread>
+#include <GFK/System/Logger.hpp>
 
 namespace gfk
 {
@@ -41,6 +42,21 @@ currentTime(0.0)
 
 }
 
+#if defined(PLATFORM_ANDROID)
+	Game::Game(android_app *app) :
+	isFixedTimeStep(false),
+	targetUpdateFramesPerSecond(60),
+	title("GFK Game"),
+	width(1280),
+	height(720),
+	accumulator(0.0),
+	currentTime(0.0),
+	app(app)
+	{
+
+	}
+#endif
+
 Game::~Game()
 {
 	UDPSocket::ShutdownSocketLayer();
@@ -69,9 +85,20 @@ void Game::Initialize()
 
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();
-
-	Device.Initialize(*this);
 	MonitorConfig::SetupMonitor(width, height, title, false);
+
+	time.TotalGameTime = GameTime::GetSystemTime();
+	currentTime = GameTime::GetSystemTime();
+	dt = 1.0 / targetUpdateFramesPerSecond;
+
+#if !defined(PLATFORM_ANDROID)
+	glfwSetTime(0.0);
+#endif
+}
+
+void Game::InitializeGraphics()
+{
+	Device.Initialize(*this);
 	Device.SetClearColor(Color::CornflowerBlue);
 
 #if !defined(PLATFORM_ANDROID)
@@ -85,14 +112,13 @@ void Game::Initialize()
 	glfwSetWindowSizeCallback(Device.GetPrimaryWindow(), WindowResizeHandler);
 #endif
 
-	time.TotalGameTime = GameTime::GetSystemTime();
-	currentTime = GameTime::GetSystemTime();
-	dt = 1.0 / targetUpdateFramesPerSecond;
-
 	LoadContent();
-#if !defined(PLATFORM_ANDROID)
-	glfwSetTime(0.0);
-#endif
+}
+
+void Game::UninitializeGraphics()
+{
+	Device.Uninitialize();
+	UnloadContent();
 }
 
 void Game::LoadContent()
@@ -112,8 +138,11 @@ void Game::Update(const gfk::GameTime &gameTime)
 
 void Game::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
-	Device.Clear();
-	Device.SwapBuffers();
+	if (Device.state == GraphicsDevice::Initialized)
+	{
+		Device.Clear();
+		Device.SwapBuffers();
+	}
 }
 
 void Game::Tick()
@@ -144,10 +173,13 @@ void Game::Tick()
 			accumulator -= dt;
 		}
 
-		// interpolationFactor is how far we are between
-		// the previous world state and the current world state
-		double interpolationFactor = accumulator / dt;
-		Draw(time, interpolationFactor);
+		if (Device.state == GraphicsDevice::Initialized)
+		{
+			// interpolationFactor is how far we are between
+			// the previous world state and the current world state
+			double interpolationFactor = accumulator / dt;
+			Draw(time, interpolationFactor);
+		}
 	}
 	else
 	{
@@ -158,7 +190,10 @@ void Game::Tick()
 		HandleEvents();
 
 		Update(time);
-		Draw(time, 1.0f);
+		if (Device.state == GraphicsDevice::Initialized)
+		{
+			Draw(time, 1.0f);
+		}
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -167,6 +202,7 @@ void Game::Tick()
 void Game::Run()
 {
 	Initialize();
+	InitializeGraphics();
 
 	while(!exitRequested && !Device.WindowShouldClose())
 	{

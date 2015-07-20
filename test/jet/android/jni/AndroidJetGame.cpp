@@ -12,8 +12,8 @@ using namespace gfk;
 namespace jetGame
 {
 
-AndroidJetGame::AndroidJetGame() :
-Game(),
+AndroidJetGame::AndroidJetGame(android_app *app) :
+Game(app),
 networkCounter(0),
 networkSendsPerSecond(10),
 mesh()
@@ -26,14 +26,15 @@ mesh()
 AndroidJetGame::~AndroidJetGame()
 {
 	Logger::Log("Jet Game Destructor!");
+	jetClient.DisconnectFromServer();
 }
 
 void AndroidJetGame::Initialize()
 {
 	Logger::Log("initialize()!");
 	gfk::Game::Initialize();
-	mesh.Load("assets/f18Hornet.3DS");
-	primBatch.Initialize();
+	// mesh.Load("assets/f18Hornet.3DS");
+
 
 	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 1.0);
 
@@ -48,21 +49,21 @@ void AndroidJetGame::Initialize()
 	{
 		jetClient.ConnectToServer("192.168.24.53", 55777, ClientType::GFK_ANDROID);
 	}
-
-	Device.SetClearColor(Color::Black);
 }
 
 void AndroidJetGame::LoadContent()
 {
 	gfk::Game::LoadContent();
 	Logger::Logf("load content()!");
+
+	primBatch.Initialize();
+	Device.SetClearColor(Color::Black);
 }
 
 void AndroidJetGame::UnloadContent()
 {
 	gfk::Game::UnloadContent();
 	Logger::Log("unload content()!");
-	jetClient.DisconnectFromServer();
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)

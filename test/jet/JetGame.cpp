@@ -39,6 +39,13 @@ JetGame::~JetGame()
 void JetGame::Initialize()
 {
 	gfk::Game::Initialize();
+	jetClient.ConnectToServer("127.0.0.1", 55777, ClientType::DESKTOP);
+}
+
+void JetGame::LoadContent()
+{
+	gfk::Game::LoadContent();
+
 	mesh.Load("assets/f18Hornet.3DS");
 	primBatch.Initialize();
 
@@ -48,16 +55,9 @@ void JetGame::Initialize()
 	};
 	vrCam.Initialize(renderFunction);
 
-	jetClient.ConnectToServer("127.0.0.1", 55777, ClientType::DESKTOP);
-
 	Device.SetClearColor(Color::Black);
 
 	Mouse::SetPos(Vector2(0, 0));
-}
-
-void JetGame::LoadContent()
-{
-	gfk::Game::LoadContent();
 }
 
 void JetGame::UnloadContent()

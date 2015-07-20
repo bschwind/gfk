@@ -19,7 +19,7 @@ namespace jetGame
 class AndroidJetGame : public Game
 {
 public:
-	AndroidJetGame();
+	AndroidJetGame(android_app *app);
 	~AndroidJetGame();
 
 	void Initialize();

@@ -5,8 +5,12 @@ GFK_PATH := $(LOCAL_PATH)/../../../..
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := native-activity
-LOCAL_C_INCLUDES := $(GFK_PATH)/include/
-LOCAL_SRC_FILES := main.cpp
+LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
+                    $(LOCAL_PATH)/../../include/ \
+                    $(GFK_PATH)/lib/enet/include/ \
+                    $(GFK_PATH)/lib/libnatpmp/
+LOCAL_SRC_FILES := main.cpp \
+                   AndroidJetGame.cpp
 LOCAL_LDLIBS := -llog -landroid -lEGL -lGLESv2
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
 LOCAL_STATIC_LIBRARIES += libgfk
