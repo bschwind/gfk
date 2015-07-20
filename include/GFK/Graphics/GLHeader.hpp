@@ -25,5 +25,6 @@ static std::map<std::string, GLint> GLSL_ATTRIB_MAP = {
 };
 
 bool GLErrorCheck();
+bool GLErrorCheck(const std::string &tag);
 
 }
