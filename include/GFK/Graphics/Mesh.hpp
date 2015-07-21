@@ -7,6 +7,10 @@
 #include <vector>
 #include <string>
 
+#if defined(PLATFORM_ANDROID)
+	#include <android_native_app_glue.h>
+#endif
+
 struct aiScene;
 struct aiNode;
 
@@ -21,6 +25,9 @@ public:
 	void Bind() const;
 	void Unbind() const;
 	void Load(const std::string &fileName);
+#if defined(PLATFORM_ANDROID)
+	void Load(const std::string &fileName, android_app *app);
+#endif
 
 	int numVertices;
 

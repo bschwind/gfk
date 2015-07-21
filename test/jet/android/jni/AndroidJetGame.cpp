@@ -2,6 +2,7 @@
 #include "network/Packet.hpp"
 #include "objects/Jet.hpp"
 #include <GFK/Graphics/Color.hpp>
+#include <GFK/Math/MathHelper.hpp>
 #include <GFK/System/Logger.hpp>
 #include <GFK/Network/NetDiscoveryClient.hpp>
 #include <sstream>
@@ -33,8 +34,6 @@ void AndroidJetGame::Initialize()
 {
 	Logger::Log("initialize()!");
 	gfk::Game::Initialize();
-	// mesh.Load("assets/f18Hornet.3DS");
-
 
 	std::unordered_set<IPAddress> hosts = NetDiscoveryClient::FindHosts(55778, 1.0);
 
@@ -57,6 +56,7 @@ void AndroidJetGame::LoadContent()
 	Logger::Logf("load content()!");
 
 	primBatch.Initialize();
+	mesh.Load("f18Hornet.3DS", GetAndroidApp());
 	Device.SetClearColor(Color::Black);
 }
 
@@ -113,19 +113,18 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 
 	for (const auto &player : jetClient.players)
 	{
-		Matrix world = player.second.displayJet.GetTransform();
+		Matrix world = player.second.displayJet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
 		float jetX = player.second.displayJet.GetPosition().X;
 		float jetY = player.second.displayJet.GetPosition().Y;
 		float jetZ = player.second.displayJet.GetPosition().Z;
 
+		primBatch.Begin(PrimitiveType::TriangleList, cam, world);
+		primBatch.DrawMesh(mesh);
+		primBatch.End();
+
 		primBatch.Begin(PrimitiveType::LineList, cam);
 		primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
 		primBatch.DrawLine(Vector3(), Vector3(jetX, jetY, jetZ), Color::Green, Color::Green);
-		primBatch.End();
-
-		primBatch.Begin(PrimitiveType::TriangleList, cam, world);
-		primBatch.FillTriangle(Vector3(-0.5f, 0, 0), Vector3(0, 0, -1), Vector3(0.5f, 0, 0), Color::Red, Color::Red, Color::Red);
-		primBatch.FillTriangle(Vector3(0, 0, 0), Vector3(0, 0.5f, 0), Vector3(0, 0, -1), Color::Blue, Color::Blue, Color::Blue);
 		primBatch.End();
 	}
 

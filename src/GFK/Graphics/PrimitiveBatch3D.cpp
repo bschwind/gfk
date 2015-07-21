@@ -203,7 +203,6 @@ void PrimitiveBatch3D::Flush()
 	vertCounter = 0;
 }
 
-#if !defined(PLATFORM_ANDROID)
 void PrimitiveBatch3D::DrawMesh(const Mesh &mesh)
 {
 	shader.Apply();
@@ -220,7 +219,6 @@ void PrimitiveBatch3D::DrawMesh(const Mesh &mesh)
 
 	mesh.Unbind();
 }
-#endif
 
 void PrimitiveBatch3D::End()
 {
