@@ -7,7 +7,7 @@ ENET_PATH := $(ROOT_PATH)/lib/enet
 NAT_PMP_PATH := $(ROOT_PATH)/lib/libnatpmp
 IF_ADDRS_PATH := $(ROOT_PATH)/lib/android-ifaddrs
 NET_ADAPTER_PATH := $(ROOT_PATH)/lib/net-adapter
-JET_INCLUDE_PATH := $(LOCAL_PATH)/../../../../include
+JET_INCLUDE_PATH := $(LOCAL_PATH)/../../../../common/include
 
 GFK_SRC := ../../../../../../src
 
@@ -25,15 +25,14 @@ LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
 		    $(NET_ADAPTER_PATH)/include/
 
 LOCAL_SRC_FILES := \
-	../../GFKAndroidWrapper.cpp \
-	../../TopDownCamera.cpp \
-	../../../../network/JetClient.cpp \
-	../../../../network/NetworkHelper.cpp \
-	../../../../network/Packet.cpp \
-	../../../../network/Outbox.cpp \
-	../../../../objects/ClientData.cpp \
-	../../../../objects/Jet.cpp \
-	../../../../objects/GameInput.cpp \
+	../../../../common/TopDownCamera.cpp \
+	../../../../common/network/JetClient.cpp \
+	../../../../common/network/NetworkHelper.cpp \
+	../../../../common/network/Packet.cpp \
+	../../../../common/network/Outbox.cpp \
+	../../../../common/objects/ClientData.cpp \
+	../../../../common/objects/Jet.cpp \
+	../../../../common/objects/GameInput.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \
 	$(GFK_SRC)/GFK/Network/IPAddress.cpp \

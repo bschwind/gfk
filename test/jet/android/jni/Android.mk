@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := native-activity
 LOCAL_C_INCLUDES := $(GFK_PATH)/include/ \
-                    $(LOCAL_PATH)/../../include/ \
+                    $(LOCAL_PATH)/../../common/include/ \
                     $(GFK_PATH)/lib/enet/include/ \
                     $(GFK_PATH)/lib/libnatpmp/
 LOCAL_SRC_FILES := main.cpp \

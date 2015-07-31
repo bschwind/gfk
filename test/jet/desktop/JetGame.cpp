@@ -1,4 +1,4 @@
-#include "include/JetGame.hpp"
+#include "JetGame.hpp"
 #include "network/Packet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Input/Keyboard.hpp>
