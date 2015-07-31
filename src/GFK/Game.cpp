@@ -3,7 +3,7 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GFK/Network/UDPSocket.hpp>
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	#include <GFK/Input/Keyboard.hpp>
 	#include <GFK/Input/Mouse.hpp>
 	#include <signal.h>
@@ -73,7 +73,7 @@ void Game::SignalHandler(int signal)
 
 void Game::Initialize()
 {
-#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_WINDOWS)
+#if !defined(PLATFORM_MOBILE) && !defined(PLATFORM_WINDOWS)
 	// Catch signals such as CTRL-C
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = SignalHandler;
@@ -91,7 +91,7 @@ void Game::Initialize()
 	currentTime = GameTime::GetSystemTime();
 	dt = 1.0 / targetUpdateFramesPerSecond;
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	glfwSetTime(0.0);
 #endif
 }
@@ -101,7 +101,7 @@ void Game::InitializeGraphics()
 	Device.Initialize(*this);
 	Device.SetClearColor(Color::CornflowerBlue);
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
 	Mouse::SetTargetWindow(Device.GetPrimaryWindow());
 
@@ -212,7 +212,7 @@ void Game::Run()
 	UnloadContent();
 }
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 void Game::WindowResizeHandler(GLFWwindow *window, int width, int height)
 {
 	Game *gameToResize = static_cast<Game *>(glfwGetWindowUserPointer(window));

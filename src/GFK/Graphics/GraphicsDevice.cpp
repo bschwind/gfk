@@ -31,7 +31,7 @@ void GraphicsDevice::Initialize(const gfk::Game &game)
 #if defined(PLATFORM_ANDROID)
 	InitializeAndroid(game);
 #endif
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	InitializeWindows();
 	InitializeGLEW();
 	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
@@ -49,7 +49,7 @@ void GraphicsDevice::Uninitialize()
 #if defined(PLATFORM_ANDROID)
 	UninitializeAndroid();
 #endif
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
 	{
 		glfwDestroyWindow(*iter);
@@ -60,7 +60,7 @@ void GraphicsDevice::Uninitialize()
 	state = Uninitialized;
 }
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 void GraphicsDevice::InitializeGLEW()
 {
 	// Initialize GLEW
@@ -271,7 +271,7 @@ void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
 
 void GraphicsDevice::SetDepthClearValue(float depth)
 {
-#if defined(PLATFORM_ANDROID)
+#if defined(PLATFORM_ANDROID) // PLATFORM_MOBILE?
 	glClearDepthf(depth);
 #else
 	glClearDepth(depth);
@@ -349,7 +349,7 @@ bool GraphicsDevice::WindowShouldClose()
 	return gameShouldClose;
 }
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 GLFWwindow* GraphicsDevice::GetPrimaryWindow()
 {
 	return primaryWindow;

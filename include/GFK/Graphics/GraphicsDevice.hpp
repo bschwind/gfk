@@ -41,7 +41,7 @@ public:
 	void SwapBuffers();
 	void UpdateWindowEvents();
 	bool WindowShouldClose();
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	GLFWwindow* GetPrimaryWindow();
 	std::vector<GLFWwindow*> GetWindows();
 #endif
