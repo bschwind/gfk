@@ -251,13 +251,13 @@ void GraphicsDevice::SwapBuffers()
 #endif
 #if !defined(PLATFORM_ANDROID)
 	glfwSwapBuffers(primaryWindow);
-	glfwPollEvents(); // TODO
 #endif
 }
 
 void GraphicsDevice::UpdateWindowEvents()
 {
 #if !defined(PLATFORM_ANDROID)
+	glfwPollEvents();
 	if (glfwWindowShouldClose(primaryWindow)) {
 		gameShouldClose = true;
 	}
