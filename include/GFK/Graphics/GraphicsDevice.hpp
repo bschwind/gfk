@@ -43,17 +43,15 @@ public:
 	bool WindowShouldClose();
 #if !defined(PLATFORM_MOBILE)
 	GLFWwindow* GetPrimaryWindow();
-	std::vector<GLFWwindow*> GetWindows();
 #endif
 protected:
 
 private:
 	GLFWwindow* primaryWindow;
-	std::vector<GLFWwindow*> windows;
 	bool gameShouldClose;
 	static void error_callback(int error, const char* description);
 	void InitializeGLEW();
-	void InitializeWindows();
+	void InitializeWindow(const gfk::Game &game);
 #if defined(PLATFORM_ANDROID)
 
 	struct AndroidSurface {

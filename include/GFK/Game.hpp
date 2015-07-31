@@ -33,6 +33,9 @@ public:
 	void Tick();
 	virtual void ResizeWindow(int width, int height);
 	void Exit();
+	int GetWidth() const;
+	int GetHeight() const;
+	std::string GetTitle() const;
 #if defined(PLATFORM_ANDROID)
 	android_app* GetAndroidApp() const;
 #endif

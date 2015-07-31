@@ -244,4 +244,19 @@ void Game::Exit()
 	exitRequested = true;
 }
 
+int Game::GetWidth() const
+{
+	return width;
+}
+
+int Game::GetHeight() const
+{
+	return height;
+}
+
+std::string Game::GetTitle() const
+{
+	return title;
+}
+
 }

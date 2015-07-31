@@ -32,7 +32,7 @@ void GraphicsDevice::Initialize(const gfk::Game &game)
 	InitializeAndroid(game);
 #endif
 #if !defined(PLATFORM_MOBILE)
-	InitializeWindows();
+	InitializeWindow(game);
 	InitializeGLEW();
 	glfwSwapInterval(0);// - 0 for no VSync, 1 for VSync
 #endif
@@ -50,11 +50,7 @@ void GraphicsDevice::Uninitialize()
 	UninitializeAndroid();
 #endif
 #if !defined(PLATFORM_MOBILE)
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		glfwDestroyWindow(*iter);
-	}
-
+	glfwDestroyWindow(primaryWindow);
 	glfwTerminate();
 #endif
 	state = Uninitialized;
@@ -76,7 +72,7 @@ void GraphicsDevice::InitializeGLEW()
 	glGetError();
 }
 
-void GraphicsDevice::InitializeWindows()
+void GraphicsDevice::InitializeWindow(const gfk::Game &game)
 {
 	// Initialize GLFW
 	glfwSetErrorCallback(error_callback);
@@ -94,65 +90,13 @@ void GraphicsDevice::InitializeWindows()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
-	int monitorCount;
-	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-	int currentMonitorIndex = 0;
-	int desiredWindowCount = MonitorConfig::GetMonitorCount();
-
-	if (desiredWindowCount == 0)
-	{
-		// The user didn't specify a particular window layout
-		// Give them a default setup
-		primaryWindow = glfwCreateWindow(1280, 720, "GFK Game", NULL, NULL);
-		windows.push_back(primaryWindow);
-	}
-
-	for (auto iter = MonitorConfig::begin(); iter != MonitorConfig::end(); ++iter)
-	{
-		if (currentMonitorIndex >= monitorCount)
-		{
-			// The user has requested more monitors than what we have, finish the loop
-			break;
-		}
-
-		// This check is just so we can grab a pointer to the primary window
-		// We will use this pointer to share its GL context with the other windows
-		if (currentMonitorIndex == 0)
-		{
-			primaryWindow = glfwCreateWindow(
-				iter->Width,
-				iter->Height,
-				iter->WindowName.c_str(),
-				iter->IsFullScreen ? glfwGetPrimaryMonitor() : NULL,
-				NULL);
-			windows.push_back(primaryWindow);
-		}
-		else
-		{
-			GLFWwindow* newWindow = glfwCreateWindow(
-				iter->Width,
-				iter->Height,
-				iter->WindowName.c_str(),
-				iter->IsFullScreen ? monitors[currentMonitorIndex] : NULL,
-				primaryWindow);
-			if (!newWindow)
-			{
-				break;
-			}
-			windows.push_back(newWindow);
-		}
-
-		currentMonitorIndex++;
-	}
+	primaryWindow = glfwCreateWindow(game.GetWidth(), game.GetHeight(), game.GetTitle().c_str(), NULL, NULL);
 
 	if (!primaryWindow)
 	{
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
-	// Check secondary monitors
-	// Update the monitor list in monitor config
 
 	glfwMakeContextCurrent(primaryWindow);
 }
@@ -214,6 +158,7 @@ void GraphicsDevice::InitializeWindows()
 
 		if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
 			// LOGW("Unable to eglMakeCurrent");
+			Logger::Log("Unable to eglMakeCurrent");
 			return -1;
 		}
 
@@ -250,17 +195,8 @@ void GraphicsDevice::InitializeWindows()
 
 void GraphicsDevice::SetClearColor(const gfk::Color &color)
 {
-#if defined(PLATFORM_ANDROID)
 	glClearColor(color.R, color.G, color.B, color.A);
 	GLErrorCheck();
-#else
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		glfwMakeContextCurrent(*iter);
-		glClearColor(color.R, color.G, color.B, color.A);
-		GLErrorCheck();
-	}
-#endif
 }
 
 void GraphicsDevice::SetClearColor(const gfk::PackedColor &color)
@@ -281,17 +217,8 @@ void GraphicsDevice::SetDepthClearValue(float depth)
 
 void GraphicsDevice::Clear()
 {
-#if defined(PLATFORM_ANDROID)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	GLErrorCheck();
-#else
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		glfwMakeContextCurrent(*iter);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		GLErrorCheck();
-	}
-#endif
 
 	glEnable(GL_BLEND);
 	GLErrorCheck();
@@ -323,23 +250,16 @@ void GraphicsDevice::SwapBuffers()
 	eglSwapBuffers(androidSurface.display, androidSurface.surface);
 #endif
 #if !defined(PLATFORM_ANDROID)
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		glfwSwapBuffers(*iter);
-	}
-
-	glfwPollEvents();
+	glfwSwapBuffers(primaryWindow);
+	glfwPollEvents(); // TODO
 #endif
 }
 
 void GraphicsDevice::UpdateWindowEvents()
 {
 #if !defined(PLATFORM_ANDROID)
-	for (auto iter = windows.begin(); iter != windows.end(); ++iter)
-	{
-		if (glfwWindowShouldClose(*iter)) {
-			gameShouldClose = true;
-		}
+	if (glfwWindowShouldClose(primaryWindow)) {
+		gameShouldClose = true;
 	}
 #endif
 }
@@ -353,11 +273,6 @@ bool GraphicsDevice::WindowShouldClose()
 GLFWwindow* GraphicsDevice::GetPrimaryWindow()
 {
 	return primaryWindow;
-}
-
-std::vector<GLFWwindow*> GraphicsDevice::GetWindows()
-{
-	return windows;
 }
 #endif
 
