@@ -25,6 +25,7 @@ public:
 	void Initialize();
 	void LoadContent();
 	void UnloadContent();
+	void OnTouchEvent(const TouchEvent &event);
 	void Update(const gfk::GameTime &gameTime);
 	void Draw(const gfk::GameTime &gameTime, float interpolationFactor);
 	void ResizeWindow(int width, int height);

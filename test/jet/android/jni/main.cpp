@@ -1,5 +1,7 @@
 #include <android_native_app_glue.h>
 #include <GFK/System/Logger.hpp>
+#include <GFK/Input/TouchEvent.hpp>
+#include <GFK/System/GameTime.hpp>
 #include "AndroidJetGame.hpp"
 
 /**
@@ -17,13 +19,47 @@ struct saved_state
 static int32_t handleInput(struct android_app* app, AInputEvent* event)
 {
     // struct engine* engine = (struct engine*)app->userData;
-
-    gfk::Logger::Log("Handling Input");
+    jetGame::AndroidJetGame *game = (jetGame::AndroidJetGame*)app->userData;
 
     if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
     {
-        // state.x = AMotionEvent_getX(event, 0);
-        // state.y = AMotionEvent_getY(event, 0);
+        TouchEvent touchEvent;
+
+        int32_t action = AMotionEvent_getAction(event);
+        uint32_t flags = action & AMOTION_EVENT_ACTION_MASK;
+        int32_t pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+
+        switch (flags) {
+            case AMOTION_EVENT_ACTION_DOWN:
+            case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                touchEvent.touchType = TouchEvent::Began;
+                break;
+            case AMOTION_EVENT_ACTION_UP:
+            case AMOTION_EVENT_ACTION_POINTER_UP:
+                touchEvent.touchType = TouchEvent::Ended;
+                break;
+            case AMOTION_EVENT_ACTION_MOVE:
+                touchEvent.touchType = TouchEvent::Moved;
+                break;
+            case AMOTION_EVENT_ACTION_CANCEL:
+                touchEvent.touchType = TouchEvent::Cancelled;
+                break;
+            default:
+                return 0;
+        }
+
+        touchEvent.time = GameTime::GetSystemTime();
+        touchEvent.numTouches = AMotionEvent_getPointerCount(event);
+
+        for (int i = 0; i < touchEvent.numTouches; i++) {
+            TouchEvent::TouchPoint& curPoint = touchEvent.touchPoints[i];
+            curPoint.id = AMotionEvent_getPointerId(event, i);
+            curPoint.pos.X = AMotionEvent_getX(event, i);
+            curPoint.pos.Y = AMotionEvent_getY(event, i);
+            curPoint.isChanged = (i == pointerIndex);
+        }
+
+        game->OnTouchEvent(touchEvent);
         return 1;
     }
 

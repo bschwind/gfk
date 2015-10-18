@@ -114,6 +114,7 @@ add_library(gfk-input STATIC
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/Keyboard.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/Mouse.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/GamePad.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/src/GFK/Input/TouchEvent.cpp
 )
 
 add_library(gfk-graphics STATIC

@@ -199,6 +199,11 @@ void Game::Tick()
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
+void Game::OnTouchEvent(const TouchEvent &event)
+{
+
+}
+
 void Game::Run()
 {
 	Initialize();

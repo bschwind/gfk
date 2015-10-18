@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GFK/OSDetection.hpp>
+#include <GFK/Input/TouchEvent.hpp>
 #include <GFK/System/GameTime.hpp>
 #include <GFK/Graphics/GraphicsDevice.hpp>
 #include <iostream>
@@ -29,6 +30,7 @@ public:
 	void InitializeGraphics();
 	void UninitializeGraphics();
 	virtual void UnloadContent();
+	virtual void OnTouchEvent(const TouchEvent &event);
 	void Run();
 	void Tick();
 	virtual void ResizeWindow(int width, int height);

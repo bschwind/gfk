@@ -130,26 +130,25 @@ void PrimitiveBatch3D::BindAttributes()
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera)
 {
-	this->primitiveType = primitiveType;
-	world = Matrix::Identity;
-	view = camera.GetView();
-	projection = camera.GetProjection();
-
-	if (hasBegun)
-	{
-		// throw error
-		return;
-	}
-
-	hasBegun = true;
+	Begin(primitiveType, camera.GetView(), camera.GetProjection(), Matrix::Identity);
 }
 
 void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, Camera &camera, const Matrix &worldMatrix)
 {
+	Begin(primitiveType, camera.GetView(), camera.GetProjection(), worldMatrix);
+}
+
+void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, const Matrix &view, const Matrix &projection)
+{
+	Begin(primitiveType, view, projection, Matrix::Identity);
+}
+
+void PrimitiveBatch3D::Begin(PrimitiveType primitiveType, const Matrix &view, const Matrix &projection, const Matrix &worldMatrix)
+{
 	this->primitiveType = primitiveType;
 	world = worldMatrix;
-	view = camera.GetView();
-	projection = camera.GetProjection();
+	this->view = view;
+	this->projection = projection;
 
 	if (hasBegun)
 	{

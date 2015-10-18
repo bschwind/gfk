@@ -2,6 +2,7 @@
 #include "network/Packet.hpp"
 #include "objects/Jet.hpp"
 #include <GFK/Graphics/Color.hpp>
+#include <GFK/Input/TouchEvent.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <GFK/System/Logger.hpp>
 #include <GFK/Network/NetDiscoveryClient.hpp>
@@ -66,6 +67,13 @@ void AndroidJetGame::UnloadContent()
 	Logger::Log("unload content()!");
 }
 
+TouchEvent currentTouchEvent;
+
+void AndroidJetGame::OnTouchEvent(const TouchEvent &event)
+{
+	currentTouchEvent = event;
+}
+
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 {
 	UpdateNetwork(gameTime);
@@ -125,6 +133,18 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 		primBatch.Begin(PrimitiveType::LineList, cam);
 		primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
 		primBatch.DrawLine(Vector3(), Vector3(jetX, jetY, jetZ), Color::Green, Color::Green);
+		primBatch.End();
+	}
+
+	Matrix projection = Matrix::CreateOrthographicUpperLeftOrigin(GetWidth(), GetHeight(), 0.0f, 100.0f);
+	Matrix view = Matrix::CreateLookAt(Vector3(0, 0, 1.0f), Vector3(0, 0, -1.0f), Vector3::Up);
+
+	for (int i = 0; i < currentTouchEvent.numTouches; i++)
+	{
+		Matrix world = Matrix::CreateTranslation(Vector3(currentTouchEvent.touchPoints[i].pos.X, currentTouchEvent.touchPoints[i].pos.Y, 0)) * Matrix::Identity * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(20.0f);
+		// primBatch.DrawSphere(Vector3(currentTouchEvent.touchPoints[i].pos.X, currentTouchEvent.touchPoints[i].pos.Y, 0), 100.0f, 10, 10, Color::Red);
+		primBatch.Begin(PrimitiveType::TriangleList, view, projection, world);
+		primBatch.DrawMesh(mesh);
 		primBatch.End();
 	}
 
