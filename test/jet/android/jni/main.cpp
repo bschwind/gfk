@@ -49,7 +49,7 @@ static int32_t handleInput(struct android_app* app, AInputEvent* event)
         }
 
         touchEvent.time = GameTime::GetSystemTime();
-        touchEvent.numTouches = AMotionEvent_getPointerCount(event);
+        touchEvent.numTouches = std::min(static_cast<unsigned char>(AMotionEvent_getPointerCount(event)), TouchEvent::MAX_TOUCHES);
 
         for (int i = 0; i < touchEvent.numTouches; i++) {
             TouchEvent::TouchPoint& curPoint = touchEvent.touchPoints[i];

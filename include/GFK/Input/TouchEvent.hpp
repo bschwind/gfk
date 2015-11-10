@@ -8,7 +8,7 @@ namespace gfk
 class TouchEvent
 {
 public:
-	static const unsigned char MAX_TOUCHES = 8;
+	static const unsigned char MAX_TOUCHES = 10;
 
 	enum TouchState
 	{
