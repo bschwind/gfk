@@ -8,11 +8,17 @@ namespace gfk
 
 bool GLErrorCheck()
 {
+	return GLErrorCheck("");
+}
+
+bool GLErrorCheck(const std::string &tag)
+{
 	GLenum error = glGetError();
 
 	if (error != GL_NO_ERROR)
 	{
 		Logger::Log("OpenGL error detected: \n");
+		Logger::Logf("Tag: %s", tag.c_str());
 		Logger::Log("\tError: \n");
 
 		switch (error)

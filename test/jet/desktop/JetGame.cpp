@@ -1,4 +1,4 @@
-#include "include/JetGame.hpp"
+#include "JetGame.hpp"
 #include "network/Packet.hpp"
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Input/Keyboard.hpp>
@@ -21,7 +21,7 @@ networkSendsPerSecond(10),
 updateCounter(0),
 camera(),
 vrCam(),
-mesh("assets/f18Hornet.3DS"),
+mesh(),
 inputSequenceNumber(0)
 {
 	isFixedTimeStep = true;
@@ -39,6 +39,14 @@ JetGame::~JetGame()
 void JetGame::Initialize()
 {
 	gfk::Game::Initialize();
+	jetClient.ConnectToServer("127.0.0.1", 55777, ClientType::DESKTOP);
+}
+
+void JetGame::LoadContent()
+{
+	gfk::Game::LoadContent();
+
+	mesh.Load("assets/f18Hornet.3DS");
 	primBatch.Initialize();
 
 	auto renderFunction = [this](gfk::GameTime gameTime, float interpolationFactor)
@@ -47,16 +55,9 @@ void JetGame::Initialize()
 	};
 	vrCam.Initialize(renderFunction);
 
-	jetClient.ConnectToServer("127.0.0.1", 55777, ClientType::DESKTOP);
-
 	Device.SetClearColor(Color::Black);
 
 	Mouse::SetPos(Vector2(0, 0));
-}
-
-void JetGame::LoadContent()
-{
-	gfk::Game::LoadContent();
 }
 
 void JetGame::UnloadContent()

@@ -18,6 +18,8 @@ public:
 	void Initialize();
 	void Begin(PrimitiveType primitiveType, Camera &camera);
 	void Begin(PrimitiveType primitiveType, Camera &camera, const Matrix &worldMatrix);
+	void Begin(PrimitiveType primitiveType, const Matrix &view, const Matrix &projection);
+	void Begin(PrimitiveType primitiveType, const Matrix &view, const Matrix &projection, const Matrix &worldMatrix);
 	void Flush();
 	void End();
 

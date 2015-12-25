@@ -2,7 +2,7 @@
 
 #if defined(PLATFORM_WINDOWS)
 	#include <Windows.h>
-#elif defined(PLATFORM_MAC)
+#elif defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
 	#include <mach/mach_time.h>
 #elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 	#include <sys/time.h>
@@ -50,7 +50,7 @@ void GameTime::InitClock()
 			clockResolution = 0.001; // winmm resolution is 1 ms
 			//time32 = timeGetTime();
 		}
-	#elif defined(PLATFORM_MAC)
+	#elif defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
 		mach_timebase_info_data_t info;
 		mach_timebase_info(&info);
 
@@ -108,7 +108,7 @@ unsigned long long int GameTime::GetRawTime()
 	#if defined(PLATFORM_WINDOWS)
 		// This function is not used in the Windows time code, so return 0
 		return 0.0;
-	#elif defined(PLATFORM_MAC)
+	#elif defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
 		return mach_absolute_time();
 	#elif defined(PLATFORM_UNIX) || defined(PLATFORM_ANDROID)
 		struct timeval tv;

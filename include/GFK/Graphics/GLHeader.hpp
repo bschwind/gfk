@@ -5,6 +5,7 @@
 #include <string>
 
 #if defined(PLATFORM_ANDROID)
+	#include <EGL/egl.h>
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
 #else
@@ -24,5 +25,6 @@ static std::map<std::string, GLint> GLSL_ATTRIB_MAP = {
 };
 
 bool GLErrorCheck();
+bool GLErrorCheck(const std::string &tag);
 
 }

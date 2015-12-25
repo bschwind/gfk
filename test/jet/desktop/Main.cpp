@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 #include <GFK/Game.hpp>
-#include "include/JetGame.hpp"
+#include "JetGame.hpp"
 
 using namespace jetGame;
 

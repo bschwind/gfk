@@ -4,7 +4,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libassimp
 ASSIMP_SRC_DIR = code
 
-FILE_LIST := $(wildcard $(LOCAL_PATH)/$(ASSIMP_SRC_DIR)/*.cpp)
+FILE_LIST := $(wildcard $(LOCAL_PATH)/port/AndroidJNI/*.cpp)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/$(ASSIMP_SRC_DIR)/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/openddlparser/code/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/unzip/*.c)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/poly2tri/poly2tri/*/*.cc)

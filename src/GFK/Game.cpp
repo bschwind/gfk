@@ -3,13 +3,14 @@
 #include <GFK/Graphics/Color.hpp>
 #include <GFK/Graphics/MonitorConfig.hpp>
 #include <GFK/Network/UDPSocket.hpp>
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	#include <GFK/Input/Keyboard.hpp>
 	#include <GFK/Input/Mouse.hpp>
 	#include <signal.h>
 #endif
 #include <chrono>
 #include <thread>
+#include <GFK/System/Logger.hpp>
 
 namespace gfk
 {
@@ -41,6 +42,21 @@ currentTime(0.0)
 
 }
 
+#if defined(PLATFORM_ANDROID)
+	Game::Game(android_app *app) :
+	isFixedTimeStep(false),
+	targetUpdateFramesPerSecond(60),
+	title("GFK Game"),
+	width(1280),
+	height(720),
+	accumulator(0.0),
+	currentTime(0.0),
+	app(app)
+	{
+
+	}
+#endif
+
 Game::~Game()
 {
 	UDPSocket::ShutdownSocketLayer();
@@ -57,7 +73,7 @@ void Game::SignalHandler(int signal)
 
 void Game::Initialize()
 {
-#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_WINDOWS)
+#if !defined(PLATFORM_MOBILE) && !defined(PLATFORM_WINDOWS)
 	// Catch signals such as CTRL-C
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = SignalHandler;
@@ -69,11 +85,23 @@ void Game::Initialize()
 
 	GameTime::InitClock();
 	UDPSocket::InitializeSocketLayer();
-
 	MonitorConfig::SetupMonitor(width, height, title, false);
+
+	time.TotalGameTime = GameTime::GetSystemTime();
+	currentTime = GameTime::GetSystemTime();
+	dt = 1.0 / targetUpdateFramesPerSecond;
+
+#if !defined(PLATFORM_MOBILE)
+	glfwSetTime(0.0);
+#endif
+}
+
+void Game::InitializeGraphics()
+{
+	Device.Initialize(*this);
 	Device.SetClearColor(Color::CornflowerBlue);
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 	Keyboard::SetTargetWindow(Device.GetPrimaryWindow());
 	Mouse::SetTargetWindow(Device.GetPrimaryWindow());
 
@@ -84,14 +112,13 @@ void Game::Initialize()
 	glfwSetWindowSizeCallback(Device.GetPrimaryWindow(), WindowResizeHandler);
 #endif
 
-	time.TotalGameTime = GameTime::GetSystemTime();
-	currentTime = GameTime::GetSystemTime();
-	dt = 1.0 / targetUpdateFramesPerSecond;
-
 	LoadContent();
-#if !defined(PLATFORM_ANDROID)
-	glfwSetTime(0.0);
-#endif
+}
+
+void Game::UninitializeGraphics()
+{
+	Device.Uninitialize();
+	UnloadContent();
 }
 
 void Game::LoadContent()
@@ -111,8 +138,11 @@ void Game::Update(const gfk::GameTime &gameTime)
 
 void Game::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
-	Device.Clear();
-	Device.SwapBuffers();
+	if (Device.state == GraphicsDevice::Initialized)
+	{
+		Device.Clear();
+		Device.SwapBuffers();
+	}
 }
 
 void Game::Tick()
@@ -143,10 +173,13 @@ void Game::Tick()
 			accumulator -= dt;
 		}
 
-		// interpolationFactor is how far we are between
-		// the previous world state and the current world state
-		double interpolationFactor = accumulator / dt;
-		Draw(time, interpolationFactor);
+		if (Device.state == GraphicsDevice::Initialized)
+		{
+			// interpolationFactor is how far we are between
+			// the previous world state and the current world state
+			double interpolationFactor = accumulator / dt;
+			Draw(time, interpolationFactor);
+		}
 	}
 	else
 	{
@@ -157,15 +190,24 @@ void Game::Tick()
 		HandleEvents();
 
 		Update(time);
-		Draw(time, 1.0f);
+		if (Device.state == GraphicsDevice::Initialized)
+		{
+			Draw(time, 1.0f);
+		}
 	}
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
+void Game::OnTouchEvent(const TouchEvent &event)
+{
+
+}
+
 void Game::Run()
 {
 	Initialize();
+	InitializeGraphics();
 
 	while(!exitRequested && !Device.WindowShouldClose())
 	{
@@ -175,7 +217,7 @@ void Game::Run()
 	UnloadContent();
 }
 
-#if !defined(PLATFORM_ANDROID)
+#if !defined(PLATFORM_MOBILE)
 void Game::WindowResizeHandler(GLFWwindow *window, int width, int height)
 {
 	Game *gameToResize = static_cast<Game *>(glfwGetWindowUserPointer(window));
@@ -190,6 +232,13 @@ void Game::ResizeWindow(int width, int height)
 	Device.ResizeWindow(width, height);
 }
 
+#if defined(PLATFORM_ANDROID)
+	android_app* Game::GetAndroidApp() const
+	{
+		return app;
+	}
+#endif
+
 void Game::HandleEvents()
 {
 	Device.UpdateWindowEvents();
@@ -198,6 +247,21 @@ void Game::HandleEvents()
 void Game::Exit()
 {
 	exitRequested = true;
+}
+
+int Game::GetWidth() const
+{
+	return width;
+}
+
+int Game::GetHeight() const
+{
+	return height;
+}
+
+std::string Game::GetTitle() const
+{
+	return title;
 }
 
 }
