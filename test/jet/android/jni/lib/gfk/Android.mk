@@ -38,6 +38,7 @@ LOCAL_SRC_FILES := \
 	$(GFK_SRC)/GFK/Network/IPAddress.cpp \
 	$(GFK_SRC)/GFK/Game.cpp \
 	$(GFK_SRC)/GFK/Input/TouchEvent.cpp \
+	$(GFK_SRC)/GFK/Input/GestureRecognizer.cpp \
 	$(GFK_SRC)/GFK/Network/UDPSocket.cpp \
 	$(GFK_SRC)/GFK/Network/BytePacker.cpp \
 	$(GFK_SRC)/GFK/Network/NetworkBuffer.cpp \

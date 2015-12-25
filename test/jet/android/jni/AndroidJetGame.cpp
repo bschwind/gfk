@@ -71,11 +71,13 @@ TouchEvent currentTouchEvent;
 
 void AndroidJetGame::OnTouchEvent(const TouchEvent &event)
 {
+	recognizer.OnTouchEvent(event);
 	currentTouchEvent = event;
 }
 
 void AndroidJetGame::Update(const gfk::GameTime &gameTime)
 {
+	recognizer.Update(gameTime);
 	UpdateNetwork(gameTime);
 	UpdateGame(gameTime);
 	SendStateToServer(gameTime);

@@ -7,6 +7,7 @@
 #include <GFK/Game.hpp>
 #include <GFK/Graphics/Mesh.hpp>
 #include <GFK/Graphics/PrimitiveBatch3D.hpp>
+#include <GFK/Input/GestureRecognizer.hpp>
 #include <GFK/Network/UDPSocket.hpp>
 #include <GFK/Network/NetworkBuffer.hpp>
 #include <enet/enet.h>
@@ -36,6 +37,7 @@ private:
 
 	TopDownCamera cam;
 	PrimitiveBatch3D primBatch;
+	GestureRecognizer recognizer;
 	unsigned long long int networkCounter;
 	int networkSendsPerSecond;
 	Mesh mesh;

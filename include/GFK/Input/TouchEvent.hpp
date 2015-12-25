@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GFK/Math/Vector2.hpp>
+#include <GFK/System/Logger.hpp>
 #include <stdint.h>
 
 namespace gfk
@@ -9,6 +10,8 @@ class TouchEvent
 {
 public:
 	static const unsigned char MAX_TOUCHES = 10;
+
+	static void PrintTouchEvent(const TouchEvent &event);
 
 	enum TouchState
 	{
