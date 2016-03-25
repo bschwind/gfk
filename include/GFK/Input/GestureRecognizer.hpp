@@ -20,10 +20,15 @@ private:
 		TwoFingersDown
 	};
 
-	Vector2 oneFingerPanPos;
+	Vector2 oneFingerPanStartPos;
 
 	// OneFingerDown variables
 	Vector2 oneFingerStartPos;
+	Vector2 panOffset;
+
+	// Release variables
+	double currentReleaseTime = 0.0;
+	double maxReleaseTime = 0.2;
 
 	void PrintState();
 
