@@ -123,18 +123,18 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 
 	for (const auto &player : jetClient.players)
 	{
-		Matrix world = player.second.displayJet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
-		float jetX = player.second.displayJet.GetPosition().X;
-		float jetY = player.second.displayJet.GetPosition().Y;
-		float jetZ = player.second.displayJet.GetPosition().Z;
+		Matrix world = player.second.displayVehicle.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+		float vehicleX = player.second.displayVehicle.GetPosition().X;
+		float vehicleY = player.second.displayVehicle.GetPosition().Y;
+		float vehicleZ = player.second.displayVehicle.GetPosition().Z;
 
 		primBatch.Begin(PrimitiveType::TriangleList, cam, world);
 		primBatch.DrawMesh(mesh);
 		primBatch.End();
 
 		primBatch.Begin(PrimitiveType::LineList, cam);
-		primBatch.DrawLine(Vector3(jetX, 0, jetZ), Vector3(jetX, jetY, jetZ), Color::Red, Color::Red);
-		primBatch.DrawLine(Vector3(), Vector3(jetX, jetY, jetZ), Color::Green, Color::Green);
+		primBatch.DrawLine(Vector3(vehicleX, 0, vehicleZ), Vector3(vehicleX, vehicleY, vehicleZ), Color::Red, Color::Red);
+		primBatch.DrawLine(Vector3(), Vector3(vehicleX, vehicleY, vehicleZ), Color::Green, Color::Green);
 		primBatch.End();
 	}
 

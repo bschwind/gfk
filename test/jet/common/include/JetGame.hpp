@@ -1,6 +1,7 @@
 #pragma once
 
 #include "objects/Jet.hpp"
+#include "objects/Helicopter.hpp"
 #include "objects/ClientData.hpp"
 #include "objects/GameInput.hpp"
 #include "JetCamera.hpp"

@@ -6,6 +6,8 @@ add_executable(jet
 				Main.cpp
 				JetGame.cpp
 				${COMMON_PATH}/objects/Jet.cpp
+				${COMMON_PATH}/objects/Helicopter.cpp
+				${COMMON_PATH}/objects/Vehicle.cpp
 				${COMMON_PATH}/objects/ClientData.cpp
 				${COMMON_PATH}/objects/GameInput.cpp
 				${COMMON_PATH}/network/NetworkHelper.cpp

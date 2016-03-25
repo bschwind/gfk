@@ -102,7 +102,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 	{
 		clientData.id = playerIdCounter;
 		playerIdCounter++;
-		clientData.jet.Reset();
+		clientData.vehicle.Reset();
 
 		if (protocol == Packet::NEW_DESKTOP_CLIENT_REQ)
 		{
@@ -155,7 +155,7 @@ void JetServer::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 		input.keyD = req.keyD;
 		input.keyLeftShift = req.keyLeftShift;
 
-		clientData.jet.Update(input, gameTime);
+		clientData.vehicle.Update(input, gameTime);
 
 		// TODO - validate input sequence number
 		if (input.sequenceNumber > clientData.lastInputSequenceNumber)
@@ -191,12 +191,12 @@ void JetServer::SendStateToPlayers(const gfk::GameTime &gameTime)
 			{
 				// Write jet data for all clients
 				netHelper.WritePacket(JetInputRes(clientData.id,
-					clientData.jet.GetPosition(),
-					clientData.jet.GetRotation(),
-					clientData.jet.GetEngineRPM(),
-					clientData.jet.GetRollVel(),
-					clientData.jet.GetPitchVel(),
-					clientData.jet.GetYawVel(),
+					clientData.vehicle.GetPosition(),
+					clientData.vehicle.GetRotation(),
+					clientData.vehicle.GetEngineRPM(),
+					clientData.vehicle.GetRollVel(),
+					clientData.vehicle.GetPitchVel(),
+					clientData.vehicle.GetYawVel(),
 					clientData.lastInputSequenceNumber), false);
 			}
 		);

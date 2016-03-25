@@ -85,7 +85,7 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 
 	if (localClient)
 	{
-		Jet &jet = localClient->jet;
+		Vehicle &vehicle = localClient->vehicle;
 		unsigned int lastInputSequenceNumber = jetClient.players[jetClient.localPlayerId].lastInputSequenceNumber;
 
 		if (inputs.size() > 0 && jetClient.receivedNewInput)
@@ -109,7 +109,7 @@ void JetGame::UpdateNetwork(const gfk::GameTime &gameTime)
 				// starting from the last known good server state
 				for (GameInput &input : inputs)
 				{
-					jet.Update(input, gameTime);
+					vehicle.Update(input, gameTime);
 				}
 			}
 		}
@@ -131,11 +131,11 @@ void JetGame::UpdateGame(const gfk::GameTime &gameTime)
 		GameInputReq gameInputPacket(newInput.sequenceNumber, newInput.mouseDiffX, newInput.mouseDiffY, newInput.keyW, newInput.keyS, newInput.keyA, newInput.keyD, newInput.keyLeftShift);
 		jetClient.WritePacket(gameInputPacket, false);
 
-		Jet &jet = localClient->jet;
-		jet.Update(newInput, gameTime);
+		Vehicle &vehicle = localClient->vehicle;
+		vehicle.Update(newInput, gameTime);
 
-		camera.Update(dt, jet.GetForward(), jet.GetUp(), jet.GetRight());
-		camera.SetPos(jet.GetPosition() + Vector3::Transform(Vector3(0, 0.25f, 1.1f), jet.GetRotation()) * 1.5f);
+		camera.Update(dt, vehicle.GetForward(), vehicle.GetUp(), vehicle.GetRight());
+		camera.SetPos(vehicle.GetPosition() + Vector3::Transform(Vector3(0, 0.25f, 1.1f), vehicle.GetRotation()) * 1.5f);
 	}
 
 	// Update interpolation for remote clients
@@ -240,11 +240,11 @@ void JetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 
 		if (player.second.id == jetClient.localPlayerId)
 		{
-			world = player.second.jet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+			world = player.second.vehicle.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
 		}
 		else
 		{
-			world = player.second.displayJet.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
+			world = player.second.displayVehicle.GetTransform() * Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f);
 		}
 
 		primBatch.Begin(PrimitiveType::TriangleList, camera, world);

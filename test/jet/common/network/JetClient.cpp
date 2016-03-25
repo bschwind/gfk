@@ -86,7 +86,7 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 				// If this is a remote player, update the smoothing variables
 				if (localPlayerId != jetStatePacket.playerID)
 				{
-					player.lastJet = player.displayJet;
+					player.lastVehicle = player.displayVehicle;
 					player.currentSmoothing = 0.0f;
 				}
 				else
@@ -94,10 +94,10 @@ void JetClient::HandleGamePacket(NetworkBuffer &netBuffer, unsigned short protoc
 					receivedNewInput = true;
 				}
 
-				player.jet.SetPosition(jetStatePacket.position);
-				player.jet.SetRotation(jetStatePacket.rotation);
-				player.jet.SetEngineRPM(jetStatePacket.engineRPM);
-				player.jet.SetRollPitchYawVel(jetStatePacket.rollVel, jetStatePacket.pitchVel, jetStatePacket.yawVel);
+				player.vehicle.SetPosition(jetStatePacket.position);
+				player.vehicle.SetRotation(jetStatePacket.rotation);
+				player.vehicle.SetEngineRPM(jetStatePacket.engineRPM);
+				player.vehicle.SetRollPitchYawVel(jetStatePacket.rollVel, jetStatePacket.pitchVel, jetStatePacket.yawVel);
 				player.lastInputSequenceNumber = jetStatePacket.lastInputSequenceNumber;
 			}
 		}
@@ -156,11 +156,11 @@ void JetClient::Update(const gfk::GameTime &gameTime)
 				player.second.currentSmoothing = 1.0f;
 			}
 
-			Vector3 lerpedPos = Vector3::Lerp(player.second.lastJet.GetPosition(), player.second.jet.GetPosition(), player.second.currentSmoothing);
-			player.second.displayJet.SetPosition(lerpedPos);
+			Vector3 lerpedPos = Vector3::Lerp(player.second.lastVehicle.GetPosition(), player.second.vehicle.GetPosition(), player.second.currentSmoothing);
+			player.second.displayVehicle.SetPosition(lerpedPos);
 
-			Quaternion lerpedRot = Quaternion::Slerp(player.second.lastJet.GetRotation(), player.second.jet.GetRotation(), player.second.currentSmoothing);
-			player.second.displayJet.SetRotation(lerpedRot);
+			Quaternion lerpedRot = Quaternion::Slerp(player.second.lastVehicle.GetRotation(), player.second.vehicle.GetRotation(), player.second.currentSmoothing);
+			player.second.displayVehicle.SetRotation(lerpedRot);
 		}
 	}
 }

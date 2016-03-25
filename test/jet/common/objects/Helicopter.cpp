@@ -1,4 +1,4 @@
-#include "objects/Jet.hpp"
+#include "objects/Helicopter.hpp"
 #include <GFK/Math/MathHelper.hpp>
 #include <iostream>
 #include <cmath>
@@ -6,37 +6,37 @@
 namespace jetGame
 {
 
-const float Jet::IDLE_RPM(1000.0f);
+const float Helicopter::IDLE_RPM(1000.0f);
 
-Jet::Jet() :
+Helicopter::Helicopter() :
 Vehicle(Vector3(0, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0)),
 engineRPM(0.0f)
 {
 
 }
 
-Jet::~Jet()
+Helicopter::~Helicopter()
 {
 
 }
 
-void Jet::Reset()
+void Helicopter::Reset()
 {
 	Vehicle::Reset();
 	engineRPM = 0.0f;
 }
 
-float Jet::GetEngineRPM() const
+float Helicopter::GetEngineRPM() const
 {
 	return engineRPM;
 }
 
-void Jet::SetEngineRPM(float rpm)
+void Helicopter::SetEngineRPM(float rpm)
 {
 	engineRPM = rpm;
 }
 
-void Jet::Update(const GameInput &input, const GameTime &gameTime)
+void Helicopter::Update(const GameInput &input, const GameTime &gameTime)
 {
 	float throttle = 0.0f;
 	float yawInput = 0.0f;
@@ -68,14 +68,14 @@ void Jet::Update(const GameInput &input, const GameTime &gameTime)
 	Update(throttle, input.mouseDiffX, input.mouseDiffY, yawInput, thrusterEnabled, gameTime);
 }
 
-void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime)
+void Helicopter::Update(float throttleAmt, float rollInput, float pitchInput, float yawInput, bool thrusterEnabled, const GameTime &gameTime)
 {
 	float dt = (float)gameTime.ElapsedGameTime;
 
 	// Update rotational values
 	float rollSpeed = 0.015f;
 	float pitchSpeed = 0.015f;
-	float yawSpeed = 0.015f;
+	float yawSpeed = 0.15f;
 
 	// Update engine speed
 	if (engineRPM < IDLE_RPM)
@@ -125,7 +125,7 @@ void Jet::Update(float throttleAmt, float rollInput, float pitchInput, float yaw
 
 	ReOrient();
 		
-	position += forward * engineRPM * dt * 0.01f;
+	position += up * engineRPM * dt * 0.01f;
 }
 
 }

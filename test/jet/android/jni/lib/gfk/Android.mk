@@ -32,6 +32,8 @@ LOCAL_SRC_FILES := \
 	../../../../common/network/Outbox.cpp \
 	../../../../common/objects/ClientData.cpp \
 	../../../../common/objects/Jet.cpp \
+	../../../../common/objects/Helicopter.cpp \
+	../../../../common/objects/Vehicle.cpp \
 	../../../../common/objects/GameInput.cpp \
 	$(GFK_SRC)/GFK/Math/Vector2.cpp \
 	$(GFK_SRC)/GFK/Math/MathHelper.cpp \

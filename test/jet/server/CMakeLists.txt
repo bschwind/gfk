@@ -8,6 +8,8 @@ add_executable(jetServer
 				${COMMON_PATH}/network/Packet.cpp
 				${COMMON_PATH}/network/Outbox.cpp
 				${COMMON_PATH}/objects/Jet.cpp
+				${COMMON_PATH}/objects/Helicopter.cpp
+				${COMMON_PATH}/objects/Vehicle.cpp
 				${COMMON_PATH}/objects/ClientData.cpp
 				${COMMON_PATH}/objects/GameInput.cpp)
 target_link_libraries(jetServer gfk)

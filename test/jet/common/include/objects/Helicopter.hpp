@@ -12,12 +12,12 @@ using namespace gfk;
 namespace jetGame
 {
 
-class Jet : public Vehicle
+class Helicopter : public Vehicle
 {
 public:
-	Jet();
-	Jet(const Vector3 &pos, const Vector3 &initialForward, const Vector3 &initialUp);
-	~Jet();
+	Helicopter();
+	Helicopter(const Vector3 &pos, const Vector3 &initialForward, const Vector3 &initialUp);
+	~Helicopter();
 
 	void Reset() override;
 	void Update(const GameInput &input, const GameTime &gameTime) override;
