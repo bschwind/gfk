@@ -120,7 +120,8 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 		case Release:
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
-				if (Vector2::DistanceSquared(event.touchPoints[0].pos, oneFingerStartPos) < 1600)
+
+				if (Vector2::DistanceSquared(event.touchPoints[0].pos, oneFingerStartPos) < 6400)
 				{
 					// The user tapped again close to where they tapped before, effectively
 					// making this a double tap. Enable one finger zooming

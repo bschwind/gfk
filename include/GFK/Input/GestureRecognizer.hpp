@@ -28,7 +28,7 @@ private:
 
 	// Release variables
 	double currentReleaseTime = 0.0;
-	double maxReleaseTime = 0.2;
+	double maxReleaseTime = 0.3;
 
 	void PrintState();
 
