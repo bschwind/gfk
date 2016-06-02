@@ -28,9 +28,15 @@ private:
 
 	// Release variables
 	double currentReleaseTime = 0.0;
-	double maxReleaseTime = 0.3;
+	const double maxReleaseTime = 0.3;
+
+	// ContextMenu variables
+	double currentContextMenuTime = 0.0;
+	const double maxContextMenuTime = 0.4;
 
 	void PrintState();
+	std::string StateToString(State state);
+	void ChangeState(State newState);
 
 public:
 	State state;

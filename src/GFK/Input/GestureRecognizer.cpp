@@ -16,7 +16,8 @@ GestureRecognizer::~GestureRecognizer()
 
 }
 
-void GestureRecognizer::PrintState() {
+void GestureRecognizer::PrintState()
+{
 	switch(state) {
 		case None:
 			Logger::Log("GestureRecognizer State: None");
@@ -42,22 +43,69 @@ void GestureRecognizer::PrintState() {
 	}
 }
 
+std::string GestureRecognizer::StateToString(State state)
+{
+	switch(state) {
+		case None:
+			return "None";
+			break;
+		case OneFingerDown:
+			return "OneFingerDown";
+			break;
+		case Release:
+			return "Release";
+			break;
+		case OneFingerZoom:
+			return "OneFingerZoom";
+			break;
+		case OneFingerPan:
+			return "OneFingerPan";
+			break;
+		case ContextMenu:
+			return "ContextMenu";
+			break;
+		case TwoFingersDown:
+			return "TwoFingersDown";
+			break;
+	}
+}
+
+void GestureRecognizer::ChangeState(State newState)
+{
+	std::string oldStateName = StateToString(state);
+	std::string newStateName = StateToString(newState);
+
+	Logger::Logf("%s --> %s", oldStateName.c_str(), newStateName.c_str());
+
+	state = newState;
+}
+
 void GestureRecognizer::Update(const gfk::GameTime &gameTime)
 {
-	PrintState();
+	// PrintState();
 
 	switch(state) {
 		case None:
 			break;
 		case OneFingerDown:
+			currentContextMenuTime += gameTime.ElapsedGameTime;
+
+			// Logger::Logf("Context menu time: %f", currentContextMenuTime);
+
+			if (currentContextMenuTime >= maxContextMenuTime)
+			{
+				// Logger::Log("Context menu timeout!\n");
+				ChangeState(ContextMenu);
+				currentContextMenuTime = 0.0;
+			}
 			break;
 		case Release:
 			currentReleaseTime += gameTime.ElapsedGameTime;
 
 			if (currentReleaseTime >= maxReleaseTime)
 			{
-				Logger::Log("Timeout!\n");
-				state = None;
+				// Logger::Log("One finger zoom timeout!\n");
+				ChangeState(None);
 				currentReleaseTime = 0.0;
 			}
 			break;
@@ -66,6 +114,8 @@ void GestureRecognizer::Update(const gfk::GameTime &gameTime)
 		case OneFingerPan:
 			break;
 		case ContextMenu:
+			// Emit "context menu" event
+			ChangeState(OneFingerPan);
 			break;
 		case TwoFingersDown:
 			break;
@@ -81,7 +131,7 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 		case None:
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
-				state = OneFingerDown;
+				ChangeState(OneFingerDown);
 				oneFingerStartPos = event.touchPoints[0].pos;
 			}
 			break;
@@ -89,8 +139,8 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Cancelled))
 			{
 				// Touch point went off the screen or somehow it was cancelled
-				Logger::Log("Going to None state!\n");
-				state = None;
+				// Logger::Log("Going to None state!\n");
+				ChangeState(None);
 				currentReleaseTime = 0.0;
 			}
 
@@ -99,22 +149,22 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 				// 1600 = 40 * 40
 				if (Vector2::DistanceSquared(event.touchPoints[0].pos, oneFingerStartPos) > 1600)
 				{
-					state = OneFingerPan;
+					ChangeState(OneFingerPan);
 					oneFingerPanStartPos = event.touchPoints[0].pos;
-					Logger::Log("Moved farther than 40 pixels!");
+					// Logger::Log("Moved farther than 40 pixels!");
 				}
 			}
 
 			if (event.numTouches >= 2 && event.touchType == TouchEvent::TouchState::Began)
 			{
-				state = TwoFingersDown;
+				ChangeState(TwoFingersDown);
 			}
 
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Ended)
 			{
 				// This was a quick tap
-				Logger::Log("Going to Release state!\n");
-				state = Release;
+				// Logger::Log("Going to Release state!\n");
+				ChangeState(Release);
 			}
 			break;
 		case Release:
@@ -125,61 +175,66 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 				{
 					// The user tapped again close to where they tapped before, effectively
 					// making this a double tap. Enable one finger zooming
-					Logger::Log("Going to one finger zoom!\n");
-					state = OneFingerZoom;
+					// Logger::Log("Going to one finger zoom!\n");
+					ChangeState(OneFingerZoom);
 				}
 				else
 				{
 					// The user double tapped, but the second tap was far from the first.
 					// Treat it as a new single touch down
-					Logger::Log("Going to one finger down!\n");
-					state = OneFingerDown;
+					// Logger::Log("Going to one finger down!\n");
+					ChangeState(OneFingerDown);
 					oneFingerStartPos = event.touchPoints[0].pos;
 				}
 			}
 
-			Logger::Log("In release state!\n");
+			// Logger::Log("In release state!\n");
 			break;
 		case OneFingerZoom:
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
-				state = None;
+				ChangeState(None);
 				currentReleaseTime = 0.0;
 			}
 
 			if (event.numTouches >= 2 && event.touchType == TouchEvent::TouchState::Began)
 			{
-				state = TwoFingersDown;
+				ChangeState(TwoFingersDown);
 			}
 			break;
 		case OneFingerPan:
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
-				state = None;
+				ChangeState(None);
 				currentReleaseTime = 0.0;
 			}
 
 			if (event.numTouches >= 2 && event.touchType == TouchEvent::TouchState::Began)
 			{
-				state = TwoFingersDown;
+				ChangeState(TwoFingersDown);
 			}
 
-			Logger::Logf("Distance from start touch: %f\n", Vector2::Distance(event.touchPoints[0].pos, oneFingerStartPos));
+			// Logger::Logf("Distance from start touch: %f\n", Vector2::Distance(event.touchPoints[0].pos, oneFingerStartPos));
 			Vector2::Subtract(event.touchPoints[0].pos, oneFingerStartPos, panOffset);
-			Logger::Logf("Offset: (%f,%f)\n", panOffset.X, panOffset.Y);
+			// Logger::Logf("Offset: (%f,%f)\n", panOffset.X, panOffset.Y);
 
 			break;
 		case ContextMenu:
+			if (event.touchType == TouchEvent::TouchState::Began)
+			{
+				ChangeState(TwoFingersDown);
+				currentContextMenuTime = 0.0;
+			}
 			break;
 		case TwoFingersDown:
 			if (event.numTouches == 2 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
-				state = OneFingerPan;
+				ChangeState(OneFingerPan);
 			}
 			break;
 		default:
 			Logger::Log("THIS SHOULD NEVER HAPPEN");
-			state = None; // We shouldn't even hit this case
+			ChangeState(None); // We shouldn't even hit this case
 			currentReleaseTime = 0.0;
 			break;
 	}
