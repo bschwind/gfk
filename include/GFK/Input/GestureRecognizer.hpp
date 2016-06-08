@@ -24,7 +24,7 @@ private:
 
 	// OneFingerDown variables
 	Vector2 oneFingerStartPos;
-	Vector2 panOffset;
+	Vector2 lastOneFingerPos;
 
 	// Release variables
 	double currentReleaseTime = 0.0;
@@ -38,6 +38,11 @@ private:
 	std::string StateToString(State state);
 	void ChangeState(State newState);
 
+	// Accumulated values that we will clear out every frame
+	Vector2 panAccum;
+	float rotateAccum;
+	float zoomAccum;
+
 public:
 	State state;
 
@@ -46,5 +51,9 @@ public:
 
 	void Update(const gfk::GameTime &gameTime);
 	void OnTouchEvent(const TouchEvent &event);
+
+	Vector2 GetPanOffset();
+	float GetRotationOffset();
+	float GetZoomOffset();
 };
 }

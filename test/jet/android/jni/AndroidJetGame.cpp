@@ -117,6 +117,9 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	Color color = Color::Gray;
 	color.A = 0.3f;
 
+	Vector2 panOffset = recognizer.GetPanOffset();
+	Logger::Logf("Pan Accum: (%f,%f)\n", panOffset.X, panOffset.Y);
+
 	primBatch.Begin(PrimitiveType::LineList, cam);
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
 	primBatch.End();

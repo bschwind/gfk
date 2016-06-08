@@ -129,17 +129,20 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 	switch(state)
 	{
 		case None:
+		{
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
 				ChangeState(OneFingerDown);
 				oneFingerStartPos = event.touchPoints[0].pos;
+				lastOneFingerPos = oneFingerStartPos;
 			}
 			break;
+		}
 		case OneFingerDown:
+		{
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Cancelled))
 			{
 				// Touch point went off the screen or somehow it was cancelled
-				// Logger::Log("Going to None state!\n");
 				ChangeState(None);
 				currentReleaseTime = 0.0;
 			}
@@ -163,11 +166,12 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Ended)
 			{
 				// This was a quick tap
-				// Logger::Log("Going to Release state!\n");
 				ChangeState(Release);
 			}
 			break;
+		}
 		case Release:
+		{
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
 
@@ -175,22 +179,21 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 				{
 					// The user tapped again close to where they tapped before, effectively
 					// making this a double tap. Enable one finger zooming
-					// Logger::Log("Going to one finger zoom!\n");
 					ChangeState(OneFingerZoom);
 				}
 				else
 				{
 					// The user double tapped, but the second tap was far from the first.
 					// Treat it as a new single touch down
-					// Logger::Log("Going to one finger down!\n");
 					ChangeState(OneFingerDown);
 					oneFingerStartPos = event.touchPoints[0].pos;
+					lastOneFingerPos = oneFingerStartPos;
 				}
 			}
-
-			// Logger::Log("In release state!\n");
 			break;
+		}
 		case OneFingerZoom:
+		{
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
 				ChangeState(None);
@@ -202,7 +205,9 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 				ChangeState(TwoFingersDown);
 			}
 			break;
+		}
 		case OneFingerPan:
+		{
 			if (event.numTouches == 1 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
 				ChangeState(None);
@@ -214,30 +219,58 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 				ChangeState(TwoFingersDown);
 			}
 
-			// Logger::Logf("Distance from start touch: %f\n", Vector2::Distance(event.touchPoints[0].pos, oneFingerStartPos));
-			Vector2::Subtract(event.touchPoints[0].pos, oneFingerStartPos, panOffset);
-			// Logger::Logf("Offset: (%f,%f)\n", panOffset.X, panOffset.Y);
-
+			Vector2 offset;
+			Vector2::Subtract(event.touchPoints[0].pos, lastOneFingerPos, offset);
+			lastOneFingerPos = event.touchPoints[0].pos;
+			panAccum += offset;
 			break;
+		}
 		case ContextMenu:
+		{
 			if (event.touchType == TouchEvent::TouchState::Began)
 			{
 				ChangeState(TwoFingersDown);
 				currentContextMenuTime = 0.0;
 			}
 			break;
+		}
 		case TwoFingersDown:
+		{
 			if (event.numTouches == 2 && (event.touchType == TouchEvent::TouchState::Ended || event.touchType == TouchEvent::TouchState::Cancelled))
 			{
 				ChangeState(OneFingerPan);
 			}
 			break;
+		}
 		default:
+		{
 			Logger::Log("THIS SHOULD NEVER HAPPEN");
 			ChangeState(None); // We shouldn't even hit this case
 			currentReleaseTime = 0.0;
 			break;
+		}
 	}
+}
+
+Vector2 GestureRecognizer::GetPanOffset()
+{
+	Vector2 temp(panAccum.X, panAccum.Y);
+	panAccum.X = 0.0f;
+	panAccum.Y = 0.0f;
+
+	return temp;
+}
+
+float GestureRecognizer::GetRotationOffset()
+{
+	// TODO
+	return 1.0f;
+}
+
+float GestureRecognizer::GetZoomOffset()
+{
+	// TODO
+	return 1.0f;
 }
 
 }
