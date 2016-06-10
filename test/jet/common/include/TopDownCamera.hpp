@@ -17,6 +17,8 @@ public:
 	void SetPos(const Vector3 &position);
 private:
 	Vector3 pos;
+	float yRot;
+	float xRot;
 };
 
 }
