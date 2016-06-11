@@ -20,10 +20,7 @@ private:
 		TwoFingersDown
 	};
 
-	Vector2 oneFingerPanStartPos;
-
 	// OneFingerDown variables
-	Vector2 oneFingerStartPos;
 	Vector2 lastOneFingerPos;
 
 	// Release variables

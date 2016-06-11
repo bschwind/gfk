@@ -118,7 +118,7 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 	color.A = 0.3f;
 
 	Vector2 panOffset = recognizer.GetPanOffset();
-	Logger::Logf("Pan Accum: (%f,%f)\n", panOffset.X, panOffset.Y);
+	// Logger::Logf("Pan Accum: (%f,%f)\n", panOffset.X, panOffset.Y);
 
 	primBatch.Begin(PrimitiveType::LineList, cam);
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);
@@ -140,6 +140,10 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 		primBatch.DrawLine(Vector3(), Vector3(jetX, jetY, jetZ), Color::Green, Color::Green);
 		primBatch.End();
 	}
+
+	primBatch.Begin(PrimitiveType::TriangleList, cam, Matrix::CreateRotationY(MathHelper::ToRadians(90.0f)) * Matrix::CreateScale(0.04f));
+	primBatch.DrawMesh(mesh);
+	primBatch.End();
 
 	Matrix projection = Matrix::CreateOrthographicUpperLeftOrigin(GetWidth(), GetHeight(), 0.0f, 100.0f);
 	Matrix view = Matrix::CreateLookAt(Vector3(0, 0, 1.0f), Vector3(0, 0, -1.0f), Vector3::Up);

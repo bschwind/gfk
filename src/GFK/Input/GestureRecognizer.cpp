@@ -133,8 +133,7 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
 				ChangeState(OneFingerDown);
-				oneFingerStartPos = event.touchPoints[0].pos;
-				lastOneFingerPos = oneFingerStartPos;
+				lastOneFingerPos = event.touchPoints[0].pos;
 			}
 			break;
 		}
@@ -150,10 +149,9 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Moved)
 			{
 				// 1600 = 40 * 40
-				if (Vector2::DistanceSquared(event.touchPoints[0].pos, oneFingerStartPos) > 1600)
+				if (Vector2::DistanceSquared(event.touchPoints[0].pos, lastOneFingerPos) > 1600)
 				{
 					ChangeState(OneFingerPan);
-					oneFingerPanStartPos = event.touchPoints[0].pos;
 					// Logger::Log("Moved farther than 40 pixels!");
 				}
 			}
@@ -175,7 +173,7 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			if (event.numTouches == 1 && event.touchType == TouchEvent::TouchState::Began)
 			{
 
-				if (Vector2::DistanceSquared(event.touchPoints[0].pos, oneFingerStartPos) < 6400)
+				if (Vector2::DistanceSquared(event.touchPoints[0].pos, lastOneFingerPos) < 6400)
 				{
 					// The user tapped again close to where they tapped before, effectively
 					// making this a double tap. Enable one finger zooming
@@ -186,8 +184,7 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 					// The user double tapped, but the second tap was far from the first.
 					// Treat it as a new single touch down
 					ChangeState(OneFingerDown);
-					oneFingerStartPos = event.touchPoints[0].pos;
-					lastOneFingerPos = oneFingerStartPos;
+					lastOneFingerPos = event.touchPoints[0].pos;
 				}
 			}
 			break;
