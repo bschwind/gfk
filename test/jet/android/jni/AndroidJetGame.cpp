@@ -110,6 +110,8 @@ void AndroidJetGame::SendStateToServer(const gfk::GameTime &gameTime)
 	}
 }
 
+float rotation = 0.0f;
+
 void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFactor)
 {
 	Device.Clear();
@@ -119,6 +121,11 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 
 	Vector2 panOffset = recognizer.GetPanOffset();
 	// Logger::Logf("Pan Accum: (%f,%f)\n", panOffset.X, panOffset.Y);
+
+	float rotateOffset = recognizer.GetRotationOffset();
+	rotation += rotateOffset;
+	Logger::Logf("rotation: %f\n", rotation);
+	cam.SetYRot(rotation);
 
 	primBatch.Begin(PrimitiveType::LineList, cam);
 	primBatch.DrawXZGrid(-200, -200, 200, 200, color);

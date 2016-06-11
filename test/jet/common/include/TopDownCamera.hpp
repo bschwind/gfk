@@ -15,6 +15,7 @@ public:
 	Matrix GetView();
 	Matrix GetProjection();
 	void SetPos(const Vector3 &position);
+	void SetYRot(float rot);
 private:
 	Vector3 pos;
 	float yRot;

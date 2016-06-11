@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 namespace gfk
 {
 
@@ -60,6 +62,18 @@ public:
 	static inline T ToRadians(T degrees)
 	{
 		return degrees * toRadiansFactor;
+	}
+
+	template <typename T>
+	static inline T Get2DVecRadians(T x, T y)
+	{
+		T angle = atan2(y, x);
+
+		if (angle < 0) {
+			angle += TwoPi;
+		}
+
+		return angle;
 	}
 };
 

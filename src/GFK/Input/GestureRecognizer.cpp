@@ -1,4 +1,5 @@
 #include <GFK/Input/GestureRecognizer.hpp>
+#include <GFK/Math/MathHelper.hpp>
 #include <GFK/System/Logger.hpp>
 
 namespace gfk
@@ -237,6 +238,27 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			{
 				ChangeState(OneFingerPan);
 			}
+
+			Vector2 midpoint;
+			for (int i = 0; i < event.numTouches; i++)
+			{
+				midpoint.X += event.touchPoints[i].pos.X;
+				midpoint.Y += event.touchPoints[i].pos.Y;
+			}
+
+			midpoint /= event.numTouches;
+
+			float avgRotation = 0.0f;
+			for (int i = 0; i < event.numTouches; i++)
+			{
+				Vector2 diff = event.touchPoints[i].pos - midpoint;
+				avgRotation += MathHelper::Get2DVecRadians(diff.X, diff.Y);
+			}
+
+			avgRotation /= event.numTouches;
+			rotateAccum += (avgRotation - lastRotation);
+			lastRotation = avgRotation;
+
 			break;
 		}
 		default:
@@ -260,8 +282,9 @@ Vector2 GestureRecognizer::GetPanOffset()
 
 float GestureRecognizer::GetRotationOffset()
 {
-	// TODO
-	return 1.0f;
+	float temp = rotateAccum;
+	rotateAccum = 0.0f;
+	return temp;
 }
 
 float GestureRecognizer::GetZoomOffset()

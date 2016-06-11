@@ -31,6 +31,9 @@ private:
 	double currentContextMenuTime = 0.0;
 	const double maxContextMenuTime = 0.4;
 
+	// TwoFingersDown variables
+	float lastRotation = 0.0f;
+
 	void PrintState();
 	std::string StateToString(State state);
 	void ChangeState(State newState);

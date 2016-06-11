@@ -42,4 +42,9 @@ void TopDownCamera::SetPos(const Vector3 &position)
 	pos = position;
 }
 
+void TopDownCamera::SetYRot(float rot)
+{
+	yRot = rot;
+}
+
 }
