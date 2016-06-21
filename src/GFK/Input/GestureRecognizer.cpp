@@ -19,7 +19,8 @@ GestureRecognizer::~GestureRecognizer()
 
 void GestureRecognizer::PrintState()
 {
-	switch(state) {
+	switch(state)
+	{
 		case None:
 			Logger::Log("GestureRecognizer State: None");
 			break;
@@ -46,7 +47,8 @@ void GestureRecognizer::PrintState()
 
 std::string GestureRecognizer::StateToString(State state)
 {
-	switch(state) {
+	switch(state)
+	{
 		case None:
 			return "None";
 			break;
@@ -85,7 +87,8 @@ void GestureRecognizer::Update(const gfk::GameTime &gameTime)
 {
 	// PrintState();
 
-	switch(state) {
+	switch(state)
+	{
 		case None:
 			break;
 		case OneFingerDown:
@@ -185,8 +188,9 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 					// The user double tapped, but the second tap was far from the first.
 					// Treat it as a new single touch down
 					ChangeState(OneFingerDown);
-					lastOneFingerPos = event.touchPoints[0].pos;
 				}
+
+				lastOneFingerPos = event.touchPoints[0].pos;
 			}
 			break;
 		}
@@ -240,24 +244,48 @@ void GestureRecognizer::OnTouchEvent(const TouchEvent &event)
 			}
 
 			Vector2 midpoint;
+			Vector2 lastMidpoint;
 			for (int i = 0; i < event.numTouches; i++)
 			{
 				midpoint.X += event.touchPoints[i].pos.X;
 				midpoint.Y += event.touchPoints[i].pos.Y;
+
+				lastMidpoint.X += event.touchPoints[i].lastPos.X;
+				lastMidpoint.Y += event.touchPoints[i].lastPos.Y;
 			}
 
 			midpoint /= event.numTouches;
+			lastMidpoint /= event.numTouches;
 
-			float avgRotation = 0.0f;
+			float avgRotationChange = 0.0f;
 			for (int i = 0; i < event.numTouches; i++)
 			{
-				Vector2 diff = event.touchPoints[i].pos - midpoint;
-				avgRotation += MathHelper::Get2DVecRadians(diff.X, diff.Y);
+				Vector2 lastOffset = event.touchPoints[i].lastPos - lastMidpoint;
+				float lastRotation = MathHelper::Get2DVecRadians(lastOffset.X, lastOffset.Y);
+
+				Vector2 currentOffset = event.touchPoints[i].pos - midpoint;
+				float currentRotation = MathHelper::Get2DVecRadians(currentOffset.X, currentOffset.Y);
+
+				// Correct the angle difference if it jumped across the 0-2PI border
+				if (fabs(currentRotation - lastRotation) > MathHelper::Pi)
+				{
+					if (currentRotation > lastRotation)
+					{
+						avgRotationChange += (currentRotation - (lastRotation + MathHelper::TwoPi));
+					}
+					else
+					{
+						avgRotationChange += ((currentRotation + MathHelper::TwoPi) - lastRotation);
+					}
+				}
+				else
+				{
+					avgRotationChange += (currentRotation - lastRotation);
+				}
 			}
 
-			avgRotation /= event.numTouches;
-			rotateAccum += (avgRotation - lastRotation);
-			lastRotation = avgRotation;
+			avgRotationChange /= event.numTouches;
+			rotateAccum += avgRotationChange;
 
 			break;
 		}

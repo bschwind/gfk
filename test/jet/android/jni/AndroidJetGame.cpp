@@ -124,7 +124,6 @@ void AndroidJetGame::Draw(const gfk::GameTime &gameTime, float interpolationFact
 
 	float rotateOffset = recognizer.GetRotationOffset();
 	rotation += rotateOffset;
-	Logger::Logf("rotation: %f\n", rotation);
 	cam.SetYRot(rotation);
 
 	primBatch.Begin(PrimitiveType::LineList, cam);

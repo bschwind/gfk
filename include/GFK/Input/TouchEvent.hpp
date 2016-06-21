@@ -25,6 +25,7 @@ public:
 	struct TouchPoint {
 		uintptr_t id = 0;
 		Vector2 pos;
+		Vector2 lastPos;
 		bool isChanged = false;
 	};
 

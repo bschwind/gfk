@@ -1,7 +1,9 @@
 #include <android_native_app_glue.h>
 #include <GFK/System/Logger.hpp>
 #include <GFK/Input/TouchEvent.hpp>
+#include <GFK/Math/Vector2.hpp>
 #include <GFK/System/GameTime.hpp>
+#include <unordered_map>
 #include "AndroidJetGame.hpp"
 
 /**
@@ -12,6 +14,9 @@ struct saved_state
     int32_t x;
     int32_t y;
 };
+
+// Used to store previous coordinates of touch points
+std::unordered_map<uintptr_t, Vector2> lastPositions;
 
 /**
  * Process the next input event.
@@ -26,40 +31,94 @@ static int32_t handleInput(struct android_app* app, AInputEvent* event)
         TouchEvent touchEvent;
 
         int32_t action = AMotionEvent_getAction(event);
-        uint32_t flags = action & AMOTION_EVENT_ACTION_MASK;
         int32_t pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+        uintptr_t relevantTouchID = AMotionEvent_getPointerId(event, pointerIndex);
 
-        switch (flags) {
+        uint32_t flags = action & AMOTION_EVENT_ACTION_MASK;
+
+        // Classify the action and add a new "last position" if necessary
+        switch (flags)
+        {
             case AMOTION_EVENT_ACTION_DOWN:
             case AMOTION_EVENT_ACTION_POINTER_DOWN:
+            {
                 touchEvent.touchType = TouchEvent::Began;
+                lastPositions[relevantTouchID] = Vector2(AMotionEvent_getX(event, pointerIndex), AMotionEvent_getY(event, pointerIndex));
                 break;
+            }
             case AMOTION_EVENT_ACTION_UP:
             case AMOTION_EVENT_ACTION_POINTER_UP:
+            {
                 touchEvent.touchType = TouchEvent::Ended;
                 break;
+            }
             case AMOTION_EVENT_ACTION_MOVE:
+            {
                 touchEvent.touchType = TouchEvent::Moved;
                 break;
+            }
             case AMOTION_EVENT_ACTION_CANCEL:
+            {
                 touchEvent.touchType = TouchEvent::Cancelled;
                 break;
+            }
             default:
+            {
                 return 0;
+            }
         }
 
         touchEvent.time = GameTime::GetSystemTime();
         touchEvent.numTouches = std::min(static_cast<unsigned char>(AMotionEvent_getPointerCount(event)), TouchEvent::MAX_TOUCHES);
 
-        for (int i = 0; i < touchEvent.numTouches; i++) {
+        // Move the touch info into our own data format
+        for (int i = 0; i < touchEvent.numTouches; i++)
+        {
+            uintptr_t id = AMotionEvent_getPointerId(event, i);
+
             TouchEvent::TouchPoint& curPoint = touchEvent.touchPoints[i];
-            curPoint.id = AMotionEvent_getPointerId(event, i);
-            curPoint.pos.X = AMotionEvent_getX(event, i);
-            curPoint.pos.Y = AMotionEvent_getY(event, i);
+            curPoint.id = id;
+            curPoint.pos = Vector2(AMotionEvent_getX(event, i), AMotionEvent_getY(event, i));
+            curPoint.lastPos = lastPositions[id];
             curPoint.isChanged = (i == pointerIndex);
         }
 
+        // Let the game process the event
         game->OnTouchEvent(touchEvent);
+
+        // Update the "last positions" on all touch points
+        for (int i = 0; i < touchEvent.numTouches; i++)
+        {
+            TouchEvent::TouchPoint& curPoint = touchEvent.touchPoints[i];
+
+            if (lastPositions.count(curPoint.id) > 0)
+            {
+                // For each existing point, update their last position
+                // to be their current position
+                lastPositions[curPoint.id] = curPoint.pos;
+            }
+        }
+
+        // Remove any "last positions" of touch points that were lifted up
+        switch (flags)
+        {
+            case AMOTION_EVENT_ACTION_UP:
+            case AMOTION_EVENT_ACTION_POINTER_UP:
+            {
+                lastPositions.erase(relevantTouchID);
+                break;
+            }
+            case AMOTION_EVENT_ACTION_CANCEL:
+            {
+                lastPositions.erase(relevantTouchID);
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
+
         return 1;
     }
 

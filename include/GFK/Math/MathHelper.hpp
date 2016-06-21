@@ -64,14 +64,12 @@ public:
 		return degrees * toRadiansFactor;
 	}
 
+	// Returns an angle in radians in the range [0, 2PI]
 	template <typename T>
 	static inline T Get2DVecRadians(T x, T y)
 	{
-		T angle = atan2(y, x);
-
-		if (angle < 0) {
-			angle += TwoPi;
-		}
+		T angle = atan2(-y, -x);
+		angle += Pi;
 
 		return angle;
 	}
