@@ -1,3 +1,31 @@
+// State machine representation. Plug into http://www.nomnoml.com/
+//
+// [<start>st]->[<state>None]
+// 
+// [<state>None]-> onDown()[<state>One Finger Down]
+// 
+// [<state>One Finger Down]-> Move more than 20px[<state>One Finger Pan]
+// [<state>One Finger Down]-> onUp()[<state>Release]
+// [<state>One Finger Down]-> 0.4 second timeout[<state>Context Menu]
+// [<state>One Finger Down]-> Cancel[<state>None]
+// [<state>One Finger Down]-> onDown()[<state>Two Fingers Down]
+// 
+// [<state>Release]-> onDown() within 2 seconds[<state>One Finger Zooming]
+// [<state>Release]-> onDown() within[<state>One Finger Down]
+// [<state>Release]-> 0.2 second timeout[<state>None]
+// 
+// [<state>One Finger Zooming]-> onUp()[<state>None]
+// [<state>One Finger Zooming]-> onDown()[<state>Two Fingers Down]
+// 
+// [<state>Context Menu]-> NextTick()[<state>One Finger Pan]
+// [<state>Context Menu]-> onDown()[<state>Two Fingers Down]
+// 
+// [<state>Two Fingers Down]-> onDown()[<state>Two Fingers Down]
+// [<state>Two Fingers Down]-> onUp()[<state>One Finger Pan]
+// 
+// [<state>One Finger Pan]-> onDown()[<state>Two Fingers Down]
+// [<state>One Finger Pan]-> onUp()[<state>None]
+
 #include <GFK/Input/GestureRecognizer.hpp>
 #include <GFK/Math/MathHelper.hpp>
 #include <GFK/System/Logger.hpp>
